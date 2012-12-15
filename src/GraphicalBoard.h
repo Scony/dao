@@ -1,12 +1,16 @@
 #ifndef GRAPHICALBOARD_H
 #define GRAPHICALBOARD_H
 
+#include <gtk/gtk.h>
+
 class GraphicalBoard
 {
-  //params
+  GtkWidget * dArea;
  public:
   GraphicalBoard();
   ~GraphicalBoard();
+  static gboolean onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_data);
+  GtkWidget * getDrawingArea();
 };
 
 #endif

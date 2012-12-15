@@ -3,9 +3,12 @@
 
 #include <gtk/gtk.h>
 
+#include "GraphicalBoard.h"
+
 class Application
 {
-  //params
+  GtkWidget * window;
+  GraphicalBoard * gBoard;
  public:
   Application(int argc, char ** argv);
   ~Application();
