@@ -33,6 +33,7 @@ Application::Application(int argc, char ** argv)
 
   button = gtk_button_new_with_label("Ci");
   gtk_box_pack_start(GTK_BOX(vbox),button,false,false,0);
+  g_signal_connect(button,"clicked",G_CALLBACK(onClick),NULL);
 
   GtkWidget * statbar = gtk_statusbar_new();
   guint cx = gtk_statusbar_get_context_id(GTK_STATUSBAR(statbar),"Wtf ?");
@@ -49,4 +50,9 @@ void Application::run()
 {
   gtk_widget_show_all(this->window);
   gtk_main();
+}
+
+void Application::onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+  g_print("Commit\n");
 }

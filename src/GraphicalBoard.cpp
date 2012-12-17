@@ -30,7 +30,12 @@ GraphicalBoard::~GraphicalBoard()
 
 gboolean GraphicalBoard::onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
-  g_print("%f %f\n",event->x,event->y);
+  g_print("onClick %f %f\n",event->x,event->y);
+
+  GraphicalBoard * gBoard = (GraphicalBoard*)user_data;
+
+  gBoard->handleClick(event->x,event->y);
+
   gtk_widget_queue_draw(widget);
 
   return TRUE;
@@ -38,7 +43,10 @@ gboolean GraphicalBoard::onClick(GtkWidget *widget, GdkEventButton *event, gpoin
 
 gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_data)
 {
+  g_print("onDraw\n");
+
   GraphicalBoard * gBoard = (GraphicalBoard*)user_data;
+
   string boardf = "../data/board.png";
   string p1f = "../data/stone0.png";
   string p2f = "../data/stone1.png";
@@ -48,11 +56,9 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
   cairo_surface_t * p2 = cairo_image_surface_create_from_png(p2f.c_str());
 
   cr = gdk_cairo_create(gtk_widget_get_window(widget));
-  g_print("draw!\n");
 
   cairo_set_source_surface(cr,board,10,10);
   cairo_paint(cr);
-  cairo_surface_destroy(board);
 
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
@@ -70,17 +76,9 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
   	  }
       }
 
+  cairo_surface_destroy(board);
   cairo_surface_destroy(p1);
   cairo_surface_destroy(p2);
-
-
-  // cairo_set_source_rgb(cr, 0, 0, 0);
-  // cairo_set_line_width(cr, 2.5);
-
-  // cairo_move_to(cr,0,0);
-  // cairo_line_to(cr,300,200);
-
-  // cairo_stroke(cr);
 
   cairo_destroy(cr);
 
@@ -90,4 +88,9 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
 GtkWidget * GraphicalBoard::getDrawingArea()
 {
   return this->dArea;
+}
+
+void GraphicalBoard::handleClick(int x, int y)
+{
+  //
 }

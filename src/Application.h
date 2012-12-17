@@ -15,6 +15,7 @@ class Application
   Application(int argc, char ** argv);
   ~Application();
   void run();
+  static void onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 };
 
 #endif

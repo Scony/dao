@@ -15,6 +15,6 @@ main.out: $(OBJS)
 	g++ $(CFLAGS) -c $<
 
 clean:
-	rm -f $(OBJS) $(EXE)
+	rm -f *~ $(OBJS) $(EXE)
 
 .PHONY: clean
