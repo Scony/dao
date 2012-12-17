@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "Application.h"
 #include "Configuration.h"
 
@@ -5,10 +7,7 @@ Application::Application(int argc, char ** argv)
 {
   gtk_init(&argc, &argv);
 
-  /*Test GObject Configuration*/
   this->configuration = configuration_new();
-  g_object_unref( G_OBJECT(this->configuration) );
-  /*End GObject test*/
 
   this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW(this->window), "Dao");
@@ -25,15 +24,16 @@ Application::Application(int argc, char ** argv)
 
   gtk_box_pack_start(GTK_BOX(vbox),gBoard->getDrawingArea(),false,false,0);
 
-  GtkWidget * view = gtk_text_view_new();
-  gtk_widget_set_size_request(view,300,50);
-  GtkTextBuffer * buff = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-  gtk_text_buffer_set_text(buff, "#!self\nSTART=1\nMODE=HvsH\netc", -1);
-  gtk_box_pack_start(GTK_BOX(vbox),view,false,false,0);
+  this->configuration_text = gtk_text_view_new();
+  gtk_widget_set_size_request(this->configuration_text,300,50);
+  this->configuration_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(this->configuration_text));
+  gtk_text_buffer_set_text(this->configuration_buffer, "[Game]\nfirst_move=Player2\n", -1);
+  gtk_box_pack_start(GTK_BOX(vbox),this->configuration_text,false,false,0);
 
   button = gtk_button_new_with_label("Ci");
   gtk_box_pack_start(GTK_BOX(vbox),button,false,false,0);
-  g_signal_connect(button,"clicked",G_CALLBACK(onClick),NULL);
+  g_print("%uld\n", (unsigned long)this);
+  g_signal_connect(button,"clicked",G_CALLBACK(onClick),(gpointer)this);
 
   GtkWidget * statbar = gtk_statusbar_new();
   guint cx = gtk_statusbar_get_context_id(GTK_STATUSBAR(statbar),"Wtf ?");
@@ -43,6 +43,7 @@ Application::Application(int argc, char ** argv)
 
 Application::~Application()
 {
+  g_object_unref( G_OBJECT(this->configuration) );
   delete this->gBoard;
 }
 
@@ -52,7 +53,33 @@ void Application::run()
   gtk_main();
 }
 
-void Application::onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+void Application::commitClicked()
 {
-  g_print("Commit\n");
+  gsize length;
+  gchar* data;
+
+  GtkTextIter begin;
+  GtkTextIter end;
+
+  gtk_text_buffer_get_iter_at_offset(this->configuration_buffer,
+  				     &begin,
+  				     0);
+  gtk_text_buffer_get_iter_at_offset(this->configuration_buffer,
+  				     &end,
+  				     -1);
+  data = gtk_text_buffer_get_text(this->configuration_buffer,
+  				  &begin, &end, FALSE);
+  length = strlen(data)+1;
+
+  configuration_read_from_data(this->configuration, data, length);
+
+  g_print("Commit clicked");
+  g_print(data);		
+}
+
+void Application::onClick(GtkWidget *widget, gpointer user_data)
+{
+  Application* application = (Application*)user_data;
+  g_print("%uld\n", (unsigned long)user_data);
+  application->commitClicked();
 }

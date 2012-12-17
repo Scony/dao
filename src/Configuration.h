@@ -52,6 +52,8 @@ struct _ConfigurationClass
 
 GType configuration_get_type(void) G_GNUC_CONST;
 Configuration* configuration_new();
+int configuration_read_from_data(Configuration* configuration,
+				  gchar* data, gsize length);
 
 G_END_DECLS
 
