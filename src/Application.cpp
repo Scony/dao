@@ -1,8 +1,14 @@
 #include "Application.h"
+#include "Configuration.h"
 
 Application::Application(int argc, char ** argv)
 {
   gtk_init(&argc, &argv);
+
+  /*Test GObject Configuration*/
+  this->configuration = configuration_new();
+  g_object_unref( G_OBJECT(this->configuration) );
+  /*End GObject test*/
 
   this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW(this->window), "Dao");

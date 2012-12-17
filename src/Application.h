@@ -3,12 +3,14 @@
 
 #include <gtk/gtk.h>
 
+#include "Configuration.h"
 #include "GraphicalBoard.h"
 
 class Application
 {
   GtkWidget * window;
   GraphicalBoard * gBoard;
+  Configuration* configuration;
  public:
   Application(int argc, char ** argv);
   ~Application();

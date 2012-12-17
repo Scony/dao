@@ -1,11 +1,20 @@
-all: main.out
-main.out: main.o application.o graphicalboard.o
-	g++ main.o application.o graphicalboard.o -o main.out `pkg-config --cflags --libs gtk+-3.0`
-main.o: main.cpp
-	g++ -Wall -c main.cpp -o main.o `pkg-config --cflags --libs gtk+-3.0`
-application.o: Application.cpp
-	g++ -Wall -c Application.cpp -o application.o `pkg-config --cflags --libs gtk+-3.0`
-graphicalboard.o: GraphicalBoard.cpp
-	g++ -Wall -c GraphicalBoard.cpp -o graphicalboard.o `pkg-config --cflags --libs gtk+-3.0`
+CFLAGS=-Wall `pkg-config --cflags --libs gtk+-3.0`
+LDFLAGS=`pkg-config --libs gtk+-3.0`
+OBJS=main.o Application.o GraphicalBoard.o Configuration.o
+EXE=main.out
+
+all: $(EXE)
+
+main.out: $(OBJS)
+	g++ $(OBJS) -o main.out $(LDFLAGS)
+
+.SUFFIXES:
+.SUFFIXES: .o .cpp
+
+.cpp.o:
+	g++ $(CFLAGS) -c $<
+
 clean:
-	rm -f *.o *~
+	rm -f $(OBJS) $(EXE)
+
+.PHONY: clean
