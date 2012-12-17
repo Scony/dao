@@ -3,17 +3,20 @@
 
 #include <iostream>
 #include <gtk/gtk.h>
+#include <stdlib.h>
 
 class GraphicalBoard
 {
   GtkWidget * dArea;
-  int state[4][4];
+  int stone[4][4];
+  int effect[4][4];
  public:
   GraphicalBoard();
   ~GraphicalBoard();
   void handleClick(int x, int y);
   GtkWidget * getDrawingArea();
-  static gboolean onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
+
+  static void onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
   static gboolean onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_data);
 };
 
