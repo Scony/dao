@@ -25,9 +25,6 @@ Application::Application(int argc, char ** argv)
 
   gtk_box_pack_start(GTK_BOX(vbox),gBoard->getDrawingArea(),false,false,0);
 
-  //gtk_widget_add_events(dArea, GDK_BUTTON_PRESS_MASK); 
-  //g_signal_connect(dArea,"button-press-event",G_CALLBACK(clicked),NULL);
-
   GtkWidget * view = gtk_text_view_new();
   gtk_widget_set_size_request(view,300,50);
   GtkTextBuffer * buff = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
