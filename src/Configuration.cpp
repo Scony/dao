@@ -1,5 +1,7 @@
 #include "Configuration.h"
 
+#define BUFFER_SIZE 64
+
 #define CONFIGURATION_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), TYPE_CONFIGURATION, ConfigurationPrivate))
 
 G_DEFINE_TYPE( Configuration, configuration, G_TYPE_OBJECT)
@@ -58,7 +60,7 @@ Configuration* configuration_new()
   return configuration;
 }
 
-void configuration_read_from_gkeyfile(Configuration* configuration,
+int configuration_read_from_gkeyfile(Configuration* configuration,
 				      GKeyFile* key_file)
 {
   gchar* first_player;
@@ -76,6 +78,65 @@ void configuration_read_from_gkeyfile(Configuration* configuration,
       configuration->first_player = 0;
     }
 
+  //Players
+  for(int i = 0; i < 2; i++)
+    {
+      gchar player_name_buf[BUFFER_SIZE];
+      PlayerConfiguration* player;
+      gchar* player_type;
+
+      g_snprintf(player_name_buf, BUFFER_SIZE, "Player%d", i+1);
+      g_print("%s\n", player_name_buf);
+
+      player = configuration->players + i;
+      player->color = g_key_file_get_integer(key_file, 
+					     player_name_buf,
+					     "color",
+					     NULL);
+      player_type = g_key_file_get_string(key_file,
+					  player_name_buf,
+					  "type",
+					  NULL);
+      if(g_strcmp0(player_type, "human") == 0)
+	{
+	  player->type = PLAYER_HUMAN;
+	}
+      else if (g_strcmp0(player_type, "computer") == 0)
+	{
+	  player->type = PLAYER_COMPUTER;
+	}
+      else
+	{
+	  g_print("Unknown player type");
+	  return 1;
+	}
+      
+      if (player->type == PLAYER_COMPUTER)
+	{
+	  gchar* player_algorithm;
+	  player_algorithm = g_key_file_get_string(key_file,
+						   player_name_buf,
+						   "algorithm",
+						   NULL);
+
+	  if (g_strcmp0(player_algorithm, "random") == 0)
+	    {
+	      player->algorithm = ALGORITHM_RANDOM;
+	    }
+	  else if(g_strcmp0(player_algorithm, "hill climber") == 0)
+	    {
+	      player->algorithm = ALGORITHM_HILL_CLIMBER;
+	    }
+	  else
+	    {
+	      g_print("Unknown algorithm\n");
+	      return 1;
+	    }
+	}
+    }
+
+  g_print("%d", configuration->first_player);
+  return 0;
 }
 
 int configuration_read_from_data(Configuration* configuration,
@@ -92,6 +153,8 @@ int configuration_read_from_data(Configuration* configuration,
     {
       return 1;
     }
+
+  configuration_read_from_gkeyfile(configuration, key_file);
   return 0;
 } 
 
