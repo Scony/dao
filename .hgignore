@@ -5,6 +5,11 @@ syntax: glob
 *.o
 .#*
 #*#
+*.aux
+*.log
 dao_expert
 
+syntax: regexp
+
+doc/\w*.pdf
 
