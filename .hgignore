@@ -7,6 +7,7 @@ syntax: glob
 #*#
 *.aux
 *.log
+*.orig
 dao_expert
 
 syntax: regexp

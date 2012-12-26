@@ -33,6 +33,8 @@ poniższych punktach.
 
 \subsubsection{Reprezentacja krótka}
 
+TODO: Zamienić biały -> czerwony, czarny->niebieski
+
 Reprezentacja krótka zawiera pełną informację o stanie gry zawartą
 w 32--bitowej liczbie całkowitej bez znaku. Jest ona stosowana przy
 wykrywaniu cykli.
@@ -83,7 +85,19 @@ określonej przez nią kolejności pól, jest obliczana reprezentacja
 krótka (bez negowania). Spośród obliczonych 8 reprezentacji, 
 jest wybierana ta, która stanowi najmniejszą liczbę.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{data/field_order2.pdf}
+  \caption{Transformacje planszy nie zmieniające stanu gry}
+  \label{fig:field_order2}
+\end{figure}
+
+
 \subsubsection{Przykład}
+
+Rozważmy stan gry przedstawiony na rysunku \ref{fig:exaple_state}.
+
+
 
 \subsection{Generacja ruchów dopuszczalnych}
 
