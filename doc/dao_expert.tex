@@ -26,6 +26,65 @@ Lorem ipsum
 
 \subsection{Reprezentacja stanu gry}
 
+Stan gry jest reprezentowany na trzy sposoby. Są one wymienione w
+poniższych punktach.
+
+\subsubsection{Podstawowa reprezentacja macierzowa}
+
+\subsubsection{Reprezentacja krótka}
+
+Reprezentacja krótka zawiera pełną informację o stanie gry zawartą
+w 32--bitowej liczbie całkowitej bez znaku. Jest ona stosowana przy
+wykrywaniu cykli.
+
+Stan każdego z 16 pól jest reprezentowany za pomocą dwóch
+bitów:
+\begin{itemize}
+\item $(00)_B$ reprezentuje pole puste
+\item $(01)_B$ reprezentuje pole zajęte przez pionek gracza aktualnie
+  wykonującego ruch
+\item $(10)_B$ reprezentuje pole zajęte przez pionek gracza
+  oczekującego na ruch przeciwnika
+\item $(11)_B$ stan zakazany, przydatny przy rozpoznawaniu kolorów
+  graczy.
+\end{itemize}
+
+Reprezentacje stanów pól są konkantenowane zgodnie z kolejnością pól,
+przedstawioną na rysunku \ref{fig:field_order}. Tworzą one 32-bitową
+liczbę. Jeżeli gracz aktualnie wykonujący ruch ma kolor biały,
+utworzona liczba jest reprezentacją krótką stanu gry. Jeżeli kolorem
+gracza wykoującego ruch jest czarny, reprezentacja krótka powstaje 
+poprzez zanegowanie bitowe utworzonej przez konkatenację liczby.
+
+\begin{figure}
+  \centering
+  \includegraphics{data/field_order.pdf}
+  \caption{Kolejność pól przy obliczaniu reprezentacji krótkiej}
+  \label{fig:field_order}
+\end{figure}
+
+Kolor gracza wykonującego ruch można określić, wyszukując w
+reprezentacji stanu gry sekwencji $(11)_B$. Jest ona obecna wtedy i
+tylko wtedy, gdy gracz wykonujący ruch posiada pionki czarne.
+
+TODO: Ująć jakoś, że $(11)_B$ nie jest dowolną sekwencją, lecz jednym
+z 16 2--bitowych kawałków.
+
+\subsubsection{Reprezentacja krótka niezmienna względem odbić,
+  obrotów i kolorów}
+Jest to wariant reprezentacji krótkiej, nie zawierający informacji 
+o kolorach pionów. Jest on obliczany w sposób, zapewniający 
+niezmienniczość względem obrotów planszy i odbić lustrzanych w pionie
+i poziomie. 
+
+Plansze na rysunku \ref{fig:field_order2} zawierają numery pól na
+planszy poddanej transformacjom. Dla każdej z 8 transformacji i
+określonej przez nią kolejności pól, jest obliczana reprezentacja 
+krótka (bez negowania). Spośród obliczonych 8 reprezentacji, 
+jest wybierana ta, która stanowi najmniejszą liczbę.
+
+\subsubsection{Przykład}
+
 \subsection{Generacja ruchów dopuszczalnych}
 
 \subsection{Metody przeszukiwania stanów gry}
