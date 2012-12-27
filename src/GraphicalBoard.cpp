@@ -7,8 +7,8 @@ GraphicalBoard::GraphicalBoard()
   this->dArea = gtk_drawing_area_new();
   gtk_widget_set_size_request(this->dArea,320,320);
   gtk_widget_add_events(this->dArea, GDK_BUTTON_PRESS_MASK); 
-  // g_signal_connect(this->dArea,"button-press-event",G_CALLBACK(onClick),(gpointer)this);
-  // g_signal_connect(G_OBJECT(this->dArea),"draw",G_CALLBACK(onDraw),(gpointer)this);
+  g_signal_connect(this->dArea,"button-press-event",G_CALLBACK(onClick),(gpointer)this);
+  g_signal_connect(G_OBJECT(this->dArea),"draw",G_CALLBACK(onDraw),(gpointer)this);
 
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
@@ -108,14 +108,14 @@ void GraphicalBoard::handleClick(int x, int y)
 {
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      stone[i][j] *= (stone[i][j] < 0 ? -1 : 1);
+      effect[i][j] = 0;
   x -= 45;
   y -= 45;
   if(x > 0 && y > 0)
     {
       if(x%60 <= 50 && y%60 <= 50 && x/60 < 4 && y/60 < 4)
 	{
-	  this->effect[y/60][x/60] = 2;
+	  this->effect[y/60][x/60] = 1;
 	}
     }
 }
