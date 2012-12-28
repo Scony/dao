@@ -1,4 +1,4 @@
-CFLAGS=-Wall `pkg-config --cflags --libs gtk+-3.0`
+CFLAGS=-Wall `pkg-config --cflags --libs gtk+-3.0` -fpermissive
 LDFLAGS=`pkg-config --libs gtk+-3.0`
 OBJS=main.o Application.o GraphicalBoard.o Configuration.o
 EXE=main.out

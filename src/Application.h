@@ -15,12 +15,14 @@ class Application
 
   GtkTextBuffer* configuration_buffer;
 
+  void initUI();
   void commitClicked();
  public:
   Application(int argc, char ** argv);
   ~Application();
   void run();
   static void onClick(GtkWidget *widget, gpointer user_data);
+  static void onConfigurationChange(GObject* object,
+				    gpointer user_data);
 };
-
 #endif

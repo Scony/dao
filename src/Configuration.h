@@ -43,6 +43,8 @@ struct _Configuration
 
   int first_player;
   PlayerConfiguration players[NUM_PLAYERS];
+
+  GKeyFile* key_file;
 };
 
 struct _ConfigurationClass
@@ -54,6 +56,10 @@ GType configuration_get_type(void) G_GNUC_CONST;
 Configuration* configuration_new();
 int configuration_read_from_data(Configuration* configuration,
 				  gchar* data, gsize length);
+int configuration_read_from_file(Configuration* configuration,
+				 char* filename);
+gchar* configuration_get_data(Configuration* configuration,
+			      gsize* length, GError **error);
 
 G_END_DECLS
 

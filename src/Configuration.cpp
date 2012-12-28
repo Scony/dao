@@ -13,16 +13,25 @@ struct _ConfigurationPrivate
   int a;
 };
 
+enum
+  {
+    SIGNAL_CHANGED,
+    N_SIGNALS
+  };
+
+guint dao_configuration_signals[N_SIGNALS];
+
+
 static void configuration_finalize(GObject* configuration);
 
 static void configuration_set_property(GObject* object, 
-				       guint prop_id,
-				       const GValue *value,
-				       GParamSpec *pspec);
+					 guint prop_id,
+					 const GValue *value,
+					 GParamSpec *pspec);
 static void configuration_get_property(GObject* object,
-				       guint prop_id,
-				       GValue* value,
-				       GParamSpec *pspec);
+					 guint prop_id,
+					 GValue* value,
+					 GParamSpec *pspec);
 
 static void configuration_class_init(ConfigurationClass* klass)
 {
@@ -30,6 +39,19 @@ static void configuration_class_init(ConfigurationClass* klass)
   gobject_class->finalize = configuration_finalize;
   gobject_class->get_property = configuration_get_property;
   gobject_class->set_property = configuration_set_property;
+
+  dao_configuration_signals[SIGNAL_CHANGED] = 
+    g_signal_newv("changed",
+		    G_TYPE_FROM_CLASS(gobject_class),
+		    G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE |
+		    G_SIGNAL_NO_HOOKS,
+		    NULL,
+		    NULL,
+		    NULL,
+		    g_cclosure_marshal_VOID__VOID,
+		    G_TYPE_NONE,
+		    0,
+		    NULL);
 }
 
 static void configuration_init(Configuration* configuration)
@@ -136,27 +158,59 @@ int configuration_read_from_gkeyfile(Configuration* configuration,
     }
 
   g_print("%d", configuration->first_player);
+
+g_signal_emit(configuration, dao_configuration_signals[SIGNAL_CHANGED], 0);
   return 0;
 }
 
 int configuration_read_from_data(Configuration* configuration,
 				  gchar* data, gsize length)
 {
-  GKeyFile* key_file;
   GKeyFileFlags flags;
   GError* error;
 
   flags = G_KEY_FILE_KEEP_COMMENTS;
 
-  key_file = g_key_file_new();
-  if (!g_key_file_load_from_data(key_file, data, length, flags, &error))
+  configuration->key_file = g_key_file_new();
+  if (!g_key_file_load_from_data(configuration->key_file,
+				   data, length, flags, &error))
     {
       return 1;
     }
 
-  configuration_read_from_gkeyfile(configuration, key_file);
+  return configuration_read_from_gkeyfile(configuration, 
+				     configuration->key_file);
+}
+
+int configuration_read_from_file(Configuration* configuration,
+				   char* filename)
+{
+  GKeyFileFlags flags;
+  GError* error;
+
+  flags = G_KEY_FILE_KEEP_COMMENTS;
+
+  configuration->key_file = g_key_file_new();
+g_print("Reading from file");
+  if (!g_key_file_load_from_file(configuration->key_file,
+				   filename, flags, &error))
+    {
+      return 1;
+    }
+g_print("Read from file");
+
+  configuration_read_from_gkeyfile(configuration, 
+				     configuration->key_file);
   return 0;
-} 
+}
+
+
+gchar* configuration_get_data(Configuration* configuration,
+				gsize* length, GError **error)
+{
+return g_key_file_to_data(configuration->key_file,
+			    length, error);
+}
 
 static void configuration_get_property(GObject* object,
 				       guint prop_id,

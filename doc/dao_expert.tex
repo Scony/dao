@@ -58,7 +58,7 @@ utworzona liczba jest reprezentacją krótką stanu gry. Jeżeli kolorem
 gracza wykoującego ruch jest czarny, reprezentacja krótka powstaje 
 poprzez zanegowanie bitowe utworzonej przez konkatenację liczby.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics{data/field_order.pdf}
   \caption{Kolejność pól przy obliczaniu reprezentacji krótkiej}
@@ -85,7 +85,7 @@ określonej przez nią kolejności pól, jest obliczana reprezentacja
 krótka (bez negowania). Spośród obliczonych 8 reprezentacji, 
 jest wybierana ta, która stanowi najmniejszą liczbę.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{data/field_order2.pdf}
   \caption{Transformacje planszy nie zmieniające stanu gry}
@@ -97,6 +97,12 @@ jest wybierana ta, która stanowi najmniejszą liczbę.
 
 Rozważmy stan gry przedstawiony na rysunku \ref{fig:exaple_state}.
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=5cm]{data/example_board.pdf}
+  \caption{Przykładowy stan gry}
+  \label{fig:example_state}
+\end{figure}
 
 
 \subsection{Generacja ruchów dopuszczalnych}

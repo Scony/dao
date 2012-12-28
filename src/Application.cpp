@@ -5,11 +5,37 @@
 
 Application::Application(int argc, char ** argv)
 {
+  gchar* configuration_text;
+  gsize configuration_text_len;
+
   gtk_init(&argc, &argv);
 
+  /*Set up configuration GObject*/
   this->configuration = configuration_new();
+  configuration_read_from_file(this->configuration,
+			       "data/config.ini");
+  g_signal_connect(this->configuration, "changed",
+		   G_CALLBACK(onConfigurationChange),
+		   (gpointer)this);
 
-  this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  this->initUI();
+  
+  configuration_text = configuration_get_data(this->configuration, 
+			 &configuration_text_len, NULL);
+  gtk_text_buffer_set_text(this->configuration_buffer,
+			   configuration_text, 
+			   configuration_text_len);
+}
+
+Application::~Application()
+{
+  g_object_unref( G_OBJECT(this->configuration) );
+  delete this->gBoard;
+}
+
+void Application::initUI()
+{
+this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW(this->window), "Dao");
   gtk_window_set_position (GTK_WINDOW(this->window), GTK_WIN_POS_CENTER);
   gtk_window_set_resizable(GTK_WINDOW(this->window), FALSE);
@@ -24,6 +50,7 @@ Application::Application(int argc, char ** argv)
 
   gtk_box_pack_start(GTK_BOX(vbox),gBoard->getDrawingArea(),false,false,0);
 
+  /*GtkTextView configuration_text*/
   this->configuration_text = gtk_text_view_new();
   gtk_widget_set_size_request(this->configuration_text,300,50);
   this->configuration_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(this->configuration_text));
@@ -39,13 +66,7 @@ Application::Application(int argc, char ** argv)
   guint cx = gtk_statusbar_get_context_id(GTK_STATUSBAR(statbar),"Wtf ?");
   gtk_statusbar_push(GTK_STATUSBAR(statbar),cx,"values ...");
   gtk_box_pack_start(GTK_BOX(vbox),statbar,false,false,0);
-}
-
-Application::~Application()
-{
-  g_object_unref( G_OBJECT(this->configuration) );
-  delete this->gBoard;
-}
+}  
 
 void Application::run()
 {
@@ -72,14 +93,28 @@ void Application::commitClicked()
   length = strlen(data)+1;
 
   configuration_read_from_data(this->configuration, data, length);
-
-  g_print("Commit clicked");
-  g_print(data);		
 }
 
 void Application::onClick(GtkWidget *widget, gpointer user_data)
 {
   Application* application = (Application*)user_data;
-  g_print("%uld\n", (unsigned long)user_data);
   application->commitClicked();
+}
+
+void Application::onConfigurationChange(GObject* object,
+					gpointer user_data)
+{
+  Application* self;
+  gsize length;
+  gchar* config_data;
+
+  self  = (Application*)user_data;
+  config_data = configuration_get_data(self->configuration,
+				       &length, NULL);
+
+  //get rid of additional newline
+  config_data[length--] = 0;
+  
+  gtk_text_buffer_set_text(self->configuration_buffer,
+			   config_data, length);
 }
