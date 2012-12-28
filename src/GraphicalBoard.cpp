@@ -1,3 +1,4 @@
+#include "defines.h"
 #include "GraphicalBoard.h"
 
 using namespace std;
@@ -44,11 +45,11 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
 
   GraphicalBoard * gBoard = (GraphicalBoard*)user_data;
 
-  string boardf = "../data/board.png";
-  string p1f = "../data/stone0.png";
-  string p2f = "../data/stone1.png";
-  string hilightf = "../data/highlight.png";
-  string lolightf = "../data/gray.png";
+  string boardf = DATA("board.png");
+  string p1f = DATA("stone0.png");
+  string p2f = DATA("stone1.png");
+  string hilightf = DATA("highlight.png");
+  string lolightf = DATA("gray.png");
 
   cairo_surface_t * board = cairo_image_surface_create_from_png(boardf.c_str());
   cairo_surface_t * p1 = cairo_image_surface_create_from_png(p1f.c_str());

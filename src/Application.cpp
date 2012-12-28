@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "defines.h"
 #include "Application.h"
 #include "Configuration.h"
 
@@ -13,7 +14,7 @@ Application::Application(int argc, char ** argv)
   /*Set up configuration GObject*/
   this->configuration = configuration_new();
   configuration_read_from_file(this->configuration,
-			       "data/config.ini");
+			       CONFIG_FILE);
   g_signal_connect(this->configuration, "changed",
 		   G_CALLBACK(onConfigurationChange),
 		   (gpointer)this);
