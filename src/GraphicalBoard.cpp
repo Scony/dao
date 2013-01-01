@@ -5,6 +5,7 @@ using namespace std;
 GraphicalBoard::GraphicalBoard()
 {
   this->dArea = gtk_drawing_area_new();
+
   gtk_widget_set_size_request(this->dArea,320,320);
   gtk_widget_add_events(this->dArea, GDK_BUTTON_PRESS_MASK); 
   g_signal_connect(this->dArea,"button-press-event",G_CALLBACK(onClick),(gpointer)this);
@@ -13,14 +14,17 @@ GraphicalBoard::GraphicalBoard()
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
       {
-	this->effect[i][j] = 0;
+	this->effect[i][j] = NONE;
+	this->stone[i][j] = EMPTY;
+
 	if(i == j)
-	  this->stone[i][j] = 1;
-	else if(3 - i == j)
-	  this->stone[i][j] = 2;
-	else
-	  this->stone[i][j] = 0;
+	  this->stone[i][j] = P1;
+	if(3 - i == j)
+	  this->stone[i][j] = P2;
       }
+
+  choosen.x = -1;
+  choosen.y = -1;
 }
 
 GraphicalBoard::~GraphicalBoard()
@@ -44,11 +48,11 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
 
   GraphicalBoard * gBoard = (GraphicalBoard*)user_data;
 
-  string boardf = "../data/board.png";
-  string p1f = "../data/stone0.png";
-  string p2f = "../data/stone1.png";
-  string hilightf = "../data/highlight.png";
-  string lolightf = "../data/gray.png";
+  string boardf = "./data/board.png";
+  string p1f = "./data/stone0.png";
+  string p2f = "./data/stone1.png";
+  string hilightf = "./data/highlight.png";
+  string lolightf = "./data/gray.png";
 
   cairo_surface_t * board = cairo_image_surface_create_from_png(boardf.c_str());
   cairo_surface_t * p1 = cairo_image_surface_create_from_png(p1f.c_str());
@@ -66,25 +70,28 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
       {
   	switch(abs(gBoard->stone[i][j]))
   	  {
-  	  case 1:
+  	  case P1:
   	    cairo_set_source_surface(cr,p1,45+j*60,45+i*60);
   	    cairo_paint(cr);
   	    break;
-  	  case 2:
+  	  case P2:
   	    cairo_set_source_surface(cr,p2,45+j*60,45+i*60);
   	    cairo_paint(cr);
   	    break;
+	  case EMPTY:
+	    ;
   	  }
   	switch(gBoard->effect[i][j])
   	  {
-  	  case 1:
+  	  case LIGHT:
   	    cairo_set_source_surface(cr,hilight,45+j*60,45+i*60);
   	    cairo_paint(cr);
   	    break;
-  	  case 2:
+  	  case GRAY:
   	    cairo_set_source_surface(cr,lolight,45+j*60,45+i*60);
   	    cairo_paint(cr);
-  	    break;
+	  case NONE:
+	    ;
   	  }
       }
 
@@ -106,16 +113,37 @@ GtkWidget * GraphicalBoard::getDrawingArea()
 
 void GraphicalBoard::handleClick(int x, int y)
 {
-  for(int i = 0; i < 4; i++)
-    for(int j = 0; j < 4; j++)
-      effect[i][j] = 0;
+  // for(int i = 0; i < 4; i++)
+  //   for(int j = 0; j < 4; j++)
+  //     effect[i][j] = NONE;
+
   x -= 45;
   y -= 45;
+
   if(x > 0 && y > 0)
     {
       if(x%60 <= 50 && y%60 <= 50 && x/60 < 4 && y/60 < 4)
 	{
-	  this->effect[y/60][x/60] = 1;
+	  int a = y / 60, b = x / 60;
+
+	  if(choosen.x >= 0 && this->effect[a][b] == LIGHT)
+	    {
+	      for(int i = 0; i < 4; i++)
+		for(int j = 0; j < 4; j++)
+		  effect[i][j] = NONE;
+	      choosen.x = -1;
+	      choosen.y = -1;
+	    }
+	  else if(choosen.x < 0 && this->stone[a][b] == P1)
+	    {
+	      this->effect[a][b] = LIGHT;
+	      this->effect[rand()%4][rand()%4] = LIGHT;
+	      this->effect[rand()%4][rand()%4] = LIGHT;
+	      this->effect[rand()%4][rand()%4] = LIGHT;
+	      choosen.x = a;
+	      choosen.y = b;
+	    }
 	}
     }
 }
+

@@ -8,8 +8,9 @@
 class GraphicalBoard
 {
   GtkWidget * dArea;
-  int stone[4][4];
-  int effect[4][4];
+  struct { int x, y; } choosen;
+  enum { EMPTY, P1, P2 } stone[4][4];
+  enum { NONE, GRAY, LIGHT } effect[4][4];
  public:
   GraphicalBoard();
   ~GraphicalBoard();

@@ -9,6 +9,7 @@ syntax: glob
 *.log
 *.orig
 dao_expert
+run.sh
 
 syntax: regexp
 
