@@ -126,22 +126,94 @@ void GraphicalBoard::handleClick(int x, int y)
 	{
 	  int a = y / 60, b = x / 60;
 
-	  if(choosen.x >= 0 && this->effect[a][b] == LIGHT)
+	  if(this->choosen.x >= 0 && this->effect[a][b] == LIGHT && (this->choosen.x != a || this->choosen.y != b))
 	    {
 	      for(int i = 0; i < 4; i++)
 		for(int j = 0; j < 4; j++)
-		  effect[i][j] = NONE;
-	      choosen.x = -1;
-	      choosen.y = -1;
+		  this->effect[i][j] = NONE;
+
+	      //vector of move direction
+	      int vecA = a - this->choosen.x;
+	      int vecB = b - this->choosen.y;
+	      g_print("here %d %d ",vecA,vecB);
+	      //normalization
+	      vecA = vecA < -1 ? -1 : vecA;
+	      vecA = vecA > 1 ? 1 : vecA;
+	      vecB = vecB < -1 ? -1 : vecB;
+	      vecB = vecB > 1 ? 1 : vecB;
+	      //moving till end or stone
+	      while(a + vecA >= 0 && a + vecA < 4 && b + vecB >= 0 && b + vecB < 4 && stone[a+vecA][b+vecB] == EMPTY)
+		{
+		  a += vecA;
+		  b += vecB;
+		}
+
+	      this->stone[a][b] = this->stone[this->choosen.x][this->choosen.y];
+	      this->stone[this->choosen.x][this->choosen.y] = EMPTY;
+
+	      this->choosen.x = -1;
+	      this->choosen.y = -1;
+	    }
+	  else if(this->choosen.x >= 0 && this->effect[a][b] == LIGHT)
+	    {
+	      for(int i = 0; i < 4; i++)
+		for(int j = 0; j < 4; j++)
+		  this->effect[i][j] = NONE;
+
+	      this->choosen.x = -1;
+	      this->choosen.y = -1;
 	    }
 	  else if(choosen.x < 0 && this->stone[a][b] == P1)
 	    {
 	      this->effect[a][b] = LIGHT;
-	      this->effect[rand()%4][rand()%4] = LIGHT;
-	      this->effect[rand()%4][rand()%4] = LIGHT;
-	      this->effect[rand()%4][rand()%4] = LIGHT;
-	      choosen.x = a;
-	      choosen.y = b;
+
+	      //vertical
+	      for(int i = b + 1; i < 4; i++)
+		if(this->stone[a][i] == EMPTY)
+		  this->effect[a][i] = LIGHT;
+		else
+		  break;
+	      for(int i = b - 1; i >= 0; i--)
+		if(this->stone[a][i] == EMPTY)
+		  this->effect[a][i] = LIGHT;
+		else
+		  break;
+	      //horizontal
+	      for(int i = a + 1; i < 4; i++)
+		if(this->stone[i][b] == EMPTY)
+		  this->effect[i][b] = LIGHT;
+		else
+		  break;
+	      for(int i = a - 1; i >= 0; i--)
+		if(this->stone[i][b] == EMPTY)
+		  this->effect[i][b] = LIGHT;
+		else
+		  break;
+	      //right slant
+	      for(int i = 1; a + i < 4 && b + i < 4; i++)
+		if(this->stone[a+i][b+i] == EMPTY)
+		  this->effect[a+i][b+i] = LIGHT;
+		else
+		  break;
+	      for(int i = 1; a - i >= 0 && b - i >= 0; i++)
+		if(this->stone[a-i][b-i] == EMPTY)
+		  this->effect[a-i][b-i] = LIGHT;
+		else
+		  break;
+	      //left slant
+	      for(int i = 1; a + i < 4 && b - i >= 0; i++)
+		if(this->stone[a+i][b-i] == EMPTY)
+		  this->effect[a+i][b-i] = LIGHT;
+		else
+		  break;
+	      for(int i = 1; a - i >= 0 && b + i < 4; i++)
+		if(this->stone[a-i][b+i] == EMPTY)
+		  this->effect[a-i][b+i] = LIGHT;
+		else
+		  break;
+
+	      this->choosen.x = a;
+	      this->choosen.y = b;
 	    }
 	}
     }
