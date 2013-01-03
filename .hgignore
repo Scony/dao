@@ -12,5 +12,6 @@ dao_expert
 
 syntax: regexp
 
+(.*/)?\#[^/]*\#$
 doc/\w*.pdf
 
