@@ -23,8 +23,8 @@ GraphicalBoard::GraphicalBoard()
 	  this->stone[i][j] = P2;
       }
 
-  choosen.x = -1;
-  choosen.y = -1;
+  choosen.a = -1;
+  choosen.b = -1;
 }
 
 GraphicalBoard::~GraphicalBoard()
@@ -126,15 +126,15 @@ void GraphicalBoard::handleClick(int x, int y)
 	{
 	  int a = y / 60, b = x / 60;
 
-	  if(this->choosen.x >= 0 && this->effect[a][b] == LIGHT && (this->choosen.x != a || this->choosen.y != b))
+	  if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT && (this->choosen.a != a || this->choosen.b != b))
 	    {
 	      for(int i = 0; i < 4; i++)
 		for(int j = 0; j < 4; j++)
 		  this->effect[i][j] = NONE;
 
 	      //vector of move direction
-	      int vecA = a - this->choosen.x;
-	      int vecB = b - this->choosen.y;
+	      int vecA = a - this->choosen.a;
+	      int vecB = b - this->choosen.b;
 	      g_print("here %d %d ",vecA,vecB);
 	      //normalization
 	      vecA = vecA < -1 ? -1 : vecA;
@@ -142,28 +142,28 @@ void GraphicalBoard::handleClick(int x, int y)
 	      vecB = vecB < -1 ? -1 : vecB;
 	      vecB = vecB > 1 ? 1 : vecB;
 	      //moving till end or stone
-	      while(a + vecA >= 0 && a + vecA < 4 && b + vecB >= 0 && b + vecB < 4 && stone[a+vecA][b+vecB] == EMPTY)
+	      while(a + vecA >= 0 && a + vecA < 4 && b + vecB >= 0 && b + vecB < 4 && this->stone[a+vecA][b+vecB] == EMPTY)
 		{
 		  a += vecA;
 		  b += vecB;
 		}
 
-	      this->stone[a][b] = this->stone[this->choosen.x][this->choosen.y];
-	      this->stone[this->choosen.x][this->choosen.y] = EMPTY;
+	      this->stone[a][b] = this->stone[this->choosen.a][this->choosen.b];
+	      this->stone[this->choosen.a][this->choosen.b] = EMPTY;
 
-	      this->choosen.x = -1;
-	      this->choosen.y = -1;
+	      this->choosen.a = -1;
+	      this->choosen.b = -1;
 	    }
-	  else if(this->choosen.x >= 0 && this->effect[a][b] == LIGHT)
+	  else if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT)
 	    {
 	      for(int i = 0; i < 4; i++)
 		for(int j = 0; j < 4; j++)
 		  this->effect[i][j] = NONE;
 
-	      this->choosen.x = -1;
-	      this->choosen.y = -1;
+	      this->choosen.a = -1;
+	      this->choosen.b = -1;
 	    }
-	  else if(choosen.x < 0 && this->stone[a][b] == P1)
+	  else if(choosen.a < 0 && this->stone[a][b] == P1)
 	    {
 	      this->effect[a][b] = LIGHT;
 
@@ -212,8 +212,8 @@ void GraphicalBoard::handleClick(int x, int y)
 		else
 		  break;
 
-	      this->choosen.x = a;
-	      this->choosen.y = b;
+	      this->choosen.a = a;
+	      this->choosen.b = b;
 	    }
 	}
     }
