@@ -26,9 +26,14 @@ struct PlayerConfiguration
   PlayerType m_type;
   PlayerAlgorithm m_algorithm;
 
-  int setType(const std::string& type);
-  int setAlgorithm(const std::string& algorithm);
-  int readKeyFile(const Glib::KeyFile& key);
+  PlayerType stringToPlayerType(const std::string& type)
+    const throw(DaoException);
+
+  PlayerAlgorithm stringToPlayerAlgorithm(const std::string& algorithm)
+    const throw(DaoException);
+
+  void readKeyFile(const Glib::KeyFile& key) 
+    throw(DaoException, Glib::KeyFileError);
 };
 
 class Configuration
@@ -38,9 +43,15 @@ public:
   int m_firstPlayer;
   PlayerConfiguration m_players[NUM_PLAYERS];
 
-  static Configuration& getInstance();
-  int readString(const std::string& s);
-  void readFile(const std::string& filename) throw(DaoException);
+  static Configuration& getInstance()
+    throw();
+
+  void readString(const std::string& s)
+    throw(DaoException);
+
+  void readFile(const std::string& filename)
+    throw(DaoException);
+
   std::string getData();
 private:
   Glib::KeyFile m_keyFile;
@@ -51,7 +62,8 @@ private:
   Configuration& operator=(const Configuration& c) {
     return *this;
   };
-  int parseKeyFile() throw(Glib::KeyFileError);
+  void parseKeyFile()
+    throw(Glib::KeyFileError);
 };
 
 #endif

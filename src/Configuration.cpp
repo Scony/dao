@@ -5,40 +5,38 @@
 
 using namespace std;
 
-int PlayerConfiguration::setType(const std::string& type)
+PlayerType PlayerConfiguration::stringToPlayerType(const std::string& type) const throw(DaoException)
 {
   if (type == "human")
-    m_type = PLAYER_HUMAN;
+    return PLAYER_HUMAN;
   else if (type == "computer")
-    m_type = PLAYER_COMPUTER;
+    return PLAYER_COMPUTER;
   else
-    return -1;
-  return 0;
+    throw DaoException("Unknown player type");
 }
 
-int PlayerConfiguration::setAlgorithm(const std::string& a)
+PlayerAlgorithm PlayerConfiguration::stringToPlayerAlgorithm(const std::string& a) const throw(DaoException)
 {
   if (a == "random")
-    m_algorithm = ALGORITHM_RANDOM;
+    return ALGORITHM_RANDOM;
   else if (a == "hill climber")
-    m_algorithm = ALGORITHM_HILL_CLIMBER;
+    return ALGORITHM_HILL_CLIMBER;
   else
-    return -1;
-  return 0;
+    throw DaoException("Unknown algorithm");
 }
 
-int PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
+void PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
+  throw(DaoException, Glib::KeyFileError)
 {
   string type, algorithm;
   
   type = key.get_string(m_sectionName, "type");
-  if (setType(type) != 0)
-    return -1;
+  m_type = stringToPlayerType(type);
+
   if (m_type == PLAYER_COMPUTER)
     {
       algorithm = key.get_string(m_sectionName, "algorithm");
-      if (setAlgorithm(algorithm) != 0)
-	return -1;
+      m_algorithm = stringToPlayerAlgorithm(algorithm);
     }
 }
 
@@ -53,13 +51,13 @@ Configuration::Configuration()
   m_players[1].m_sectionName = "Player2";
 }
 
-Configuration& Configuration::getInstance()
+Configuration& Configuration::getInstance() throw()
 {
   static Configuration configuration;
   return configuration;
 }
 
-int Configuration::parseKeyFile() throw(Glib::KeyFileError)
+void Configuration::parseKeyFile() throw(Glib::KeyFileError)
 {
   string first_player = m_keyFile.get_string("Game", "first_move");
   if (first_player == "Player2")
@@ -71,15 +69,20 @@ int Configuration::parseKeyFile() throw(Glib::KeyFileError)
     {
       m_players[i].readKeyFile(m_keyFile);
     }
-
-  //TODO: emit signal
-  return 0;
 }
 
-int Configuration::readString(const string& data)
+void Configuration::readString(const string& data)
+  throw(DaoException)
 {
-  m_keyFile.load_from_data(data, Glib::KEY_FILE_KEEP_COMMENTS);
-  parseKeyFile();
+  try
+    {
+      m_keyFile.load_from_data(data, Glib::KEY_FILE_KEEP_COMMENTS);
+      parseKeyFile();
+    }
+  catch (Glib::KeyFileError e)
+    {
+      throw DaoException(e.what());
+    }
 }
 
 void Configuration::readFile(const string& filename) throw(DaoException)
