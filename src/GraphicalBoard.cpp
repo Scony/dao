@@ -12,17 +12,12 @@ GraphicalBoard::GraphicalBoard()
   g_signal_connect(this->dArea,"button-press-event",G_CALLBACK(onClick),(gpointer)this);
   g_signal_connect(G_OBJECT(this->dArea),"draw",G_CALLBACK(onDraw),(gpointer)this);
 
+  
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      {
-	this->effect[i][j] = NONE;
-	this->stone[i][j] = EMPTY;
-
-	if(i == j)
-	  this->stone[i][j] = P1;
-	if(3 - i == j)
-	  this->stone[i][j] = P2;
-      }
+      this->effect[i][j] = NONE;
+  
+  m_board = Board::initialBoard();
 
   choosen.a = -1;
   choosen.b = -1;
@@ -69,17 +64,17 @@ gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
       {
-  	switch(abs(gBoard->stone[i][j]))
+  	switch(gBoard->m_board.m_fields[i][j])
   	  {
-  	  case P1:
+  	  case FIELD_COLOR0:
   	    cairo_set_source_surface(cr,p1,45+j*60,45+i*60);
   	    cairo_paint(cr);
   	    break;
-  	  case P2:
+  	  case FIELD_COLOR1:
   	    cairo_set_source_surface(cr,p2,45+j*60,45+i*60);
   	    cairo_paint(cr);
   	    break;
-	  case EMPTY:
+	  case FIELD_EMPTY:
 	    ;
   	  }
   	switch(gBoard->effect[i][j])
@@ -143,14 +138,14 @@ void GraphicalBoard::handleClick(int x, int y)
 	      vecB = vecB < -1 ? -1 : vecB;
 	      vecB = vecB > 1 ? 1 : vecB;
 	      //moving till end or stone
-	      while(a + vecA >= 0 && a + vecA < 4 && b + vecB >= 0 && b + vecB < 4 && this->stone[a+vecA][b+vecB] == EMPTY)
+	      while(a + vecA >= 0 && a + vecA < 4 && b + vecB >= 0 && b + vecB < 4 && m_board.m_fields[a+vecA][b+vecB] == FIELD_EMPTY)
 		{
 		  a += vecA;
 		  b += vecB;
 		}
 
-	      this->stone[a][b] = this->stone[this->choosen.a][this->choosen.b];
-	      this->stone[this->choosen.a][this->choosen.b] = EMPTY;
+	      m_board.m_fields[a][b] = m_board.m_fields[this->choosen.a][this->choosen.b];
+	      m_board.m_fields[this->choosen.a][this->choosen.b] = FIELD_EMPTY;
 
 	      this->choosen.a = -1;
 	      this->choosen.b = -1;
@@ -164,51 +159,51 @@ void GraphicalBoard::handleClick(int x, int y)
 	      this->choosen.a = -1;
 	      this->choosen.b = -1;
 	    }
-	  else if(choosen.a < 0 && this->stone[a][b] == P1)
+	  else if(choosen.a < 0 && m_board.m_fields[a][b] == FIELD_COLOR0)
 	    {
 	      this->effect[a][b] = LIGHT;
 
 	      //vertical
 	      for(int i = b + 1; i < 4; i++)
-		if(this->stone[a][i] == EMPTY)
+		if(m_board.m_fields[a][i] == FIELD_EMPTY)
 		  this->effect[a][i] = LIGHT;
 		else
 		  break;
 	      for(int i = b - 1; i >= 0; i--)
-		if(this->stone[a][i] == EMPTY)
+		if(m_board.m_fields[a][i] == FIELD_EMPTY)
 		  this->effect[a][i] = LIGHT;
 		else
 		  break;
 	      //horizontal
 	      for(int i = a + 1; i < 4; i++)
-		if(this->stone[i][b] == EMPTY)
+		if(m_board.m_fields[i][b] == FIELD_EMPTY)
 		  this->effect[i][b] = LIGHT;
 		else
 		  break;
 	      for(int i = a - 1; i >= 0; i--)
-		if(this->stone[i][b] == EMPTY)
+		if(m_board.m_fields[i][b] == FIELD_EMPTY)
 		  this->effect[i][b] = LIGHT;
 		else
 		  break;
 	      //right slant
 	      for(int i = 1; a + i < 4 && b + i < 4; i++)
-		if(this->stone[a+i][b+i] == EMPTY)
+		if(m_board.m_fields[a+i][b+i] == FIELD_EMPTY)
 		  this->effect[a+i][b+i] = LIGHT;
 		else
 		  break;
 	      for(int i = 1; a - i >= 0 && b - i >= 0; i++)
-		if(this->stone[a-i][b-i] == EMPTY)
+		if(m_board.m_fields[a-i][b-i] == FIELD_EMPTY)
 		  this->effect[a-i][b-i] = LIGHT;
 		else
 		  break;
 	      //left slant
 	      for(int i = 1; a + i < 4 && b - i >= 0; i++)
-		if(this->stone[a+i][b-i] == EMPTY)
+		if(m_board.m_fields[a+i][b-i] == FIELD_EMPTY)
 		  this->effect[a+i][b-i] = LIGHT;
 		else
 		  break;
 	      for(int i = 1; a - i >= 0 && b + i < 4; i++)
-		if(this->stone[a-i][b+i] == EMPTY)
+		if(m_board.m_fields[a-i][b+i] == FIELD_EMPTY)
 		  this->effect[a-i][b+i] = LIGHT;
 		else
 		  break;

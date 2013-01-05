@@ -5,12 +5,10 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
+#include "Board.h"
+
 class GraphicalBoard
 {
-  GtkWidget * dArea;
-  struct { int a, b; } choosen;
-  enum { EMPTY, P1, P2 } stone[4][4];
-  enum { NONE, GRAY, LIGHT } effect[4][4];
  public:
   GraphicalBoard();
   ~GraphicalBoard();
@@ -19,6 +17,12 @@ class GraphicalBoard
 
   static void onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
   static gboolean onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_data);
+
+ private:
+  GtkWidget * dArea;
+  struct { int a, b; } choosen;
+  Board m_board;
+  enum { NONE, GRAY, LIGHT } effect[4][4];
 };
 
 #endif

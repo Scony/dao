@@ -1,7 +1,6 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <gtk/gtk.h>
 #include <glibmm/refptr.h>
 #include <gtkmm/window.h>
 

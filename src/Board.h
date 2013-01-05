@@ -3,9 +3,9 @@
 
 enum FieldState
   {
-    FIELD_STATE_EMPTY,
-    FIELD_STATE_COLOR_0,
-    FIELD_STATE_COLOR_1
+    FIELD_EMPTY,
+    FIELD_COLOR0,
+    FIELD_COLOR1
   };
 
 class Board
@@ -13,7 +13,7 @@ class Board
 public:
   static const int SIZE = 4;
 
-  FieldState m_board[SIZE][SIZE];
+  FieldState m_fields[SIZE][SIZE];
   
   Board();
   Board(const Board& b);

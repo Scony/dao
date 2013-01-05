@@ -8,7 +8,7 @@ Board::Board()
 
 Board::Board(const Board& b)
 {
-  memcpy(m_board, b.m_board, SIZE * SIZE * sizeof(int));
+  memcpy(m_fields, b.m_fields, SIZE * SIZE * sizeof(int));
 }
 
 
@@ -23,7 +23,7 @@ Board Board::rotate180()
     {
       for(int j = 0; j < SIZE; j++)
 	{
-	  b.m_board[i][j] = m_board[SIZE-i-1][SIZE-j-1];
+	  b.m_fields[i][j] = m_fields[SIZE-i-1][SIZE-j-1];
 	}
     }
   return b;
@@ -37,11 +37,11 @@ Board Board::initialBoard()
       for(int j = 0; j < SIZE; j++)
 	{
 	  if(i == j)
-	    b.m_board[i][j] = FIELD_STATE_COLOR_0;
+	    b.m_fields[i][j] = FIELD_COLOR0;
 	  else if (i+j == 3)
-	    b.m_board[i][j] = FIELD_STATE_COLOR_1;
+	    b.m_fields[i][j] = FIELD_COLOR1;
 	  else
-	    b.m_board[i][j] = FIELD_STATE_EMPTY;
+	    b.m_fields[i][j] = FIELD_EMPTY;
 	}
     }
   return b;
