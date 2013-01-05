@@ -1,22 +1,11 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#define NUM_PLAYERS 2
+#include <string>
+#include <glibmm/keyfile.h>
+#include <sigc++/sigc++.h>
 
-#include <glib-object.h>
-
-G_BEGIN_DECLS
-
-#define TYPE_CONFIGURATION    (configuration_get_type() )
-#define CONFIGURATION(obj)    (G_TYPE_CHECK_INSTANCE_CAST( (obj), TYPE_CONFIGURATION, Configuration) )
-#define IS_CONFIGURATION(obj) (G_TYPE_CHECK_INSTANCE_TYPE( (obj), TYPE_CONFIGURATION))
-#define CONFIGURATION_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST( (klass), TYPE_CONFIGURATION, ConfigurationClass))
-#define CONFIGURATION_IS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE( (klass), TYPE_CONFIGURATION))
-#define CONFIGURATION_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), CONFIGURATION_TYPE, ConfigurationClass))
-
-typedef struct _PlayerConfiguration PlayerConfiguration;
-typedef struct _Configuration Configuration;
-typedef struct _ConfigurationClass ConfigurationClass;
+#include "DaoException.h"
 
 enum PlayerType
   {
@@ -30,37 +19,39 @@ enum PlayerAlgorithm
     ALGORITHM_HILL_CLIMBER
   };
 
-struct _PlayerConfiguration
+struct PlayerConfiguration
 {
-  int color;
-  PlayerType type;
-  PlayerAlgorithm algorithm;
+  std::string m_sectionName;
+  int m_color;
+  PlayerType m_type;
+  PlayerAlgorithm m_algorithm;
+
+  int setType(const std::string& type);
+  int setAlgorithm(const std::string& algorithm);
+  int readKeyFile(const Glib::KeyFile& key);
 };
 
-struct _Configuration
+class Configuration
 {
-  GObject parent;
+public:
+  static const int NUM_PLAYERS = 2;
+  int m_firstPlayer;
+  PlayerConfiguration m_players[NUM_PLAYERS];
 
-  int first_player;
-  PlayerConfiguration players[NUM_PLAYERS];
+  static Configuration& getInstance();
+  int readString(const std::string& s);
+  void readFile(const std::string& filename) throw(DaoException);
+  std::string getData();
+private:
+  Glib::KeyFile m_keyFile;
 
-  GKeyFile* key_file;
+  //Prevent object from being copied
+  Configuration();
+  Configuration(const Configuration& c) {};
+  Configuration& operator=(const Configuration& c) {
+    return *this;
+  };
+  int parseKeyFile() throw(Glib::KeyFileError);
 };
-
-struct _ConfigurationClass
-{
-  GObjectClass parent_class;
-};
-
-GType configuration_get_type(void) G_GNUC_CONST;
-Configuration* configuration_new();
-int configuration_read_from_data(Configuration* configuration,
-				  gchar* data, gsize length);
-int configuration_read_from_file(Configuration* configuration,
-				 char* filename);
-gchar* configuration_get_data(Configuration* configuration,
-			      gsize* length, GError **error);
-
-G_END_DECLS
 
 #endif

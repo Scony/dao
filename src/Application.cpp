@@ -1,36 +1,24 @@
 #include <string.h>
+#include <string>
 
 #include "defines.h"
 #include "Application.h"
 #include "Configuration.h"
 
-Application::Application(int argc, char ** argv)
+using namespace std;
+
+Application::Application()
 {
-  gchar* configuration_text;
-  gsize configuration_text_len;
-
-  gtk_init(&argc, &argv);
-
-  /*Set up configuration GObject*/
-  this->configuration = configuration_new();
-  configuration_read_from_file(this->configuration,
-			       CONFIG_FILE);
-  g_signal_connect(this->configuration, "changed",
-		   G_CALLBACK(onConfigurationChange),
-		   (gpointer)this);
-
   this->initUI();
   
-  configuration_text = configuration_get_data(this->configuration, 
-			 &configuration_text_len, NULL);
-  gtk_text_buffer_set_text(this->configuration_buffer,
-			   configuration_text, 
-			   configuration_text_len);
+  //string configuration_text = this->configuration->getData();
+  //gtk_text_buffer_set_text(this->configuration_buffer,
+			   // configuration_text.c_str(), 
+			   // configuration_text.length());
 }
 
 Application::~Application()
 {
-  g_object_unref( G_OBJECT(this->configuration) );
   delete this->gBoard;
 }
 
@@ -60,7 +48,6 @@ this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
   button = gtk_button_new_with_label("Ci");
   gtk_box_pack_start(GTK_BOX(vbox),button,false,false,0);
-  g_print("%uld\n", (unsigned long)this);
   g_signal_connect(button,"clicked",G_CALLBACK(onClick),(gpointer)this);
 
   GtkWidget * statbar = gtk_statusbar_new();
@@ -77,7 +64,6 @@ void Application::run()
 
 void Application::commitClicked()
 {
-  gsize length;
   gchar* data;
 
   GtkTextIter begin;
@@ -91,9 +77,8 @@ void Application::commitClicked()
   				     -1);
   data = gtk_text_buffer_get_text(this->configuration_buffer,
   				  &begin, &end, FALSE);
-  length = strlen(data)+1;
 
-  configuration_read_from_data(this->configuration, data, length);
+  Configuration::getInstance().readString(data);
 }
 
 void Application::onClick(GtkWidget *widget, gpointer user_data)
@@ -105,6 +90,7 @@ void Application::onClick(GtkWidget *widget, gpointer user_data)
 void Application::onConfigurationChange(GObject* object,
 					gpointer user_data)
 {
+  /*
   Application* self;
   gsize length;
   gchar* config_data;
@@ -118,4 +104,6 @@ void Application::onConfigurationChange(GObject* object,
   
   gtk_text_buffer_set_text(self->configuration_buffer,
 			   config_data, length);
+  */
 }
+
