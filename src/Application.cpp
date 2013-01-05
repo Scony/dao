@@ -1,109 +1,84 @@
 #include <string.h>
 #include <string>
+#include <gtkmm/hvbox.h>
+#include <gtkmm/button.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/statusbar.h>
+#include <gtkmm/messagedialog.h>
 
 #include "defines.h"
 #include "Application.h"
 #include "Configuration.h"
+#include "DaoException.h"
 
 using namespace std;
 
 Application::Application()
 {
   this->initUI();
-  
-  //string configuration_text = this->configuration->getData();
-  //gtk_text_buffer_set_text(this->configuration_buffer,
-			   // configuration_text.c_str(), 
-			   // configuration_text.length());
+
+  Configuration& config = Configuration::getInstance();  
+  string configuration_text = config.getData();
+  m_configuration_buffer->set_text(configuration_text);
 }
 
 Application::~Application()
 {
-  delete this->gBoard;
+  delete m_gBoard;
 }
 
 void Application::initUI()
 {
-this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW(this->window), "Dao");
-  gtk_window_set_position (GTK_WINDOW(this->window), GTK_WIN_POS_CENTER);
-  gtk_window_set_resizable(GTK_WINDOW(this->window), FALSE);
-  g_signal_connect(this->window,"destroy",G_CALLBACK(gtk_main_quit),NULL);
-  this->gBoard = new GraphicalBoard();
+  m_gBoard = 0;
+  set_title("Dao");
+  set_position(Gtk::WIN_POS_CENTER_ALWAYS);
+  set_resizable(false);
 
-  GtkWidget * vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
-  gtk_container_add(GTK_CONTAINER(window),vbox);
+  Gtk::VBox* layout = manage(new Gtk::VBox);
+  add(*layout);
 
-  GtkWidget * button = gtk_button_new_with_label("Some");
-  gtk_box_pack_start(GTK_BOX(vbox),button,false,false,0);
+  Gtk::Button* button = manage(new Gtk::Button("Some"));
+  layout->add(*button);
 
-  gtk_box_pack_start(GTK_BOX(vbox),gBoard->getDrawingArea(),false,false,0);
+  m_gBoard = new GraphicalBoard;
+  layout->add(*Glib::wrap(m_gBoard->getDrawingArea()));
 
-  /*GtkTextView configuration_text*/
-  this->configuration_text = gtk_text_view_new();
-  gtk_widget_set_size_request(this->configuration_text,300,50);
-  this->configuration_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(this->configuration_text));
-  gtk_text_buffer_set_text(this->configuration_buffer, "[Game]\nfirst_move=Player2\n", -1);
-  gtk_box_pack_start(GTK_BOX(vbox),this->configuration_text,false,false,0);
+  Gtk::TextView* configuration_text = manage(new Gtk::TextView);
+  configuration_text->set_size_request(300, 50);
+  layout->add(*configuration_text);
 
-  button = gtk_button_new_with_label("Ci");
-  gtk_box_pack_start(GTK_BOX(vbox),button,false,false,0);
-  g_signal_connect(button,"clicked",G_CALLBACK(onClick),(gpointer)this);
+  Gtk::Button* commit_button = manage(new Gtk::Button("Ci"));
+  commit_button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onCommitClicked));
+  layout->add(*commit_button);
 
-  GtkWidget * statbar = gtk_statusbar_new();
-  guint cx = gtk_statusbar_get_context_id(GTK_STATUSBAR(statbar),"Wtf ?");
-  gtk_statusbar_push(GTK_STATUSBAR(statbar),cx,"values ...");
-  gtk_box_pack_start(GTK_BOX(vbox),statbar,false,false,0);
+  Gtk::Statusbar* statusbar = manage(new Gtk::Statusbar);
+  statusbar->push("values ...");
+  layout->add(*statusbar);
+
+  Configuration& config = Configuration::getInstance();
+  config.signal_changed.connect( sigc::mem_fun(*this, &Application::onConfigurationChanged));
+
+  m_configuration_buffer = configuration_text->get_buffer();
 }  
 
-void Application::run()
+void Application::onCommitClicked()
 {
-  gtk_widget_show_all(this->window);
-  gtk_main();
+  string configuration_text = m_configuration_buffer->get_text();
+  try
+    {
+      Configuration::getInstance().readString(configuration_text);
+    }
+  catch(DaoException e)
+    {
+      Gtk::MessageDialog dlg(*this, "Błąd podczas wczytywania pliku konfiguracyjnego");
+      dlg.set_secondary_text(e.what());
+      dlg.run();
+    }
 }
 
-void Application::commitClicked()
+void Application::onConfigurationChanged()
 {
-  gchar* data;
-
-  GtkTextIter begin;
-  GtkTextIter end;
-
-  gtk_text_buffer_get_iter_at_offset(this->configuration_buffer,
-  				     &begin,
-  				     0);
-  gtk_text_buffer_get_iter_at_offset(this->configuration_buffer,
-  				     &end,
-  				     -1);
-  data = gtk_text_buffer_get_text(this->configuration_buffer,
-  				  &begin, &end, FALSE);
-
-  Configuration::getInstance().readString(data);
+  string configuration_text =
+    Configuration::getInstance().getData();
+  m_configuration_buffer->set_text(configuration_text);
 }
-
-void Application::onClick(GtkWidget *widget, gpointer user_data)
-{
-  Application* application = (Application*)user_data;
-  application->commitClicked();
-}
-
-void Application::onConfigurationChange(GObject* object,
-					gpointer user_data)
-{
-  /*
-  Application* self;
-  gsize length;
-  gchar* config_data;
-
-  self  = (Application*)user_data;
-  config_data = configuration_get_data(self->configuration,
-				       &length, NULL);
-
-  //get rid of additional newline
-  config_data[length--] = 0;
-  
-  gtk_text_buffer_set_text(self->configuration_buffer,
-			   config_data, length);
-  */
-}
-

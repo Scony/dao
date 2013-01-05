@@ -57,7 +57,8 @@ Configuration& Configuration::getInstance() throw()
   return configuration;
 }
 
-void Configuration::parseKeyFile() throw(Glib::KeyFileError)
+void Configuration::parseKeyFile()
+  throw(DaoException, Glib::KeyFileError)
 {
   string first_player = m_keyFile.get_string("Game", "first_move");
   if (first_player == "Player2")
@@ -69,6 +70,8 @@ void Configuration::parseKeyFile() throw(Glib::KeyFileError)
     {
       m_players[i].readKeyFile(m_keyFile);
     }
+
+  signal_changed.emit();
 }
 
 void Configuration::readString(const string& data)
@@ -85,7 +88,7 @@ void Configuration::readString(const string& data)
     }
 }
 
-void Configuration::readFile(const string& filename) throw(DaoException)
+void Configuration::readFile(const string& filename) throw(DaoException, Glib::FileError)
 {
   try 
     {

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <glibmm/keyfile.h>
+#include <glibmm/fileutils.h>
 #include <sigc++/sigc++.h>
 
 #include "DaoException.h"
@@ -50,9 +51,13 @@ public:
     throw(DaoException);
 
   void readFile(const std::string& filename)
-    throw(DaoException);
+    throw(DaoException, Glib::FileError);
 
   std::string getData();
+
+public: //SIGNALS
+  sigc::signal<void> signal_changed;
+
 private:
   Glib::KeyFile m_keyFile;
 
@@ -63,7 +68,7 @@ private:
     return *this;
   };
   void parseKeyFile()
-    throw(Glib::KeyFileError);
+    throw(DaoException, Glib::KeyFileError);
 };
 
 #endif

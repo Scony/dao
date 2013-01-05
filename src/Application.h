@@ -2,26 +2,22 @@
 #define APPLICATION_H
 
 #include <gtk/gtk.h>
+#include <glibmm/refptr.h>
+#include <gtkmm/window.h>
 
 #include "Configuration.h"
 #include "GraphicalBoard.h"
 
-class Application
+class Application : public Gtk::Window
 {
-  GtkWidget * window;
-  GraphicalBoard * gBoard;
-  GtkWidget* configuration_text;
-
-  GtkTextBuffer* configuration_buffer;
+  GraphicalBoard * m_gBoard;
+  Glib::RefPtr<Gtk::TextBuffer> m_configuration_buffer;
 
   void initUI();
-  void commitClicked();
+  void onCommitClicked();
+  void onConfigurationChanged();
  public:
   Application();
   ~Application();
-  void run();
-  static void onClick(GtkWidget *widget, gpointer user_data);
-  static void onConfigurationChange(GObject* object,
-				    gpointer user_data);
 };
 #endif
