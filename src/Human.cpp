@@ -17,3 +17,8 @@ void Human::proposeMove(State state)
 {
   //TODO: implement
 }
+
+bool Human::isInteractive() const
+{
+  return true;
+}

@@ -16,6 +16,7 @@ struct PlayerConfiguration
   int m_color;
   PlayerType m_type;
   PlayerAlgorithm m_algorithm;
+  std::string m_name;
 
   PlayerType stringToPlayerType(const std::string& type)
     const throw(DaoException);

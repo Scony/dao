@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <string.h>
 #include <string>
 #include <gtkmm/hvbox.h>
@@ -120,8 +121,20 @@ void Application::onMenuGameNewSelected()
     }
 }
 
-void Application::onGameNew(State s)
+void Application::onGameNew(State s, const Player& p)
 {
-  m_statusbar->push("New game");
+  ostringstream message;
+  message << "Nowa gra. Rozpoczyna " << p.m_name;
+  if (p.m_color == 0)
+    message << " koloru czerwonego. ";
+  else 
+    message << " koloru niebieskiego. ";
+  
+  if (p.isInteractive())
+    message << " Kliknij!";
+  else
+    message << " Czekaj...";
+
+  m_statusbar->push(message.str());
 }
 

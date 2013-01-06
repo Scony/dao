@@ -49,6 +49,8 @@ Configuration::Configuration()
   m_players[1].m_type = PLAYER_HUMAN;
   m_players[0].m_sectionName = "Player1";
   m_players[1].m_sectionName = "Player2";
+  m_players[0].m_name = "Gracz 1";
+  m_players[1].m_name = "Gracz 2";
 }
 
 Configuration& Configuration::getInstance() throw()

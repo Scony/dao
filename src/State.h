@@ -10,7 +10,7 @@ class State
 {
 public:
   Board m_board;
-  int m_current_move;
+  int m_current_move; //Kolor gracza aktalnie wykonującego ruch
 
   //TODO: Add copy constructors
   State();

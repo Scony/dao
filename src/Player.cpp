@@ -6,6 +6,7 @@
 Player::Player(const PlayerConfiguration& config)
 {
   m_color = config.m_color;
+  m_name = config.m_name;
 }
 
 Player::~Player()

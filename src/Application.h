@@ -8,6 +8,7 @@
 #include "Configuration.h"
 #include "GraphicalBoard.h"
 #include "State.h"
+#include "Player.h"
 
 class Application : public Gtk::Window
 {
@@ -27,6 +28,6 @@ private: /* SLOTS */
   void onCommitClicked();
   void onConfigurationChanged();
   void onMenuGameNewSelected();
-  void onGameNew(State s);
+  void onGameNew(State s, const Player& p);
 };
 #endif

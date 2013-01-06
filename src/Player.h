@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include <sigc++/sigc++.h>
+#include <string>
 #include "State.h"
 #include "Move.h"
 #include "DaoException.h"
@@ -24,16 +25,18 @@ enum PlayerAlgorithm
 class Player : public sigc::trackable
 {
 public:
+  int m_color;
+  std::string m_name;
+  
   Player(const PlayerConfiguration& config);
   virtual ~Player();
 
   virtual void proposeMove(State state) = 0;
+  virtual bool isInteractive() const = 0;
 
 public: /* SIGNALS */
   sigc::signal<bool, Player*, Move> signal_move_proposed;
 
-protected:
-  int m_color;
 };
 
 

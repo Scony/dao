@@ -11,7 +11,7 @@ public:
   ~Human();
 
   virtual void proposeMove(State state);
-
+  virtual bool isInteractive() const;
 };
 
 #endif

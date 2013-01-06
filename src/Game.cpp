@@ -36,7 +36,8 @@ void Game::newGame()
   State initialState(config.m_firstPlayer);
   m_states.push_back(initialState);
   
-  signal_new_game.emit(m_states.back());
+  signal_new_game.emit(m_states.back(), 
+		       *m_players[config.m_firstPlayer]);
 }
 
     

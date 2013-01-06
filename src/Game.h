@@ -24,8 +24,8 @@ public:
   
 
 public: /* SIGNALS */
-  sigc::signal<void, State> signal_new_game;
-  sigc::signal<void, State> signal_state_changed;
+  sigc::signal<void, State, const Player&> signal_new_game;
+  sigc::signal<void, State, const Player&> signal_state_changed;
   
 private:
   Player* m_players[NUM_PLAYERS];
