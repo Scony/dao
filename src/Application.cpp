@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string.h>
 #include <string>
 #include <gtkmm/hvbox.h>
@@ -11,6 +12,8 @@
 #include "Application.h"
 #include "Configuration.h"
 #include "DaoException.h"
+#include "Game.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -21,6 +24,11 @@ Application::Application()
   Configuration& config = Configuration::getInstance();  
   string configuration_text = config.getData();
   m_configuration_buffer->set_text(configuration_text);
+
+  m_game = new Game;
+  m_game->signal_new_game.connect( sigc::mem_fun(*this, &Application::onGameNew));
+  //TODO: Connect game signals
+  PlayerFactory::setGBoard(m_gBoard);
 }
 
 Application::~Application()
@@ -39,7 +47,8 @@ void Application::initUI()
 
   Gtk::VBox* layout = manage(new Gtk::VBox);
 
-  Gtk::Button* button = manage(new Gtk::Button("Some"));
+  Gtk::Button* button = manage(new Gtk::Button("New game"));
+  button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
   layout->add(*button);
 
   m_gBoard = new GraphicalBoard;
@@ -62,9 +71,9 @@ void Application::initUI()
   commit_button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onCommitClicked));
   layout->add(*commit_button);
 
-  Gtk::Statusbar* statusbar = manage(new Gtk::Statusbar);
-  statusbar->push("values ...");
-  layout->add(*statusbar);
+  m_statusbar = manage(new Gtk::Statusbar);
+  m_statusbar->push("values ...");
+  layout->add(*m_statusbar);
 
   add(*layout);
 
@@ -95,3 +104,24 @@ void Application::onConfigurationChanged()
     Configuration::getInstance().getData();
   m_configuration_buffer->set_text(configuration_text);
 }
+
+void Application::onMenuGameNewSelected()
+{
+  cout << "Menu selected" << endl;
+  try
+    {
+      m_game->newGame();
+    }
+  catch (DaoException e)
+    {
+      Gtk::MessageDialog dlg(*this, "Błąd podczas uruchamiania gry");
+      dlg.set_secondary_text(e.what());
+      dlg.run();
+    }
+}
+
+void Application::onGameNew(State s)
+{
+  m_statusbar->push("New game");
+}
+

@@ -9,10 +9,12 @@ typedef unsigned int dao_hash_invariant;
 class State
 {
 public:
-  Board board;
-  int current_move;
+  Board m_board;
+  int m_current_move;
 
+  //TODO: Add copy constructors
   State();
+  State(int current_move, Board board = Board::initialBoard());
   ~State();
 
   dao_hash_short getHash() const;

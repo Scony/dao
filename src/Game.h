@@ -1,12 +1,35 @@
 #ifndef GAME_H
 #define GAME_H
 
-class Game
+#include <sigc++/sigc++.h>
+#include <vector>
+#include "State.h"
+#include "Player.h"
+#include "Move.h"
+#include "DaoException.h"
+
+class Game : public sigc::trackable
 {
-  //params
- public:
+public:
+  static const int NUM_PLAYERS = 2;
+
   Game();
   ~Game();
+
+  void newGame()
+    throw(DaoException);
+  
+  /* SLOTS */
+  bool performMove(Player* player, Move move);
+  
+
+public: /* SIGNALS */
+  sigc::signal<void, State> signal_new_game;
+  sigc::signal<void, State> signal_state_changed;
+  
+private:
+  Player* m_players[NUM_PLAYERS];
+  std::vector<State> m_states;
 };
 
 #endif

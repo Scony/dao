@@ -7,18 +7,8 @@
 #include <sigc++/sigc++.h>
 
 #include "DaoException.h"
-
-enum PlayerType
-  {
-    PLAYER_HUMAN,
-    PLAYER_COMPUTER
-  };
-
-enum PlayerAlgorithm
-  {
-    ALGORITHM_RANDOM,
-    ALGORITHM_HILL_CLIMBER
-  };
+#include "Game.h"
+#include "Player.h"
 
 struct PlayerConfiguration
 {
@@ -40,9 +30,8 @@ struct PlayerConfiguration
 class Configuration
 {
 public:
-  static const int NUM_PLAYERS = 2;
   int m_firstPlayer;
-  PlayerConfiguration m_players[NUM_PLAYERS];
+  PlayerConfiguration m_players[Game::NUM_PLAYERS];
 
   static Configuration& getInstance()
     throw();

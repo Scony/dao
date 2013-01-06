@@ -1,7 +1,7 @@
 CFLAGS=-Wall `pkg-config --cflags gtk+-3.0 gtkmm-3.0` -fpermissive
 LDFLAGS=`pkg-config --libs gtk+-3.0 gtkmm-3.0`
 OBJS=main.o Application.o GraphicalBoard.o Configuration.o Board.o 
-OBJS+=State.o
+OBJS+=State.o Move.o Player.o Human.o Game.o
 EXE=main.out
 
 all: $(EXE)
