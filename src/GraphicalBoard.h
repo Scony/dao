@@ -1,28 +1,37 @@
 #ifndef GRAPHICALBOARD_H
 #define GRAPHICALBOARD_H
 
-#include <iostream>
-#include <gtk/gtk.h>
-#include <stdlib.h>
+#include <gtkmm/drawingarea.h>
+#include <gdk/gdk.h>
 
 #include "Board.h"
 
-class GraphicalBoard
+class GraphicalBoard : public Gtk::DrawingArea
 {
  public:
   GraphicalBoard();
   ~GraphicalBoard();
-  void handleClick(int x, int y);
-  GtkWidget * getDrawingArea();
 
-  static void onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-  static gboolean onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_data);
-
- private:
-  GtkWidget * dArea;
-  struct { int a, b; } choosen;
+  /*Slots*/
+public:
+  bool onButtonPress(GdkEventButton* event);
+  
+  /*Events*/
+protected:
+  virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+  
+private:
   Board m_board;
+  struct { int a, b; } choosen;
   enum { NONE, GRAY, LIGHT } effect[4][4];
+  
+  Cairo::RefPtr<Cairo::ImageSurface> m_boardImg;
+  Cairo::RefPtr<Cairo::ImageSurface> m_p1Img;
+  Cairo::RefPtr<Cairo::ImageSurface> m_p2Img;
+  Cairo::RefPtr<Cairo::ImageSurface> m_hilightImg;
+  Cairo::RefPtr<Cairo::ImageSurface> m_lolightImg;
+
+  void handleClick(int x, int y);
 };
 
 #endif

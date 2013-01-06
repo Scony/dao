@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "defines.h"
 #include "GraphicalBoard.h"
 
@@ -5,13 +7,21 @@ using namespace std;
 
 GraphicalBoard::GraphicalBoard()
 {
-  this->dArea = gtk_drawing_area_new();
+  set_size_request(320, 320);
+  add_events(Gdk::BUTTON_PRESS_MASK);
 
-  gtk_widget_set_size_request(this->dArea,320,320);
-  gtk_widget_add_events(this->dArea, GDK_BUTTON_PRESS_MASK); 
-  g_signal_connect(this->dArea,"button-press-event",G_CALLBACK(onClick),(gpointer)this);
-  g_signal_connect(G_OBJECT(this->dArea),"draw",G_CALLBACK(onDraw),(gpointer)this);
+  m_boardImg =
+    Cairo::ImageSurface::create_from_png(DATA("board.png"));
+  m_p1Img =
+    Cairo::ImageSurface::create_from_png(DATA("stone0.png"));
+  m_p2Img =
+    Cairo::ImageSurface::create_from_png(DATA("stone1.png"));
+  m_hilightImg =
+    Cairo::ImageSurface::create_from_png(DATA("highlight.png"));
+  m_lolightImg =
+    Cairo::ImageSurface::create_from_png(DATA("gray.png"));
 
+  signal_button_press_event().connect(sigc::mem_fun(this, &GraphicalBoard::onButtonPress));
   
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
@@ -27,84 +37,53 @@ GraphicalBoard::~GraphicalBoard()
 {
 }
 
-void GraphicalBoard::onClick(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 {
-  g_print("onClick %f %f\n",event->x,event->y);
-
-  GraphicalBoard * gBoard = (GraphicalBoard*)user_data;
-
-  gBoard->handleClick(event->x,event->y);
-
-  gtk_widget_queue_draw(widget);
+  cout << "onClick " << event->x << " " << event->y << endl;
+  handleClick(event->x, event->y);
+  queue_draw();
+  return true;
 }
 
-gboolean GraphicalBoard::onDraw(GtkWidget * widget, cairo_t * cr, gpointer user_data)
+
+bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-  g_print("onDraw\n");
-
-  GraphicalBoard * gBoard = (GraphicalBoard*)user_data;
-
-  string boardf = DATA("board.png");
-  string p1f = DATA("stone0.png");
-  string p2f = DATA("stone1.png");
-  string hilightf = DATA("highlight.png");
-  string lolightf = DATA("gray.png");
-
-  cairo_surface_t * board = cairo_image_surface_create_from_png(boardf.c_str());
-  cairo_surface_t * p1 = cairo_image_surface_create_from_png(p1f.c_str());
-  cairo_surface_t * p2 = cairo_image_surface_create_from_png(p2f.c_str());
-  cairo_surface_t * hilight = cairo_image_surface_create_from_png(hilightf.c_str());
-  cairo_surface_t * lolight = cairo_image_surface_create_from_png(lolightf.c_str());
-
-  cr = gdk_cairo_create(gtk_widget_get_window(widget));
-
-  cairo_set_source_surface(cr,board,10,10);
-  cairo_paint(cr);
+  cout << "on_draw()" << endl;
+  
+  cr->set_source(m_boardImg, 10, 10);
+  cr->paint();
 
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
       {
-  	switch(gBoard->m_board.m_fields[i][j])
+  	switch(m_board.m_fields[i][j])
   	  {
   	  case FIELD_COLOR0:
-  	    cairo_set_source_surface(cr,p1,45+j*60,45+i*60);
-  	    cairo_paint(cr);
+	    cr->set_source(m_p1Img, 45+j*60, 45+i*60);
+	    cr->paint();
   	    break;
   	  case FIELD_COLOR1:
-  	    cairo_set_source_surface(cr,p2,45+j*60,45+i*60);
-  	    cairo_paint(cr);
+	    cr->set_source(m_p2Img, 45+j*60, 45+i*60);
+	    cr->paint();
   	    break;
 	  case FIELD_EMPTY:
 	    ;
   	  }
-  	switch(gBoard->effect[i][j])
+  	switch(this->effect[i][j])
   	  {
   	  case LIGHT:
-  	    cairo_set_source_surface(cr,hilight,45+j*60,45+i*60);
-  	    cairo_paint(cr);
-  	    break;
+	    cr->set_source(m_hilightImg, 45+j*60, 45+i*60);
+	    cr->paint();
+	    break;
   	  case GRAY:
-  	    cairo_set_source_surface(cr,lolight,45+j*60,45+i*60);
-  	    cairo_paint(cr);
+	    cr->set_source(m_lolightImg, 45+j*60, 45+i*60);
+	    cr->paint();
 	  case NONE:
 	    ;
   	  }
       }
 
-  cairo_surface_destroy(board);
-  cairo_surface_destroy(p1);
-  cairo_surface_destroy(p2);
-  cairo_surface_destroy(hilight);
-  cairo_surface_destroy(lolight);
-
-  cairo_destroy(cr);
-
-  return false;
-}
-
-GtkWidget * GraphicalBoard::getDrawingArea()
-{
-  return this->dArea;
+  return true;
 }
 
 void GraphicalBoard::handleClick(int x, int y)

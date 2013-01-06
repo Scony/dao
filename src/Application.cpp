@@ -5,6 +5,7 @@
 #include <gtkmm/textview.h>
 #include <gtkmm/statusbar.h>
 #include <gtkmm/messagedialog.h>
+#include <gtkmm/scrolledwindow.h>
 
 #include "defines.h"
 #include "Application.h"
@@ -32,21 +33,31 @@ void Application::initUI()
   m_gBoard = 0;
   set_title("Dao");
   set_position(Gtk::WIN_POS_CENTER_ALWAYS);
-  set_resizable(false);
+  //set_resizable(false);
+
+  m_configuration_buffer = Gtk::TextBuffer::create();
 
   Gtk::VBox* layout = manage(new Gtk::VBox);
-  add(*layout);
 
   Gtk::Button* button = manage(new Gtk::Button("Some"));
   layout->add(*button);
 
   m_gBoard = new GraphicalBoard;
-  layout->add(*Glib::wrap(m_gBoard->getDrawingArea()));
+  layout->add(*m_gBoard);
+
+  Gtk::ScrolledWindow* scrolled_window =
+    manage(new Gtk::ScrolledWindow);
+  scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
+			     Gtk::POLICY_AUTOMATIC);
+  scrolled_window->set_size_request(300, 50);
 
   Gtk::TextView* configuration_text = manage(new Gtk::TextView);
-  configuration_text->set_size_request(300, 50);
-  layout->add(*configuration_text);
+  configuration_text->set_buffer(m_configuration_buffer);
+  //TODO: Zbadać, dlaczego tu powstaje Gtk-Critical x2
+  scrolled_window->add(*configuration_text);
 
+  layout->add(*scrolled_window);
+    
   Gtk::Button* commit_button = manage(new Gtk::Button("Ci"));
   commit_button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onCommitClicked));
   layout->add(*commit_button);
@@ -55,10 +66,12 @@ void Application::initUI()
   statusbar->push("values ...");
   layout->add(*statusbar);
 
+  add(*layout);
+
+
   Configuration& config = Configuration::getInstance();
   config.signal_changed.connect( sigc::mem_fun(*this, &Application::onConfigurationChanged));
 
-  m_configuration_buffer = configuration_text->get_buffer();
 }  
 
 void Application::onCommitClicked()
