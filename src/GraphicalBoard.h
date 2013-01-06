@@ -5,6 +5,10 @@
 #include <gdk/gdk.h>
 
 #include "Board.h"
+#include "State.h"
+#include "Player.h"
+
+class Human;
 
 class GraphicalBoard : public Gtk::DrawingArea
 {
@@ -12,9 +16,13 @@ class GraphicalBoard : public Gtk::DrawingArea
   GraphicalBoard();
   ~GraphicalBoard();
 
-  /*Slots*/
-public:
+  /** Called by Human **/
+  void proposeMove(Human* player);
+
+public: /* Slots */
   bool onButtonPress(GdkEventButton* event);
+  void onGameNew(State s, const Player& p);
+  void onGameStateChanged(State s, const Player& p);
   
   /*Events*/
 protected:
@@ -22,6 +30,7 @@ protected:
   
 private:
   Board m_board;
+  Human* m_currentPlayer;
   struct { int a, b; } choosen;
   enum { NONE, GRAY, LIGHT } effect[4][4];
   

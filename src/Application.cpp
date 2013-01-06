@@ -28,8 +28,12 @@ Application::Application()
 
   m_game = new Game;
   m_game->signal_new_game.connect( sigc::mem_fun(*this, &Application::onGameNew));
-  //TODO: Connect game signals
+  m_game->signal_new_game.connect( sigc::mem_fun(*m_gBoard, &GraphicalBoard::onGameNew));
+  m_game->signal_state_changed.connect( sigc::mem_fun(*this, &Application::onGameStateChanged));
+  m_game->signal_state_changed.connect( sigc::mem_fun(*m_gBoard, &GraphicalBoard::onGameStateChanged));
   PlayerFactory::setGBoard(m_gBoard);
+
+  m_game->newGame();
 }
 
 Application::~Application()
@@ -48,7 +52,7 @@ void Application::initUI()
 
   Gtk::VBox* layout = manage(new Gtk::VBox);
 
-  Gtk::Button* button = manage(new Gtk::Button("New game"));
+  Gtk::Button* button = manage(new Gtk::Button("Nowa gra"));
   button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
   layout->add(*button);
 
@@ -138,3 +142,19 @@ void Application::onGameNew(State s, const Player& p)
   m_statusbar->push(message.str());
 }
 
+void Application::onGameStateChanged(State s, const Player& p)
+{
+  ostringstream message;
+  message << "Ruch ma " << p.m_name;
+  if (p.m_color == 0)
+    message << " koloru czerwonego. ";
+  else 
+    message << " koloru niebieskiego. ";
+  
+  if (p.isInteractive())
+    message << " Kliknij!";
+  else
+    message << " Czekaj...";
+
+  m_statusbar->push(message.str());
+}

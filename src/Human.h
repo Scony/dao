@@ -3,6 +3,9 @@
 
 #include "Player.h"
 #include "State.h"
+#include "Move.h"
+
+class GraphicalBoard;
 
 class Human : public Player
 {
@@ -12,6 +15,10 @@ public:
 
   virtual void proposeMove(State state);
   virtual bool isInteractive() const;
+
+  void commitMoveProposal(Move m);
+private:
+  GraphicalBoard* m_gBoard;
 };
 
 #endif

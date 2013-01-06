@@ -29,5 +29,6 @@ private: /* SLOTS */
   void onConfigurationChanged();
   void onMenuGameNewSelected();
   void onGameNew(State s, const Player& p);
+  void onGameStateChanged(State s, const Player& p);
 };
 #endif

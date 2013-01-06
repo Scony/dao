@@ -1,6 +1,10 @@
+#include <iostream>
+
 #include "Game.h"
 #include "DaoException.h"
 #include "Configuration.h"
+
+using namespace std;
 
 Game::Game()
 {
@@ -28,16 +32,40 @@ void Game::newGame()
 	}
       m_players[i] =
 	PlayerFactory::createPlayer(config.m_players[i]);
+
+      m_players[i]->signal_move_proposed.connect( sigc::mem_fun( *this, &Game::performMove));
     }
 
-  //TODO: Clear game history
   //TODO: Implement reading custom initial states
   m_states.clear();
-  State initialState(config.m_firstPlayer);
+  m_currentPlayer = config.m_firstPlayer;
+  State initialState(m_currentPlayer);
   m_states.push_back(initialState);
   
+  
   signal_new_game.emit(m_states.back(), 
-		       *m_players[config.m_firstPlayer]);
+		       *m_players[m_currentPlayer]);
+
+  m_players[m_currentPlayer]->proposeMove(m_states.back());
 }
 
-    
+bool Game::performMove(Player* player, Move move)
+{
+  //TODO: verify move
+  
+  cout << "TODO: verify and perform move" << endl;
+  
+  //TODO: perform move
+  if (m_currentPlayer == 0)
+    m_currentPlayer = 1;
+  else
+    m_currentPlayer = 0;
+
+  signal_state_changed.emit(m_states.back(), 
+		       *m_players[m_currentPlayer]);
+
+  m_players[m_currentPlayer]->proposeMove(m_states.back());
+  return true;
+}
+
+  

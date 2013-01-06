@@ -30,6 +30,7 @@ public: /* SIGNALS */
 private:
   Player* m_players[NUM_PLAYERS];
   std::vector<State> m_states;
+  int m_currentPlayer;
 };
 
 #endif

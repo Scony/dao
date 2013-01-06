@@ -2,6 +2,7 @@
 
 #include "defines.h"
 #include "GraphicalBoard.h"
+#include "Human.h"
 
 using namespace std;
 
@@ -37,6 +38,13 @@ GraphicalBoard::~GraphicalBoard()
 {
 }
 
+void GraphicalBoard::proposeMove(Human* player)
+{
+  //TODO: implement
+  cout << "GraphicalBoard: Entering choose move state" << endl;
+  cout << "      for player: " << player->m_name << endl;
+}
+
 bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 {
   cout << "onClick " << event->x << " " << event->y << endl;
@@ -45,6 +53,33 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
   return true;
 }
 
+void GraphicalBoard::onGameNew(State s, const Player& p)
+{
+  //TODO: enter no move selection mode
+  //Jeżeli aktualny gracz będzie człowiekiem, to
+  //sam wykona GraphicalBoard::proposeMove()
+  m_currentPlayer = 0;
+  m_board = s.m_board;
+  
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 4; j++)
+      this->effect[i][j] = NONE;
+
+  queue_draw();
+}
+
+void GraphicalBoard::onGameStateChanged(State s, const Player& p)
+{
+  //TODO: enter no move selection mode
+  //Jeżeli aktualny gracz będzie człowiekiem, to
+  //sam wykona GraphicalBoard::proposeMove()
+  m_board = s.m_board;
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 4; j++)
+      this->effect[i][j] = NONE;
+  
+  queue_draw();
+}
 
 bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -88,6 +123,15 @@ bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 void GraphicalBoard::handleClick(int x, int y)
 {
+  //TODO: Po wykonaniu ruchu wywołaj Human::commitMoveProposal
+  // currentPlayer->commitMoveProposal
+
+  // Spowoduje to cykl wywołań funkcji, m.in
+  // GraphicalBoard::onGameStateChanged
+
+
+
+
   // for(int i = 0; i < 4; i++)
   //   for(int j = 0; j < 4; j++)
   //     effect[i][j] = NONE;
