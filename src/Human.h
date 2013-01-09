@@ -16,9 +16,13 @@ public:
   virtual void proposeMove(State state);
   virtual bool isInteractive() const;
 
+  //Move* getAvailableMoves();
+
   void commitMoveProposal(Move m);
 private:
   GraphicalBoard* m_gBoard;
+  //Moveset
+  //State currentState
 };
 
 #endif

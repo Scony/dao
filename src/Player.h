@@ -34,6 +34,11 @@ public:
   virtual void proposeMove(State state) = 0;
   virtual bool isInteractive() const = 0;
 
+protected:
+  //void    getAvailableMoves(Moveset*, State*)
+  //filterCycles(Moveset* ) //korzystało z this->game
+  //filterSymmetic(Moveset* )
+
 public: /* SIGNALS */
   sigc::signal<bool, Player*, Move> signal_move_proposed;
 
