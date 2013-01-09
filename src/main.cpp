@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <gtkmm/messagedialog.h>
+#include <gtkmm/main.h>
 #include <glibmm/fileutils.h>
 
 #include "Application.h"
@@ -12,8 +13,7 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
-  Glib::RefPtr<Gtk::Application> app =
-    Gtk::Application::create(argc, argv);
+  Gtk::Main app(argc, argv);
 
   try
     {
@@ -44,6 +44,6 @@ int main(int argc, char ** argv)
   Application* mainWindow = new Application;
   mainWindow->show_all();
 
-  app->run(*mainWindow);
+  app.run(*mainWindow);
   return 0;
 }
