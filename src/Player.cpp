@@ -3,8 +3,9 @@
 #include "Human.h"
 #include "Computer.h"
 
-Player::Player(const PlayerConfiguration& config)
+Player::Player(const PlayerConfiguration& config, const Game* game)
 {
+  //TODO: Zapamietywanie game
   m_color = config.m_color;
   m_name = config.m_name;
 }

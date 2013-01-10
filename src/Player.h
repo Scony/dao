@@ -9,6 +9,7 @@
 
 struct GraphicalBoard;
 struct PlayerConfiguration;
+class Game;
 
 enum PlayerType
   {
@@ -28,7 +29,7 @@ public:
   int m_color;
   std::string m_name;
   
-  Player(const PlayerConfiguration& config);
+  Player(const PlayerConfiguration& config, const Game* game=0);
   virtual ~Player();
 
   virtual void proposeMove(State state) = 0;
