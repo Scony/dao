@@ -21,63 +21,133 @@ GraphicalBoard::GraphicalBoard()
     Cairo::ImageSurface::create_from_png(DATA("highlight.png"));
   m_lolightImg =
     Cairo::ImageSurface::create_from_png(DATA("gray.png"));
-
-  signal_button_press_event().connect(sigc::mem_fun(this, &GraphicalBoard::onButtonPress));
-  
-  for(int i = 0; i < 4; i++)
-    for(int j = 0; j < 4; j++)
-      this->effect[i][j] = NONE;
   
   m_board = Board::initialBoard();
+  m_currentPlayer = NULL;
 
   choosen.a = -1;
   choosen.b = -1;
+
+  lock();
+
+  signal_button_press_event().connect(sigc::mem_fun(this, &GraphicalBoard::onButtonPress));
 }
 
 GraphicalBoard::~GraphicalBoard()
 {
+  //TODO: free Img's or smth
 }
 
 void GraphicalBoard::proposeMove(Human* player)
 {
-  //TODO: implement
-  cout << "GraphicalBoard: Entering choose move state" << endl;
-  cout << "      for player: " << player->m_name << endl;
+  cout << "proposeMove(" << player->m_name << ")" << endl;
+
+  m_currentPlayer = player;
+
+  unlock();
+
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 4; j++)
+      if(m_board.m_fields[i][j] != FIELD_EMPTY)
+	effect[i][j] = GRAY;
+
+  Move * pMove = m_currentPlayer->getAvailableMoves();
+  while(pMove != NULL)
+    {
+      cout << "f" << pMove->from << "t" << pMove->to << endl;
+      effect[pMove->from%4][pMove->from/4] = NONE;
+      pMove = pMove->next;
+    }
+
+  queue_draw();
 }
 
 bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 {
-  cout << "onClick " << event->x << " " << event->y << endl;
-  handleClick(event->x, event->y);
+  cout << "onButtonPress(" << event->x << "x" << event->y << ")" << endl;
+
+  if(locked)
+    return true;
+
+  int x = event->x - 45;
+  int y = event->y - 45;
+
+  //TODO: Po wykonaniu ruchu wywolaj Human::commitMoveProposal
+  // currentPlayer->commitMoveProposal
+
+  // Spowoduje to cykl wywolan funkcji, m.in
+  // GraphicalBoard::onGameStateChanged
+
+  if(x > 0 && y > 0)
+    {
+      if(x%60 <= 50 && y%60 <= 50 && x/60 < 4 && y/60 < 4)
+	{
+	  int a = y / 60, b = x / 60;
+
+	  if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT && (this->choosen.a != a || this->choosen.b != b))
+	    {
+	      Move move;
+	      move.from = choosen.a + 4 * choosen.b;
+	      move.to = a + 4 * b;
+
+	      choosen.a = -1;
+	      choosen.b = -1;
+
+	      lock();
+	      // m_currentPlayer->commitMoveProposal(move);
+	    }
+	  else if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT)
+	    {
+	      for(int i = 0; i < 4; i++)
+	      	for(int j = 0; j < 4; j++)
+		  if(effect[i][j] == LIGHT)
+		    effect[i][j] = NONE;
+
+	      this->choosen.a = -1;
+	      this->choosen.b = -1;
+	    }
+	  else if(choosen.a < 0 && m_board.m_fields[a][b] != FIELD_EMPTY && effect[a][b] != GRAY)
+	    {
+	      //IF xyx0 -> y -> 0xxx => THEN TODO: vectors & path enlightment
+	      Move * pMove = m_currentPlayer->getAvailableMoves();
+	      while(pMove != NULL)
+		{
+		  if(pMove->from % 4 == a && pMove->from / 4 == b)
+		    effect[pMove->to%4][pMove->to/4] = LIGHT;
+		  pMove = pMove->next;
+		}
+	      effect[a][b] = LIGHT;
+
+	      choosen.a = a;
+	      choosen.b = b;
+	    }
+	}
+    }
+
   queue_draw();
+
   return true;
 }
 
 void GraphicalBoard::onGameNew(State s, const Player& p)
 {
   //TODO: enter no move selection mode
-  //Jeżeli aktualny gracz będzie człowiekiem, to
+  //Jezeli aktualny gracz bedzie czlowiekiem, to
   //sam wykona GraphicalBoard::proposeMove()
-  m_currentPlayer = 0;
+  m_currentPlayer = NULL;
   m_board = s.m_board;
+  lock();
   
-  for(int i = 0; i < 4; i++)
-    for(int j = 0; j < 4; j++)
-      this->effect[i][j] = NONE;
-
   queue_draw();
 }
 
 void GraphicalBoard::onGameStateChanged(State s, const Player& p)
 {
   //TODO: enter no move selection mode
-  //Jeżeli aktualny gracz będzie człowiekiem, to
+  //Jezeli aktualny gracz bedzie czlowiekiem, to
   //sam wykona GraphicalBoard::proposeMove()
   m_board = s.m_board;
-  for(int i = 0; i < 4; i++)
-    for(int j = 0; j < 4; j++)
-      this->effect[i][j] = NONE;
-  
+
   queue_draw();
 }
 
@@ -121,120 +191,20 @@ bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   return true;
 }
 
-void GraphicalBoard::handleClick(int x, int y)
+void GraphicalBoard::lock()
 {
-  //TODO: Po wykonaniu ruchu wywołaj Human::commitMoveProposal
-  // currentPlayer->commitMoveProposal
+  locked = true;
 
-  // Spowoduje to cykl wywołań funkcji, m.in
-  // GraphicalBoard::onGameStateChanged
-
-
-
-
-  // for(int i = 0; i < 4; i++)
-  //   for(int j = 0; j < 4; j++)
-  //     effect[i][j] = NONE;
-
-  x -= 45;
-  y -= 45;
-
-  if(x > 0 && y > 0)
-    {
-      if(x%60 <= 50 && y%60 <= 50 && x/60 < 4 && y/60 < 4)
-	{
-	  int a = y / 60, b = x / 60;
-
-	  if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT && (this->choosen.a != a || this->choosen.b != b))
-	    {
-	      for(int i = 0; i < 4; i++)
-		for(int j = 0; j < 4; j++)
-		  this->effect[i][j] = NONE;
-
-	      //vector of move direction
-	      int vecA = a - this->choosen.a;
-	      int vecB = b - this->choosen.b;
-	      g_print("here %d %d ",vecA,vecB);
-	      //normalization
-	      vecA = vecA < -1 ? -1 : vecA;
-	      vecA = vecA > 1 ? 1 : vecA;
-	      vecB = vecB < -1 ? -1 : vecB;
-	      vecB = vecB > 1 ? 1 : vecB;
-	      //moving till end or stone
-	      while(a + vecA >= 0 && a + vecA < 4 && b + vecB >= 0 && b + vecB < 4 && m_board.m_fields[a+vecA][b+vecB] == FIELD_EMPTY)
-		{
-		  a += vecA;
-		  b += vecB;
-		}
-
-	      m_board.m_fields[a][b] = m_board.m_fields[this->choosen.a][this->choosen.b];
-	      m_board.m_fields[this->choosen.a][this->choosen.b] = FIELD_EMPTY;
-
-	      this->choosen.a = -1;
-	      this->choosen.b = -1;
-	    }
-	  else if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT)
-	    {
-	      for(int i = 0; i < 4; i++)
-		for(int j = 0; j < 4; j++)
-		  this->effect[i][j] = NONE;
-
-	      this->choosen.a = -1;
-	      this->choosen.b = -1;
-	    }
-	  else if(choosen.a < 0 && m_board.m_fields[a][b] == FIELD_COLOR0)
-	    {
-	      this->effect[a][b] = LIGHT;
-
-	      //vertical
-	      for(int i = b + 1; i < 4; i++)
-		if(m_board.m_fields[a][i] == FIELD_EMPTY)
-		  this->effect[a][i] = LIGHT;
-		else
-		  break;
-	      for(int i = b - 1; i >= 0; i--)
-		if(m_board.m_fields[a][i] == FIELD_EMPTY)
-		  this->effect[a][i] = LIGHT;
-		else
-		  break;
-	      //horizontal
-	      for(int i = a + 1; i < 4; i++)
-		if(m_board.m_fields[i][b] == FIELD_EMPTY)
-		  this->effect[i][b] = LIGHT;
-		else
-		  break;
-	      for(int i = a - 1; i >= 0; i--)
-		if(m_board.m_fields[i][b] == FIELD_EMPTY)
-		  this->effect[i][b] = LIGHT;
-		else
-		  break;
-	      //right slant
-	      for(int i = 1; a + i < 4 && b + i < 4; i++)
-		if(m_board.m_fields[a+i][b+i] == FIELD_EMPTY)
-		  this->effect[a+i][b+i] = LIGHT;
-		else
-		  break;
-	      for(int i = 1; a - i >= 0 && b - i >= 0; i++)
-		if(m_board.m_fields[a-i][b-i] == FIELD_EMPTY)
-		  this->effect[a-i][b-i] = LIGHT;
-		else
-		  break;
-	      //left slant
-	      for(int i = 1; a + i < 4 && b - i >= 0; i++)
-		if(m_board.m_fields[a+i][b-i] == FIELD_EMPTY)
-		  this->effect[a+i][b-i] = LIGHT;
-		else
-		  break;
-	      for(int i = 1; a - i >= 0 && b + i < 4; i++)
-		if(m_board.m_fields[a-i][b+i] == FIELD_EMPTY)
-		  this->effect[a-i][b+i] = LIGHT;
-		else
-		  break;
-
-	      this->choosen.a = a;
-	      this->choosen.b = b;
-	    }
-	}
-    }
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 4; j++)
+      this->effect[i][j] = GRAY;  
 }
 
+void GraphicalBoard::unlock()
+{
+  locked = false;
+
+  for(int i = 0; i < 4; i++)
+    for(int j = 0; j < 4; j++)
+      this->effect[i][j] = NONE;
+}

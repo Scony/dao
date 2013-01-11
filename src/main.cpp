@@ -21,10 +21,10 @@ int main(int argc, char ** argv)
     }
   catch(Glib::FileError e)
     {
-      Gtk::MessageDialog dlg("Błąd podczas wczytywania"
+      Gtk::MessageDialog dlg("Blad podczas wczytywania"
 			     " konfiguracji"
-			     ". Proszę sprawdzić, czy w katalogu"
-			     " bieżącym znajduje się podkatalog "
+			     ". Prosze sprawdzic, czy w katalogu"
+			     " biezacym znajduje sie podkatalog "
 			     "data", false,
 			     Gtk::MESSAGE_ERROR);
       dlg.set_secondary_text(e.what());

@@ -1,34 +1,33 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-class Move
+struct Move
 {
-  //params
- public:
-  Move();
-  ~Move();
-
-  //Przechowuje następne stany
-  int from, to;
+  //Przechowuje nastepne stany
+  int from;
+  int to;
 
   int nextStateHash;
   int nextStateInvariantHash;
   //State nextState;
 
-  Move* next;
+  Move * next;
+
+  Move();
+  Move(Move * next);
+  ~Move();
 };
 
-/*
-class MoveSet
-{
-  State[16] moves;
-  bool valid;
-}
-*/
 
-/*
-MoveSet m;
-getAvailableMoves(m);
-*/
+struct MoveSet
+{
+  Move moves[32];
+  bool valid;
+
+  MoveSet();
+  ~MoveSet();
+
+  Move * begin();
+};
 
 #endif

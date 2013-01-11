@@ -36,8 +36,8 @@ public:
   virtual bool isInteractive() const = 0;
 
 protected:
-  //void    getAvailableMoves(Moveset*, State*)
-  //filterCycles(Moveset* ) //korzystało z this->game
+  void getAvailableMoves(MoveSet * moveSet, State * state);
+  //filterCycles(Moveset* ) //korzystalo z this->game
   //filterSymmetic(Moveset* )
 
 public: /* SIGNALS */
