@@ -64,7 +64,7 @@ void GraphicalBoard::proposeMove(Human* player)
 
 bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 {
-  cout << "onButtonPress(" << event->x << "x" << event->y << ")" << endl;
+  cout << "onButtonPress(" << (int)event->x << "x" << (int)event->y << ")" << endl;
 
   if(locked)
     return true;
@@ -136,6 +136,8 @@ void GraphicalBoard::onGameNew(State s, const Player& p)
   //sam wykona GraphicalBoard::proposeMove()
   m_currentPlayer = NULL;
   m_board = s.m_board;
+  choosen.a = -1;
+  choosen.b = -1;
   lock();
   
   queue_draw();

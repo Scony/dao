@@ -3,6 +3,9 @@
 #include "Human.h"
 #include "Computer.h"
 
+#include <iostream>
+using namespace std;
+
 Player::Player(const PlayerConfiguration& config, const Game* game)
 {
   //TODO: Zapamietywanie game
@@ -29,7 +32,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 	  moveSet->moves[msi].from = i + 4 * j;
 	  moveSet->moves[msi].to = -1;
 	  k = i;
-	  while(k - 1 > 0 && state->m_board.m_fields[k - 1][j] == FIELD_EMPTY)
+	  while(k - 1 >= 0 && state->m_board.m_fields[k - 1][j] == FIELD_EMPTY)
 	    k--;
 	  if(k != i)
 	     moveSet->moves[msi++].to = k + 4 * j;
@@ -47,7 +50,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 	  moveSet->moves[msi].from = i + 4 * j;
 	  moveSet->moves[msi].to = -1;
 	  l = j;
-	  while(l - 1 > 0 && state->m_board.m_fields[i][l - 1] == FIELD_EMPTY)
+	  while(l - 1 >= 0 && state->m_board.m_fields[i][l - 1] == FIELD_EMPTY)
 	    l--;
 	  if(l != j)
 	    moveSet->moves[msi++].to = i + 4 * l;
@@ -66,7 +69,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 	  moveSet->moves[msi].to = -1;
 	  k = i;
 	  l = j;
-	  while(k - 1 > 0 && l - 1 > 0 && state->m_board.m_fields[k - 1][l - 1] == FIELD_EMPTY)
+	  while(k - 1 >= 0 && l - 1 >= 0 && state->m_board.m_fields[k - 1][l - 1] == FIELD_EMPTY)
 	    {
 	      k--;
 	      l--;
@@ -92,7 +95,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 	  moveSet->moves[msi].to = -1;
 	  k = i;
 	  l = j;
-	  while(k - 1 > 0 && l + 1 < 4 && state->m_board.m_fields[k - 1][l + 1] == FIELD_EMPTY)
+	  while(k - 1 >= 0 && l + 1 < 4 && state->m_board.m_fields[k - 1][l + 1] == FIELD_EMPTY)
 	    {
 	      k--;
 	      l++;
@@ -104,7 +107,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 	  moveSet->moves[msi].to = -1;
 	  k = i;
 	  l = j;
-	  while(k + 1 < 4 && l - 1 > 0 && state->m_board.m_fields[k + 1][l - 1] == FIELD_EMPTY)
+	  while(k + 1 < 4 && l - 1 >= 0 && state->m_board.m_fields[k + 1][l - 1] == FIELD_EMPTY)
 	    {
 	      k++;
 	      l--;
