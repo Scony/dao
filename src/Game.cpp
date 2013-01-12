@@ -56,15 +56,24 @@ bool Game::performMove(Player* player, Move move)
 
   const State& currentState = m_states.back();
   State nextState = currentState.move(move);
-  //TODO: Check isTerminal
-  m_currentPlayer = nextState.m_current;
   m_states.push_back(nextState);
-
-  signal_state_changed.emit(m_states.back(), 
-		       *m_players[m_currentPlayer]);
-
-  m_players[m_currentPlayer]->proposeMove(nextState);
-  return true;
+  
+  if (!nextState.m_board.isTerminal())
+    {
+      m_currentPlayer = nextState.m_current;
+      signal_state_changed.emit(m_states.back(), 
+				*m_players[m_currentPlayer]);
+      
+      m_players[m_currentPlayer]->proposeMove(nextState);
+      return true;
+    }
+  else
+    {
+      signal_state_changed.emit(m_states.back(),
+				*m_players[m_currentPlayer]);
+      signal_game_end.emit(*m_players[m_currentPlayer]);
+      return true;
+    }
 }
 
 const pPlayer* Game::getPlayers() const 

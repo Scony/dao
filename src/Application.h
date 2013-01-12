@@ -29,6 +29,7 @@ private: /* SLOTS */
   void onConfigurationChanged();
   void onMenuGameNewSelected();
   void onGameNew(const Game& game);
+  void onGameEnd(const Player& winner);
   void onGameStateChanged(State s, const Player& p);
 };
 #endif

@@ -30,6 +30,7 @@ public:
 public: /* SIGNALS */
   sigc::signal<void, const Game&> signal_new_game;
   sigc::signal<void, State, const Player&> signal_state_changed;
+  sigc::signal<void, const Player&> signal_game_end;
   
 private:
   Player* m_players[NUM_PLAYERS];

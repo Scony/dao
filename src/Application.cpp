@@ -31,6 +31,7 @@ Application::Application()
   m_game->signal_new_game.connect( sigc::mem_fun(*m_gBoard, &GraphicalBoard::onGameNew));
   m_game->signal_state_changed.connect( sigc::mem_fun(*this, &Application::onGameStateChanged));
   m_game->signal_state_changed.connect( sigc::mem_fun(*m_gBoard, &GraphicalBoard::onGameStateChanged));
+  m_game->signal_game_end.connect( sigc::mem_fun(*this, &Application::onGameEnd));
   PlayerFactory::setGBoard(m_gBoard);
 
   m_game->newGame();
@@ -144,6 +145,19 @@ void Application::onGameNew(const Game& game)
   m_statusbar->push(message.str());
 }
 
+void Application::onGameEnd(const Player& winner)
+{
+  ostringstream message;
+
+  message << "Koniec! Wygral: ";
+
+  m_statusbar->push(message.str());
+
+  Gtk::MessageDialog dlg(*this, "Koniec gry");
+  //dlg.set_secondary_text(e.what());
+  dlg.run();
+}
+
 void Application::onGameStateChanged(State s, const Player& p)
 {
   ostringstream message;
@@ -152,7 +166,7 @@ void Application::onGameStateChanged(State s, const Player& p)
     {
       message << "Ruch ma " << p.m_name;
       if (p.m_color == 0)
-    message << " koloru czerwonego. ";
+	message << " koloru czerwonego. ";
       else 
 	message << " koloru niebieskiego. ";
       
@@ -162,15 +176,5 @@ void Application::onGameStateChanged(State s, const Player& p)
 	message << " Czekaj...";
       
       m_statusbar->push(message.str());
-    }
-  else
-    {
-      message << "Koniec! Wygral: ";
-
-      m_statusbar->push(message.str());
-
-      Gtk::MessageDialog dlg(*this, "Koniec gry");
-      //dlg.set_secondary_text(e.what());
-      dlg.run();
     }
 }

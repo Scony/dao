@@ -1,6 +1,7 @@
-#include<string.h>
-
+#include <string.h>
+#include <iostream>
 #include "Board.h"
+using namespace std;
 
 Board::Board()
 {
@@ -58,13 +59,14 @@ FieldState Board::getWinner()
       m_fields[3][0] == clr &&
       m_fields[3][3] == clr)
     {
+      cout << "Corners" << endl;
       return clr;
     }
 
   //Quarters
-  for(int i = 0; i < SIZE; i+=2)
+  for(int i = 0; i < SIZE-1; i++)
     {
-      for(int j = 0; j < SIZE; j+=2)
+      for(int j = 0; j < SIZE-1; j++)
 	{
 	  clr = m_fields[i][j];
 	  if(clr != FIELD_EMPTY &&
@@ -73,6 +75,7 @@ FieldState Board::getWinner()
 	     m_fields[i+1][j] == clr &&
 	     m_fields[i+1][j+1] == clr)
 	    {
+	      cout << "Quarters" << endl;
 	      return clr;
 	    }
 	}
@@ -88,7 +91,7 @@ FieldState Board::getWinner()
       int j = 1;
       for(; j < SIZE; j++)
 	if (currentColor != m_fields[i][j])
-	  continue;
+	  break;
       
       if (j == SIZE)
 	return currentColor;
@@ -104,11 +107,14 @@ FieldState Board::getWinner()
       int i = 1;
       for(; i < SIZE; i++)
 	if (currentColor != m_fields[i][j])
-	  continue;
+	  break;
       
       if (i == SIZE)
 	return currentColor;
     }
+
+  //Trapping sb in a corner
+  //TODO
 
   return FIELD_EMPTY;
 }
