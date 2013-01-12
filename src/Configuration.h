@@ -9,11 +9,12 @@
 #include "DaoException.h"
 #include "Game.h"
 #include "Player.h"
+#include "Board.h"
 
 struct PlayerConfiguration
 {
   std::string m_sectionName;
-  int m_color;
+  PlayerColor m_color;
   PlayerType m_type;
   PlayerAlgorithm m_algorithm;
   std::string m_name;
@@ -24,6 +25,9 @@ struct PlayerConfiguration
   PlayerAlgorithm stringToPlayerAlgorithm(const std::string& algorithm)
     const throw(DaoException);
 
+  PlayerColor stringToPlayerColor(const std::string& c)
+    const throw(DaoException);
+
   void readKeyFile(const Glib::KeyFile& key) 
     throw(DaoException, Glib::KeyFileError);
 };
@@ -31,7 +35,7 @@ struct PlayerConfiguration
 class Configuration
 {
 public:
-  int m_firstPlayer;
+  FieldState m_firstPlayer;
   PlayerConfiguration m_players[Game::NUM_PLAYERS];
 
   static Configuration& getInstance()

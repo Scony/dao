@@ -23,7 +23,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      if(state->m_board.m_fields[i][j] == (state->m_current_move == 0 ? FIELD_COLOR0 : FIELD_COLOR1))
+      if(state->m_board.m_fields[i][j] == state->m_current)
 	{
 	  int k, l;
 

@@ -18,13 +18,17 @@ public:
 
   void newGame()
     throw(DaoException);
+
+  const pPlayer* getPlayers() const;
+  const Player* getCurrentPlayer() const;
+  State getCurrentState() const;
   
   /* SLOTS */
   bool performMove(Player* player, Move move);
   
 
 public: /* SIGNALS */
-  sigc::signal<void, State, const Player&> signal_new_game;
+  sigc::signal<void, const Game&> signal_new_game;
   sigc::signal<void, State, const Player&> signal_state_changed;
   
 private:

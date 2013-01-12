@@ -39,12 +39,11 @@ void Game::newGame()
   //TODO: Implement reading custom initial states
   m_states.clear();
   m_currentPlayer = config.m_firstPlayer;
-  State initialState(m_currentPlayer);
+  State initialState(config.m_firstPlayer);
   m_states.push_back(initialState);
   
   
-  signal_new_game.emit(m_states.back(), 
-		       *m_players[m_currentPlayer]);
+  signal_new_game.emit(*this);
 
   m_players[m_currentPlayer]->proposeMove(m_states.back());
 }
@@ -68,4 +67,18 @@ bool Game::performMove(Player* player, Move move)
   return true;
 }
 
-  
+const pPlayer* Game::getPlayers() const 
+{
+  return m_players;
+}
+
+const Player* Game::getCurrentPlayer() const
+{
+  return m_players[m_currentPlayer];
+}
+
+State Game::getCurrentState() const
+{
+  return m_states.back();
+}
+

@@ -14,13 +14,13 @@ class GraphicalBoard : public Gtk::DrawingArea
 {
   Board m_board;
   Human* m_currentPlayer;
+  const pPlayer* m_players;
   struct { int a, b; } choosen;
   enum { NONE, GRAY, LIGHT } effect[4][4];
   bool locked;
   
   Cairo::RefPtr<Cairo::ImageSurface> m_boardImg;
-  Cairo::RefPtr<Cairo::ImageSurface> m_p1Img;
-  Cairo::RefPtr<Cairo::ImageSurface> m_p2Img;
+  Cairo::RefPtr<Cairo::ImageSurface> m_stones[COLOR_NUM];
   Cairo::RefPtr<Cairo::ImageSurface> m_hilightImg;
   Cairo::RefPtr<Cairo::ImageSurface> m_lolightImg;
 
@@ -39,7 +39,7 @@ class GraphicalBoard : public Gtk::DrawingArea
 
   /** signal handlers **/
   bool onButtonPress(GdkEventButton* event);
-  void onGameNew(State s, const Player& p);
+  void onGameNew(const Game& g);
   void onGameStateChanged(State s, const Player& p);
 };
 

@@ -125,16 +125,18 @@ void Application::onMenuGameNewSelected()
     }
 }
 
-void Application::onGameNew(State s, const Player& p)
+void Application::onGameNew(const Game& game)
 {
   ostringstream message;
-  message << "Nowa gra. Rozpoczyna " << p.m_name;
-  if (p.m_color == 0)
+  const Player* p = game.getCurrentPlayer();
+
+  message << "Nowa gra. Rozpoczyna " << p->m_name;
+  if (p->m_color == 0)
     message << " koloru czerwonego. ";
   else 
     message << " koloru niebieskiego. ";
   
-  if (p.isInteractive())
+  if (p->isInteractive())
     message << " Kliknij!";
   else
     message << " Czekaj...";

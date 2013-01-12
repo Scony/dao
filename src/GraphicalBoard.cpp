@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "GraphicalBoard.h"
 #include "Human.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -13,9 +14,9 @@ GraphicalBoard::GraphicalBoard()
 
   m_boardImg =
     Cairo::ImageSurface::create_from_png(DATA("board.png"));
-  m_p1Img =
+  m_stones[COLOR_RED] =
     Cairo::ImageSurface::create_from_png(DATA("stone0.png"));
-  m_p2Img =
+  m_stones[COLOR_BLUE] =
     Cairo::ImageSurface::create_from_png(DATA("stone1.png"));
   m_hilightImg =
     Cairo::ImageSurface::create_from_png(DATA("highlight.png"));
@@ -27,7 +28,6 @@ GraphicalBoard::GraphicalBoard()
 
   choosen.a = -1;
   choosen.b = -1;
-
   lock();
 
   signal_button_press_event().connect(sigc::mem_fun(this, &GraphicalBoard::onButtonPress));
@@ -129,13 +129,14 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
   return true;
 }
 
-void GraphicalBoard::onGameNew(State s, const Player& p)
+void GraphicalBoard::onGameNew(const Game& game)
 {
   //TODO: enter no move selection mode
   //Jezeli aktualny gracz bedzie czlowiekiem, to
   //sam wykona GraphicalBoard::proposeMove()
   m_currentPlayer = NULL;
-  m_board = s.m_board;
+  m_players = game.getPlayers();
+  m_board = game.getCurrentState().m_board;
   choosen.a = -1;
   choosen.b = -1;
   lock();
@@ -163,19 +164,17 @@ bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
       {
-  	switch(m_board.m_fields[i][j])
-  	  {
-  	  case FIELD_COLOR0:
-	    cr->set_source(m_p1Img, 45+j*60, 45+i*60);
+	FieldState fs;
+	PlayerColor color;
+	
+	fs = m_board.m_fields[i][j];
+	if (fs != FIELD_EMPTY)
+	  {
+	    color = m_players[fs]->m_color;
+	    cr->set_source(m_stones[color], 45+j*60, 45+i*60);
 	    cr->paint();
-  	    break;
-  	  case FIELD_COLOR1:
-	    cr->set_source(m_p2Img, 45+j*60, 45+i*60);
-	    cr->paint();
-  	    break;
-	  case FIELD_EMPTY:
-	    ;
-  	  }
+	  }
+
   	switch(this->effect[i][j])
   	  {
   	  case LIGHT:

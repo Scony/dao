@@ -28,7 +28,7 @@ private: /* SLOTS */
   void onCommitClicked();
   void onConfigurationChanged();
   void onMenuGameNewSelected();
-  void onGameNew(State s, const Player& p);
+  void onGameNew(const Game& game);
   void onGameStateChanged(State s, const Player& p);
 };
 #endif

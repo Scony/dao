@@ -25,13 +25,25 @@ PlayerAlgorithm PlayerConfiguration::stringToPlayerAlgorithm(const std::string& 
     throw DaoException("Unknown algorithm");
 }
 
+PlayerColor PlayerConfiguration::stringToPlayerColor(const std::string& c) const throw(DaoException)
+{
+  if (c == "red")
+    return COLOR_RED;
+  else if (c == "blue")
+    return COLOR_BLUE;
+  else
+    throw DaoException("Unknown color name");
+}
+
 void PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
   throw(DaoException, Glib::KeyFileError)
 {
-  string type, algorithm;
-  
+  string type, algorithm, color;  
   type = key.get_string(m_sectionName, "type");
   m_type = stringToPlayerType(type);
+  
+  color = key.get_string(m_sectionName, "color");
+  m_color = stringToPlayerColor(color);
 
   if (m_type == PLAYER_COMPUTER)
     {
@@ -42,9 +54,9 @@ void PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
 
 Configuration::Configuration()
 {
-  m_firstPlayer = 0;
-  m_players[0].m_color = 0;
-  m_players[1].m_color = 1;
+  m_firstPlayer = FIELD_PLAYER1;
+  m_players[0].m_color = COLOR_RED;
+  m_players[1].m_color = COLOR_BLUE;
   m_players[0].m_type = PLAYER_HUMAN;
   m_players[1].m_type = PLAYER_HUMAN;
   m_players[0].m_sectionName = "Player1";
@@ -64,9 +76,9 @@ void Configuration::parseKeyFile()
 {
   string first_player = m_keyFile.get_string("Game", "first_move");
   if (first_player == "Player2")
-    m_firstPlayer = 1;
+    m_firstPlayer = FIELD_PLAYER2;
   else
-    m_firstPlayer = 0;
+    m_firstPlayer = FIELD_PLAYER1;
 
   for (int i = 0; i < 2; i++)
     {

@@ -10,11 +10,11 @@ class State
 {
 public:
   Board m_board;
-  int m_current_move; //Kolor gracza aktalnie wykonujacego ruch
+  FieldState m_current;
 
   //TODO: Add copy constructors
   State();
-  State(int current_move, Board board = Board::initialBoard());
+  State(FieldState current_move, Board board = Board::initialBoard());
   ~State();
 
   dao_hash_short getHash() const;

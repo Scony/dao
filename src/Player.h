@@ -11,6 +11,14 @@ struct GraphicalBoard;
 struct PlayerConfiguration;
 class Game;
 
+enum PlayerColor
+  {
+    COLOR_RED = 0,
+    COLOR_BLUE,
+    COLOR_NUM,
+    COLOR_EMPTY
+  };
+
 enum PlayerType
   {
     PLAYER_HUMAN,
@@ -26,7 +34,7 @@ enum PlayerAlgorithm
 class Player : public sigc::trackable
 {
 public:
-  int m_color;
+  PlayerColor m_color;
   std::string m_name;
   
   Player(const PlayerConfiguration& config, const Game* game=0);
@@ -45,6 +53,7 @@ public: /* SIGNALS */
 
 };
 
+typedef Player* pPlayer;
 
 class PlayerFactory
 {

@@ -3,9 +3,9 @@
 
 enum FieldState
   {
-    FIELD_EMPTY,
-    FIELD_COLOR0,
-    FIELD_COLOR1
+    FIELD_PLAYER1 = 0,
+    FIELD_PLAYER2 = 1,
+    FIELD_EMPTY = 2,
   };
 
 class Board

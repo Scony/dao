@@ -37,9 +37,9 @@ Board Board::initialBoard()
       for(int j = 0; j < SIZE; j++)
 	{
 	  if(i == j)
-	    b.m_fields[i][j] = FIELD_COLOR0;
+	    b.m_fields[i][j] = FIELD_PLAYER1;
 	  else if (i+j == 3)
-	    b.m_fields[i][j] = FIELD_COLOR1;
+	    b.m_fields[i][j] = FIELD_PLAYER2;
 	  else
 	    b.m_fields[i][j] = FIELD_EMPTY;
 	}
