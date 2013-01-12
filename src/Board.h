@@ -20,7 +20,8 @@ public:
   ~Board();
 
   Board rotate180();
-  int getWinner();
+
+  FieldState getWinner();
   bool isTerminal();
 
   static Board initialBoard();

@@ -147,16 +147,30 @@ void Application::onGameNew(const Game& game)
 void Application::onGameStateChanged(State s, const Player& p)
 {
   ostringstream message;
-  message << "Ruch ma " << p.m_name;
-  if (p.m_color == 0)
-    message << " koloru czerwonego. ";
-  else 
-    message << " koloru niebieskiego. ";
-  
-  if (p.isInteractive())
-    message << " Kliknij!";
-  else
-    message << " Czekaj...";
 
-  m_statusbar->push(message.str());
+  if (!s.m_board.isTerminal() )
+    {
+      message << "Ruch ma " << p.m_name;
+      if (p.m_color == 0)
+    message << " koloru czerwonego. ";
+      else 
+	message << " koloru niebieskiego. ";
+      
+      if (p.isInteractive())
+	message << " Kliknij!";
+      else
+	message << " Czekaj...";
+      
+      m_statusbar->push(message.str());
+    }
+  else
+    {
+      message << "Koniec! Wygral: ";
+
+      m_statusbar->push(message.str());
+
+      Gtk::MessageDialog dlg(*this, "Koniec gry");
+      //dlg.set_secondary_text(e.what());
+      dlg.run();
+    }
 }
