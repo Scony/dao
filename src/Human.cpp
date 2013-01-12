@@ -36,5 +36,6 @@ Move * Human::getAvailableMoves()
 
 void Human::commitMoveProposal(Move m)
 {
-  signal_move_proposed.emit(this, m);
+  m_proposedMove = m;
+  dispatcher_move_proposed.emit();
 }

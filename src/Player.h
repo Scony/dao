@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <glibmm/dispatcher.h>
 #include <sigc++/sigc++.h>
 #include <string>
 #include "State.h"
@@ -43,14 +44,16 @@ public:
   virtual void proposeMove(State state) = 0;
   virtual bool isInteractive() const = 0;
 
+  sigc::signal<bool, Player*, Move> signal_move_proposed;
+  
 protected:
+  Move m_proposedMove;
+
   void getAvailableMoves(MoveSet * moveSet, State * state);
+  void onDispatcherMoveProposed();
   //filterCycles(Moveset* ) //korzystalo z this->game
   //filterSymmetic(Moveset* )
-
-public: /* SIGNALS */
-  sigc::signal<bool, Player*, Move> signal_move_proposed;
-
+  Glib::Dispatcher dispatcher_move_proposed;
 };
 
 typedef Player* pPlayer;

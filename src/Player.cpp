@@ -11,6 +11,8 @@ Player::Player(const PlayerConfiguration& config, const Game* game)
   //TODO: Zapamietywanie game
   m_color = config.m_color;
   m_name = config.m_name;
+
+  dispatcher_move_proposed.connect( sigc::mem_fun(*this, &Player::onDispatcherMoveProposed ));
 }
 
 Player::~Player()
@@ -124,6 +126,11 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
       while(--msi >= 0)
 	moveSet->moves[msi].next = &moveSet->moves[msi+1];
     }
+}
+
+void Player::onDispatcherMoveProposed()
+{
+  signal_move_proposed.emit(this, m_proposedMove);
 }
 
 GraphicalBoard* PlayerFactory::s_gBoard = 0;
