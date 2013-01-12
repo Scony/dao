@@ -8,6 +8,6 @@ $(EXE): src
 
 clean: 
 	make -C src clean
-	rm $(EXE)
+	rm -f $(EXE)
 
 .PHONY: all, clean
