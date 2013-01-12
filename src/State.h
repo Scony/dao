@@ -6,6 +6,8 @@
 typedef unsigned int dao_hash_short;
 typedef unsigned int dao_hash_invariant;
 
+class Move;
+
 class State
 {
 public:
@@ -16,6 +18,8 @@ public:
   State();
   State(FieldState current_move, Board board = Board::initialBoard());
   ~State();
+
+  State move(const Move& m) const;
 
   dao_hash_short getHash() const;
   dao_hash_invariant getInvariantHash() const;

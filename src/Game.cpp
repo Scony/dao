@@ -53,17 +53,17 @@ bool Game::performMove(Player* player, Move move)
   //TODO: verify move
   
   cout << "TODO: verify and perform move" << endl;
-  
-  //TODO: perform move
-  if (m_currentPlayer == 0)
-    m_currentPlayer = 1;
-  else
-    m_currentPlayer = 0;
+
+  const State& currentState = m_states.back();
+  State nextState = currentState.move(move);
+  //TODO: Check isTerminal
+  m_currentPlayer = nextState.m_current;
+  m_states.push_back(nextState);
 
   signal_state_changed.emit(m_states.back(), 
 		       *m_players[m_currentPlayer]);
 
-  m_players[m_currentPlayer]->proposeMove(m_states.back());
+  m_players[m_currentPlayer]->proposeMove(nextState);
   return true;
 }
 

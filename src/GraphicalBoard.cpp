@@ -94,7 +94,7 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 	      choosen.b = -1;
 
 	      lock();
-	      // m_currentPlayer->commitMoveProposal(move);
+	      m_currentPlayer->commitMoveProposal(move);
 	    }
 	  else if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT)
 	    {
