@@ -21,6 +21,13 @@ Player::~Player()
 
 void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 {
+  for(int i = 0; i < 4; i++)
+    {
+      for(int j = 0; j < 4; j++)
+	cout << state->m_board.m_fields[i][j] << " ";
+      cout << endl;
+    }
+
   int msi = 0;
 
   for(int i = 0; i < 4; i++)
