@@ -142,6 +142,8 @@ Player* PlayerFactory::createPlayer(const PlayerConfiguration& config)
     {
     case PLAYER_HUMAN:
       return new Human(config, s_gBoard);
+    case PLAYER_COMPUTER:
+      return new Random(config);
     default:
       throw DaoException("Player type not implemented");
     }

@@ -8,11 +8,13 @@
 #include "State.h"
 #include "Configuration.h"
 #include "Game.h"
+#include "Move.h"
 
 //TODO: Inherit all AI players from Computer class??
 
 class Random : public Player
 {
+  MoveSet m_moveSet;
 public:
   Random(const PlayerConfiguration& config, const Game* game=0);
   virtual ~Random();
