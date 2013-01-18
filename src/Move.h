@@ -3,6 +3,8 @@
 
 #include "DaoException.h"
 
+class MoveSet;
+
 struct Move
 {
   //Przechowuje nastepne stany
@@ -11,13 +13,14 @@ struct Move
 
   int nextStateHash;
   int nextStateInvariantHash;
-  //State nextState;
-
-  Move * next;
 
   Move();
   Move(int from, int to);
   ~Move();
+
+private:
+  Move * next;
+  friend class MoveSet;
 };
 
 
@@ -51,7 +54,7 @@ public:
     throw(DaoException);
 
   void clear();
-  //TODO: void remove (Iterator);
+  MoveSet::Iterator remove(MoveSet::Iterator& it);
   
 private:
   Move moves[32];
