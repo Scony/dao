@@ -68,6 +68,7 @@ Configuration::Configuration()
   m_players[1].m_sectionName = "Player2";
   m_players[0].m_name = "Gracz 1";
   m_players[1].m_name = "Gracz 2";
+  m_latency = 1;
 }
 
 Configuration& Configuration::getInstance() throw()
@@ -85,6 +86,10 @@ void Configuration::parseKeyFile()
   else
     m_firstPlayer = FIELD_PLAYER1;
 
+  if (m_keyFile.has_key("Game", "latency"))
+    {
+      m_latency = m_keyFile.get_integer("Game", "latency");
+    }
   for (int i = 0; i < 2; i++)
     {
       m_players[i].readKeyFile(m_keyFile);
