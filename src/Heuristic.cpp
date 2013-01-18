@@ -1,4 +1,6 @@
 #include "Heuristic.h"
+#include <iostream>
+using namespace std;
 
 Heuristic::Heuristic(const PlayerConfiguration & config) : m_config(config)
 {
@@ -16,9 +18,8 @@ LBHeuristic::~LBHeuristic()
 {
 }
 
-int LBHeuristic::eval(State * state)
+int LBHeuristic::eval(State * state, FieldState player)
 {
-  FieldState player = state->m_current;
   FieldState opponent = (FieldState)(1 - player);
 
   //parameters: k[i] - weight of i-th layer, h - hope
@@ -30,6 +31,7 @@ int LBHeuristic::eval(State * state)
   //H()
   int max = 18 * (k[0] + k[1] + k[2]);
   int min = -max;
+  // cout << "iam " << (int)player << "mx " << max << " mn " << min << endl;
 
   //r-ity and pure r-ity of layer i and player j
   int r[5][2] = { { 0 } };

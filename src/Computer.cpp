@@ -110,8 +110,8 @@ void HillClimber::run()
   for(MoveSet::Iterator it = best; it != m_moveSet.end(); it++)
     {
       State next = m_state.move(it.at());
-      int rate = heuristic->eval(&next);
-      cout << "H(): " << rate << endl;
+      int rate = heuristic->eval(&next,m_state.m_current);
+      cout << it.at().from << "->" << it.at().to << " H(): " << rate << endl;
       if(rate > max)
 	{
 	  max = rate;

@@ -11,7 +11,7 @@ class Heuristic
  public:
   Heuristic(const PlayerConfiguration & config);
   virtual ~Heuristic();
-  virtual int eval(State * state) = 0;
+  virtual int eval(State * state, FieldState player) = 0;
 };
 
 class LBHeuristic : public Heuristic
@@ -19,7 +19,7 @@ class LBHeuristic : public Heuristic
  public:
   LBHeuristic(const PlayerConfiguration & config);
   ~LBHeuristic();
-  int eval(State * state);
+  int eval(State * state, FieldState player);
 };
 
 #endif
