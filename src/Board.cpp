@@ -123,3 +123,24 @@ bool Board::isTerminal()
 {
   return getWinner() != FIELD_EMPTY;
 }
+
+bool Board::isValidField(int x, int y)
+{
+  if (x < 0 || x > 3)
+    return false;
+  if (y < 0 || y > 3)
+    return false;
+
+  return true;
+}
+
+bool Board::isEmptyField(int x, int y)
+{
+  if(!isValidField(x, y))
+    return false;
+
+  if (m_fields[y][x] == FIELD_EMPTY)
+    return true;
+  else
+    return false;
+}

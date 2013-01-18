@@ -20,7 +20,7 @@ public:
   virtual void proposeMove(State state);
   virtual bool isInteractive() const;
 
-  Move * getAvailableMoves();
+  MoveSet& getAvailableMoves();
   void commitMoveProposal(Move m);
 };
 

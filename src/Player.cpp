@@ -21,6 +21,7 @@ Player::~Player()
 
 void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 {
+  //Wypisywanie stanu
   for(int i = 0; i < 4; i++)
     {
       for(int j = 0; j < 4; j++)
@@ -28,32 +29,59 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
       cout << endl;
     }
 
-  int msi = 0;
+  Board* board = &(state->m_board);
+  
+  moveSet->clear();
+  for(int from_x = 0; from_x < 4; from_x++)
+    for(int from_y = 0; from_y < 4; from_y++)
+      if(board->m_fields[from_y][from_x] == state->m_current)
+	{
+	  //Iteracja po wszystkich pionkach gracza
+	  
+	  for(int x_step = -1; x_step <= 1; x_step++)
+	    for(int y_step = -1; y_step <= 1; y_step++)
+	      {
+		//Iteracja po wszystkich kierunkach ruchu
+		int to_x = from_x;
+		int to_y = from_y;
+		
+		while(board->isEmptyField(to_x + x_step, to_y + y_step))
+		  {
+		    to_x += x_step;
+		    to_y += y_step;
+		  }
+		
+		if ((to_x != from_x) || (to_y != from_y))
+		  moveSet->add(Move(from_x + 4 * from_y,
+				    to_x + 4 * to_y));
+	      }
+	}
+}
 
+/*
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      if(state->m_board.m_fields[i][j] == state->m_current)
+      if(board->m_fields[i][j] == state->m_current)
 	{
-	  int k, l;
+	  int k;
+	  int from = i + 4 * j;
 
 	  //vertical
-
-	  moveSet->moves[msi].from = i + 4 * j;
-	  moveSet->moves[msi].to = -1;
 	  k = i;
-	  while(k - 1 >= 0 && state->m_board.m_fields[k - 1][j] == FIELD_EMPTY)
+	  while(k - 1 >= 0 && board->m_fields[k - 1][j] == FIELD_EMPTY)
 	    k--;
 	  if(k != i)
-	     moveSet->moves[msi++].to = k + 4 * j;
-
-	  moveSet->moves[msi].from = i + 4 * j;
-	  moveSet->moves[msi].to = -1;
+	    moveSet->add(Move(from, k + 4 * j));
+	  
 	  k = i;
-	  while(k + 1 < 4 && state->m_board.m_fields[k + 1][j] == FIELD_EMPTY)
+	  while(k + 1 < 4 && board->m_fields[k + 1][j] == FIELD_EMPTY)
 	    k++;
 	  if(k != i)
-	    moveSet->moves[msi++].to = k + 4 * j;
-
+	    moveSet->add(Move(from, k + 4 * j));
+	}
+}
+*/
+	  /*
 	  //horizontal
 
 	  moveSet->moves[msi].from = i + 4 * j;
@@ -133,7 +161,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
       while(--msi >= 0)
 	moveSet->moves[msi].next = &moveSet->moves[msi+1];
     }
-}
+	  */
 
 void Player::onDispatcherMoveProposed()
 {

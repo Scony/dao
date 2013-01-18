@@ -1,5 +1,6 @@
-#include "Computer.h"
 #include <iostream>
+#include "Computer.h"
+#include "DaoException.h"
 
 using namespace std;
 
@@ -15,22 +16,18 @@ void Random::proposeMove(State state)
 {
   Player::getAvailableMoves(&m_moveSet,&state);
 
-  Move * pMove = m_moveSet.begin();
-  int moves = 0;
-  while(pMove != NULL)
-    {
-      pMove = pMove->next;
-      moves++;
-    }
+  int moves_n = m_moveSet.size();
+  if (moves_n == 0)
+    throw DaoException("Ilość ruchów = 0");
 
-  int move = rand() % moves;
+  int move = rand() % moves_n;
   cout << "randed: " << move << endl;
-  pMove = m_moveSet.begin();
-  while(move--)
-    pMove = pMove->next;
+  
+  MoveSet::Iterator it = m_moveSet.begin();
+  for(int i = 0; i < move; i++)
+    it = it.next();
 
-  m_proposedMove = *pMove;
-
+  m_proposedMove = it.at();
   dispatcher_move_proposed.emit();
 }
 

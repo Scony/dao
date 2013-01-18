@@ -51,12 +51,13 @@ void GraphicalBoard::proposeMove(Human* player)
       if(m_board.m_fields[i][j] != FIELD_EMPTY)
 	effect[i][j] = GRAY;
 
-  Move * pMove = m_currentPlayer->getAvailableMoves();
-  while(pMove != NULL)
+  MoveSet& moves = m_currentPlayer->getAvailableMoves();
+  MoveSet::Iterator it = moves.begin();
+  for(; it != moves.end(); it++)
     {
-      cout << "f" << pMove->from << "t" << pMove->to << endl;
-      effect[pMove->from%4][pMove->from/4] = NONE;
-      pMove = pMove->next;
+      const Move& move = it.at();
+      cout << "f" << move.from << "t" << move.to << endl;
+      effect[move.from%4][move.to/4] = NONE;
     }
 
   queue_draw();
@@ -109,12 +110,13 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 	  else if(choosen.a < 0 && m_board.m_fields[a][b] != FIELD_EMPTY && effect[a][b] != GRAY)
 	    {
 	      //IF xyx0 -> y -> 0xxx => THEN TODO: vectors & path enlightment
-	      Move * pMove = m_currentPlayer->getAvailableMoves();
-	      while(pMove != NULL)
+	      MoveSet& moves = m_currentPlayer->getAvailableMoves();
+	      MoveSet::Iterator it = moves.begin();
+	      for (; it != moves.end(); it++)
 		{
-		  if(pMove->from % 4 == a && pMove->from / 4 == b)
-		    effect[pMove->to%4][pMove->to/4] = LIGHT;
-		  pMove = pMove->next;
+		  Move& move = it.at();
+		  if(move.from % 4 == a && move.from / 4 == b)
+		    effect[move.to%4][move.to/4] = LIGHT;
 		}
 	      effect[a][b] = LIGHT;
 

@@ -2,23 +2,61 @@
 
 #include <iostream>
 
+using namespace std;
+
 Move::Move()
 {
   next = NULL;
 }
 
-Move::Move(Move * next)
+Move::Move(int from, int to)
 {
-  this->next = next;
+  this->from = from;
+  this->to = to;
 }
 
 Move::~Move()
 {
 }
 
+Move& MoveSet::Iterator::at()
+{
+  return *m_self;
+}
+
+MoveSet::Iterator MoveSet::Iterator::next()
+{
+  MoveSet::Iterator it;
+
+  it.m_prev = m_self;
+  it.m_self = m_self->next;
+
+  return it;
+}
+
+bool MoveSet::Iterator::operator==(const MoveSet::Iterator& r)
+{
+  return (m_self == r.m_self);
+}
+
+bool MoveSet::Iterator::operator!=(const MoveSet::Iterator& r)
+{
+  return (m_self != r.m_self);
+}
+
+MoveSet::Iterator MoveSet::Iterator::operator++(int unused)
+{
+  if(m_self == 0)
+    throw DaoException("Iterating over the range");
+  
+  m_prev = m_self;
+  m_self = m_self->next;
+  return *this;
+}
+
 MoveSet::MoveSet()
 {
-  //
+  clear();
 }
 
 MoveSet::~MoveSet()
@@ -26,7 +64,55 @@ MoveSet::~MoveSet()
   //
 }
 
-Move * MoveSet::begin()
+MoveSet::Iterator MoveSet::begin()
 {
-  return &moves[0]; //moves;
+  MoveSet::Iterator it;
+  it.m_prev = 0;
+  it.m_self = m_head;
+  return it;
+}
+
+MoveSet::Iterator MoveSet::end()
+{
+  MoveSet::Iterator it;
+  it.m_prev = m_tail;
+  it.m_self = 0;
+  return it;
+}
+
+int MoveSet::size()
+{
+  return m_size;
+}
+
+void MoveSet::add(const Move& move)
+  throw(DaoException)
+{
+  if (m_size >= 32)
+    {
+      throw DaoException("Adding too much elements to MoveSet");
+    }
+
+  if (m_head == 0)
+    {
+      moves[0] = move;
+      m_head = moves;
+      m_tail = moves;
+    }
+  else
+    {
+      Move* ptr = m_tail + 1;
+      (*ptr) = move;
+      m_tail->next = ptr;
+      m_tail = ptr;
+    }
+
+  m_size += 1;
+}
+
+void MoveSet::clear()
+{
+  m_size = 0;
+  m_head = 0;
+  m_tail = 0;
 }
