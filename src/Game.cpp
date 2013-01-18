@@ -141,17 +141,12 @@ void Game::filterCycles(MoveSet* moveSet) const
   
   while(it != moveSet->end())
     {
-      cout << "Moving state" << endl;
-      cout << "from" << it.at().from << " to " << it.at().to << endl;
       State next = current.move(it.at());
-      cout << "Moved state" << endl;
       dao_hash_short hash = next.getHash();
       if (m_previous_state_hashes.find(hash) !=
 	  m_previous_state_hashes.end())
 	{
-	  cout << "removing" << endl;
 	  it = moveSet->remove(it);
-	  cout << "removed" << endl;
 	}
       else
 	{

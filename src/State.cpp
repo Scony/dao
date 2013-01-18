@@ -24,8 +24,6 @@ State State::move(const Move& m) const
   FieldState* board_ptr =
     reinterpret_cast<FieldState*>(next.m_board.m_fields);
 
-  cout << "Move: " << m.from << " -> " << m.to << endl;
-
   if (board_ptr[m.to] != FIELD_EMPTY)
     throw DaoException("Moving to non-empty field");
   if (board_ptr[m.from] == FIELD_EMPTY)
