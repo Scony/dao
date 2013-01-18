@@ -29,9 +29,18 @@ Player* PlayerFactory::createPlayer(const PlayerConfiguration& config,
       return new Human(config, s_gBoard);
     case PLAYER_COMPUTER:
       {
-	//TODO: Wybor strategii
-	AIStrategy* strategy = new Random(game, config);
-	return new Computer(config, game, strategy);
+	AIStrategy* strategy;
+	switch(config.m_algorithm)
+	  {
+	  case ALGORITHM_RANDOM:
+	    strategy = new Random(game, config);
+	    return new Computer(config, game, strategy);
+	  case ALGORITHM_HILL_CLIMBER:
+	    strategy = new HillClimber(game, config);
+	    return new Computer(config, game, strategy);
+	  default:
+	    throw DaoException("Algorithm type not implemented");
+	  }
       }
     default:
       throw DaoException("Player type not implemented");

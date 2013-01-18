@@ -85,3 +85,44 @@ void Random::run()
   dispatcher_move_proposed.emit();
 }
 
+HillClimber::HillClimber(const Game* game, const PlayerConfiguration& config)
+  : AIStrategy(game, config)
+{
+  heuristic = new LBHeuristic(config);
+}
+
+HillClimber::~HillClimber()
+{
+  delete heuristic;
+}
+
+void HillClimber::run()
+{
+  m_game->getAvailableMoves(&m_moveSet,&m_state);
+
+  int moves_n = m_moveSet.size();
+  if (moves_n == 0)
+    throw DaoException("Ilość ruchów = 0");
+
+  int max = -99999999;
+  MoveSet::Iterator best = m_moveSet.begin();
+
+
+  for(MoveSet::Iterator it = best; it != m_moveSet.end(); it++)
+    {
+      State next = m_state.move(it.at());
+      int rate = heuristic->eval(&next,m_state.m_current);
+      cout << it.at().from << "->" << it.at().to << " H(): " << rate << endl;
+      if(rate > max)
+	{
+	  max = rate;
+	  best = it;
+	}
+    }
+
+  m_proposedMove = best.at();
+  cout << "best H(): " << max << endl;
+
+  sleep(1);
+  dispatcher_move_proposed.emit();
+}

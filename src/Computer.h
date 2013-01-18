@@ -9,13 +9,14 @@
 #include "Configuration.h"
 #include "Game.h"
 #include "Move.h"
-
+#include "Heuristic.h"
 
 class AIStrategy
 {
 public:
   State m_state;
   Move m_proposedMove;
+  Heuristic * heuristic;
 
   AIStrategy(const Game* game, const PlayerConfiguration& config);
   virtual void run() = 0;
@@ -49,6 +50,17 @@ class Random : public AIStrategy
 {
 public:
   Random(const Game* game, const PlayerConfiguration& config);
+  void run();
+
+private:
+  MoveSet m_moveSet;
+};
+
+class HillClimber : public AIStrategy
+{
+public:
+  HillClimber(const Game* game, const PlayerConfiguration& config);
+  ~HillClimber();
   void run();
 
 private:
