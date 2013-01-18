@@ -80,7 +80,8 @@ void Random::run()
 
   m_proposedMove = it.at();
 
-  sleep(1);
+  int latency = Configuration::getInstance().m_latency;
+  usleep(latency);
   dispatcher_move_proposed.emit();
 }
 

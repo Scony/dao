@@ -39,6 +39,7 @@ class Configuration
 public:
   FieldState m_firstPlayer;
   PlayerConfiguration m_players[Game::NUM_PLAYERS];
+  int m_latency;
 
   static Configuration& getInstance()
     throw();
