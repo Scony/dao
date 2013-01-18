@@ -47,9 +47,6 @@ public:
   sigc::signal<bool, Player*, Move> signal_move_proposed;
   
 protected:
-  void getAvailableMoves(MoveSet * moveSet, State * state);
-  //filterCycles(Moveset* ) //korzystalo z this->game
-  //filterSymmetic(Moveset* )
   const Game* m_game;
 };
 

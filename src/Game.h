@@ -24,6 +24,8 @@ public:
   State getCurrentState() const;
 
   void getAvailableMoves(MoveSet* dest, State* state) const;
+  //filterCycles(Moveset* ) //korzystalo z this->game
+  //filterSymmetic(Moveset* )
   /* SLOTS */
   bool performMove(Player* player, Move move);
   
