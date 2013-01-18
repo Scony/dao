@@ -90,16 +90,24 @@ void HillClimber::run()
   if (moves_n == 0)
     throw DaoException("Ilość ruchów = 0");
 
-  int move = rand() % moves_n;
-  cout << "randed: " << move << endl;
-  
-  MoveSet::Iterator it = m_moveSet.begin();
-  for(int i = 0; i < move; i++)
-    it = it.next();
+  int max = -99999999;
+  MoveSet::Iterator best = m_moveSet.begin();
 
-  m_proposedMove = it.at();
-  State next = m_state.move(m_proposedMove);
-  cout << heuristic->eval(&next);
+
+  for(MoveSet::Iterator it = best; it != m_moveSet.end(); it++)
+    {
+      State next = m_state.move(it.at());
+      int rate = heuristic->eval(&next);
+      cout << "H(): " << rate << endl;
+      if(rate > max)
+	{
+	  max = rate;
+	  best = it;
+	}
+    }
+
+  m_proposedMove = best.at();
+  cout << "best H(): " << max << endl;
 
   sleep(1);
   dispatcher_move_proposed.emit();
