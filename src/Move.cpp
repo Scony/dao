@@ -31,7 +31,7 @@ MoveSet::Iterator MoveSet::Iterator::next()
 {
   MoveSet::Iterator it;
 
-  if (it.m_self == 0)
+  if (m_self == 0)
     throw DaoException("Calling next on invalid MoveSet::Iterator");
 
   it.m_prev = m_self;
@@ -104,6 +104,7 @@ void MoveSet::add(const Move& move)
       moves[0] = move;
       m_head = moves;
       m_tail = moves;
+      m_tail->next = 0;
     }
   else
     {
@@ -111,6 +112,7 @@ void MoveSet::add(const Move& move)
       (*ptr) = move;
       m_tail->next = ptr;
       m_tail = ptr;
+      m_tail->next = 0;
     }
 
   m_size += 1;
@@ -131,7 +133,7 @@ MoveSet::Iterator MoveSet::remove(MoveSet::Iterator& it)
     }
   
   Iterator next = it.next();
-  
+
   if (it.m_self == m_head)
     {
       m_head = next.m_self;
