@@ -17,80 +17,111 @@ LBHeuristic::~LBHeuristic()
 {
 }
 
-LBHeuristic::eval(State * state)
+int LBHeuristic::eval(State * state)
 {
   FieldState player = state->m_current;
   FieldState opponent = 1 - player;
 
-  int k1 = 0;
-  int k2 = 0;
-  int k3 = 0;
-  int h = 0;
+  //parameters: k[i] - weight of i-th layer, h - hope
+  int k[3];
+  for(int i = 0; i < 3; i++)
+    k[i] = m_config.m_k[i];
+  int h = m_config.m_h;
 
-  int r1[2] = { 0 };
-  int r2[2] = { 0 };
-  int r3[2] = { 0 };
+  //H()
+  int max = 18 * (k1 + k2 + k3);
+  int min = -max;
 
-  int p1[2] = { 0 };
-  int p2[2] = { 0 };
-  int p3[2] = { 0 };
+  //r-ity and pure r-ity of layer i and player j
+  int r[5][2] = { 0 };
+  int p[5][2] = { 0 };
 
   Board & board = state->m_board;
 
-  //Corners
+  //ammout of stones that belongs to i-th owner (for concrete term-state)
+  int stones[3] = { 0 };
+
+  //corners
   for(int i = 0; i < 4; i+= 3)
     for(int j = 0; j < 4; j+= 3)
-      {
-	if(board.m_fields[i][j] == player)
+      stones[board.m_fields[i][j]]++;
+
+  r[stones[player]][player]++;
+  r[stones[opponent]][opponent]++;
+  if(stones[player] > 0 && stones[opponent] == 0)
+    p[stones[player]][player]++;
+  if(stones[opponent] > 0 && stones[player] == 0)
+    p[stones[opponent]][opponent]++;
 	  
 
-  //Quarters
-  for(int i = 0; i < SIZE-1; i++)
+  //quarters
+  for(int i = 0; i < 3; i++)
+    for(int j = 0; j < 3; j++)
+      {
+	for(int k = 0; k < 2; k++)
+	  stones[k] = 0;
+
+	for(int k = 0; k < 2; k++)
+	  for(int l = 0; l < 2; l++)
+	    stones[board.m_fields[i+k][j+l]]++;
+
+	r[stones[player]][player]++;
+	r[stones[opponent]][opponent]++;
+	if(stones[player] > 0 && stones[opponent] == 0)
+	  p[stones[player]][player]++;
+	if(stones[opponent] > 0 && stones[player] == 0)
+	  p[stones[opponent]][opponent]++;
+      }
+
+  //horizontal lines
+  for(int i = 0; i < 4; i++)
     {
-      for(int j = 0; j < SIZE-1; j++)
-	{
-	  clr = m_fields[i][j];
-	  if(clr != FIELD_EMPTY &&
-	     m_fields[i][j] == clr &&
-	     m_fields[i][j+1] == clr &&
-	     m_fields[i+1][j] == clr &&
-	     m_fields[i+1][j+1] == clr)
-	    {
-	      cout << "Quarters" << endl;
-	      return clr;
-	    }
-	}
+      for(int k = 0; k < 2; k++)
+	stones[k] = 0;
+
+      for(int j = 0; j < 4; j++)
+	stones[board.m_fields[i][j]]++;
+
+      r[stones[player]][player]++;
+      r[stones[opponent]][opponent]++;
+      if(stones[player] > 0 && stones[opponent] == 0)
+	p[stones[player]][player]++;
+      if(stones[opponent] > 0 && stones[player] == 0)
+	p[stones[opponent]][opponent]++;
     }
 
-  //Horizontal lines
-  for(int i = 0; i < SIZE; i++)
+  //vertical lines
+  for(int j = 0; j < 4; j++)
     {
-      FieldState currentColor = m_fields[i][0];
-      if (currentColor == FIELD_EMPTY)
-	continue;
-      
-      int j = 1;
-      for(; j < SIZE; j++)
-	if (currentColor != m_fields[i][j])
-	  break;
-      
-      if (j == SIZE)
-	return currentColor;
+      for(int k = 0; k < 2; k++)
+	stones[k] = 0;
+
+      for(int i = 0; i < 4; i++)
+	stones[board.m_fields[i][j]]++;
+
+      r[stones[player]][player]++;
+      r[stones[opponent]][opponent]++;
+      if(stones[player] > 0 && stones[opponent] == 0)
+	p[stones[player]][player]++;
+      if(stones[opponent] > 0 && stones[player] == 0)
+	p[stones[opponent]][opponent]++;
     }
 
-  //Vertical lines
-  for(int j = 0; j < SIZE; j++)
-    {
-      FieldState currentColor = m_fields[0][j];
-      if (currentColor == FIELD_EMPTY)
-	continue;
-      
-      int i = 1;
-      for(; i < SIZE; i++)
-	if (currentColor != m_fields[i][j])
-	  break;
-      
-      if (i == SIZE)
-	return currentColor;
-    }
+  if(p[4][player] > 0)
+    return max;
+
+  if(p[4][opponent] > 0)
+    return min;
+
+  int player_stable = p[1][player] * k[0] + p[2][player] * k[1] + p[3][player] * k[2];
+  int player_hope = h * ((r[1][player] - p[1][player]) * k[0] +
+			 (r[2][player] - p[2][player]) * k[1] +
+			 (r[3][player] - p[3][player]) * k[2]);
+
+  int opponent_stable = p[1][opponent] * k[0] + p[2][opponent] * k[1] + p[3][opponent] * k[2];
+  int opponent_hope = h * ((r[1][opponent] - p[1][opponent]) * k[0] +
+			   (r[2][opponent] - p[2][opponent]) * k[1] +
+			   (r[3][opponent] - p[3][opponent]) * k[2]);
+
+  return player_stable + player_hope - opponent_stable;
 }

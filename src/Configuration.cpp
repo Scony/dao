@@ -38,7 +38,7 @@ PlayerColor PlayerConfiguration::stringToPlayerColor(const std::string& c) const
 void PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
   throw(DaoException, Glib::KeyFileError)
 {
-  string type, algorithm, color;  
+  string type, algorithm, color;
   type = key.get_string(m_sectionName, "type");
   m_type = stringToPlayerType(type);
   
@@ -50,6 +50,11 @@ void PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
       algorithm = key.get_string(m_sectionName, "algorithm");
       m_algorithm = stringToPlayerAlgorithm(algorithm);
     }
+
+  m_k[0] = key.get_double(m_sectionName, "k1");
+  m_k[1] = key.get_double(m_sectionName, "k2");
+  m_k[2] = key.get_double(m_sectionName, "k3");
+  m_h = key.get_double(m_sectionName, "h");
 }
 
 Configuration::Configuration()

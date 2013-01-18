@@ -18,6 +18,8 @@ struct PlayerConfiguration
   PlayerType m_type;
   PlayerAlgorithm m_algorithm;
   std::string m_name;
+  float m_k[3];
+  float m_h;
 
   PlayerType stringToPlayerType(const std::string& type)
     const throw(DaoException);
