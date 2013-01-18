@@ -22,7 +22,8 @@ public:
   const pPlayer* getPlayers() const;
   const Player* getCurrentPlayer() const;
   State getCurrentState() const;
-  
+
+  void getAvailableMoves(MoveSet* dest, State* state) const;
   /* SLOTS */
   bool performMove(Player* player, Move move);
   

@@ -31,7 +31,7 @@ void Game::newGame()
 	  //can throw exceptions
 	}
       m_players[i] =
-	PlayerFactory::createPlayer(config.m_players[i]);
+	PlayerFactory::createPlayer(config.m_players[i], this);
 
       m_players[i]->signal_move_proposed.connect( sigc::mem_fun( *this, &Game::performMove));
     }
@@ -91,3 +91,41 @@ State Game::getCurrentState() const
   return m_states.back();
 }
 
+void Game::getAvailableMoves(MoveSet* moveSet, State* state) const
+{
+  //Wypisywanie stanu
+  for(int i = 0; i < 4; i++)
+    {
+      for(int j = 0; j < 4; j++)
+	cout << state->m_board.m_fields[i][j] << " ";
+      cout << endl;
+    }
+
+  Board* board = &(state->m_board);
+  
+  moveSet->clear();
+  for(int from_x = 0; from_x < 4; from_x++)
+    for(int from_y = 0; from_y < 4; from_y++)
+      if(board->m_fields[from_y][from_x] == state->m_current)
+	{
+	  //Iteracja po wszystkich pionkach gracza
+	  
+	  for(int x_step = -1; x_step <= 1; x_step++)
+	    for(int y_step = -1; y_step <= 1; y_step++)
+	      {
+		//Iteracja po wszystkich kierunkach ruchu
+		int to_x = from_x;
+		int to_y = from_y;
+		
+		while(board->isEmptyField(to_x + x_step, to_y + y_step))
+		  {
+		    to_x += x_step;
+		    to_y += y_step;
+		  }
+		
+		if ((to_x != from_x) || (to_y != from_y))
+		  moveSet->add(Move(from_x + 4 * from_y,
+				    to_x + 4 * to_y));
+	      }
+	} 
+}

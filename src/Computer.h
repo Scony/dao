@@ -10,22 +10,49 @@
 #include "Game.h"
 #include "Move.h"
 
-//TODO: Inherit all AI players from Computer class??
 
-class Random : public Player
+class AIStrategy
 {
-  MoveSet m_moveSet;
 public:
-  Random(const PlayerConfiguration& config, const Game* game=0);
-  virtual ~Random();
+  State m_state;
+  Move m_proposedMove;
+
+  AIStrategy(const Game* game, const PlayerConfiguration& config);
+  virtual void run() = 0;
+  
+  Glib::Dispatcher dispatcher_move_proposed;
+protected:
+  const Game* m_game;
+};
+
+
+class Computer : public Player
+{
+public:
+  Computer(const PlayerConfiguration& config, const Game* game,
+	   AIStrategy* strategy);
+  virtual ~Computer();
 
   void proposeMove(State state);
   bool isInteractive() const;
 
-  Glib::Dispatcher signal_done;
-
 protected:
-  Glib::Thread* worker_thread;
-};
+  Glib::Thread* m_thread;
+  AIStrategy* m_strategy;
   
+  void onDispatcherMoveProposed();
+
+  friend class AIStrategy;
+};
+
+class Random : public AIStrategy
+{
+public:
+  Random(const Game* game, const PlayerConfiguration& config);
+  void run();
+
+private:
+  MoveSet m_moveSet;
+};
+
 #endif

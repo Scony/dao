@@ -47,13 +47,10 @@ public:
   sigc::signal<bool, Player*, Move> signal_move_proposed;
   
 protected:
-  Move m_proposedMove;
-
   void getAvailableMoves(MoveSet * moveSet, State * state);
-  void onDispatcherMoveProposed();
   //filterCycles(Moveset* ) //korzystalo z this->game
   //filterSymmetic(Moveset* )
-  Glib::Dispatcher dispatcher_move_proposed;
+  const Game* m_game;
 };
 
 typedef Player* pPlayer;
@@ -61,7 +58,8 @@ typedef Player* pPlayer;
 class PlayerFactory
 {
 public:
-  static Player* createPlayer(const PlayerConfiguration& config)
+  static Player* createPlayer(const PlayerConfiguration& config,
+			      const Game* game)
     throw(DaoException);
   static void setGBoard(GraphicalBoard* gBoard);
 

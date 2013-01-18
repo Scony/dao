@@ -12,7 +12,7 @@ Player::Player(const PlayerConfiguration& config, const Game* game)
   m_color = config.m_color;
   m_name = config.m_name;
 
-  dispatcher_move_proposed.connect( sigc::mem_fun(*this, &Player::onDispatcherMoveProposed ));
+  
 }
 
 Player::~Player()
@@ -163,14 +163,10 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
     }
 	  */
 
-void Player::onDispatcherMoveProposed()
-{
-  signal_move_proposed.emit(this, m_proposedMove);
-}
-
 GraphicalBoard* PlayerFactory::s_gBoard = 0;
 
-Player* PlayerFactory::createPlayer(const PlayerConfiguration& config)
+Player* PlayerFactory::createPlayer(const PlayerConfiguration& config,
+				    const Game* game)
   throw(DaoException)
 {
   switch (config.m_type)
@@ -178,7 +174,11 @@ Player* PlayerFactory::createPlayer(const PlayerConfiguration& config)
     case PLAYER_HUMAN:
       return new Human(config, s_gBoard);
     case PLAYER_COMPUTER:
-      return new Random(config);
+      {
+	//TODO: Wybor strategii
+	AIStrategy* strategy = new Random(game, config);
+	return new Computer(config, game, strategy);
+      }
     default:
       throw DaoException("Player type not implemented");
     }
