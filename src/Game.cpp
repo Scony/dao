@@ -38,10 +38,12 @@ void Game::newGame()
 
   //TODO: Implement reading custom initial states
   m_states.clear();
+  m_previous_state_hashes.clear();
+
   m_currentPlayer = config.m_firstPlayer;
   State initialState(config.m_firstPlayer);
   m_states.push_back(initialState);
-  
+  m_previous_state_hashes.insert(initialState.getHash());
   
   signal_new_game.emit(*this);
 
@@ -57,6 +59,7 @@ bool Game::performMove(Player* player, Move move)
   const State& currentState = m_states.back();
   State nextState = currentState.move(move);
   m_states.push_back(nextState);
+  m_previous_state_hashes.insert(nextState.getHash());
   
   if (!nextState.m_board.isTerminal())
     {
@@ -128,4 +131,31 @@ void Game::getAvailableMoves(MoveSet* moveSet, State* state) const
 				    to_x + 4 * to_y));
 	      }
 	} 
+}
+
+void Game::filterCycles(MoveSet* moveSet) const
+{
+  MoveSet::Iterator it = moveSet->begin();
+
+  State current = getCurrentState();
+  
+  while(it != moveSet->end())
+    {
+      cout << "Moving state" << endl;
+      cout << "from" << it.at().from << " to " << it.at().to << endl;
+      State next = current.move(it.at());
+      cout << "Moved state" << endl;
+      dao_hash_short hash = next.getHash();
+      if (m_previous_state_hashes.find(hash) !=
+	  m_previous_state_hashes.end())
+	{
+	  cout << "removing" << endl;
+	  it = moveSet->remove(it);
+	  cout << "removed" << endl;
+	}
+      else
+	{
+	  it++;
+	}
+    }
 }

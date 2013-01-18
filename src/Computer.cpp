@@ -53,6 +53,16 @@ Random::Random(const Game* game, const PlayerConfiguration& config)
 void Random::run()
 {
   m_game->getAvailableMoves(&m_moveSet,&m_state);
+  m_game->filterCycles(&m_moveSet);
+
+  if (m_moveSet.size() == 0)
+    {
+      cout << "!!! Random player" << endl;
+      cout << "!!! There is no move that will not cause cycles" << endl;
+      cout << "!!! Breaking rules ;-)" << endl;
+
+      m_game->getAvailableMoves(&m_moveSet, &m_state);
+    }
 
   int moves_n = m_moveSet.size();
   if (moves_n == 0)

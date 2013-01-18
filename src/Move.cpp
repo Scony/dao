@@ -19,14 +19,20 @@ Move::~Move()
 {
 }
 
+
 Move& MoveSet::Iterator::at()
 {
+  if (m_self == 0)
+    throw DaoException("Invalid move dereferenced");
   return *m_self;
 }
 
 MoveSet::Iterator MoveSet::Iterator::next()
 {
   MoveSet::Iterator it;
+
+  if (it.m_self == 0)
+    throw DaoException("Calling next on invalid MoveSet::Iterator");
 
   it.m_prev = m_self;
   it.m_self = m_self->next;
@@ -115,4 +121,33 @@ void MoveSet::clear()
   m_size = 0;
   m_head = 0;
   m_tail = 0;
+}
+
+MoveSet::Iterator MoveSet::remove(MoveSet::Iterator& it)
+{
+  if (it.m_self == 0)
+    {
+      throw DaoException("Deleting invalid iterator");
+    }
+  
+  Iterator next = it.next();
+  
+  if (it.m_self == m_head)
+    {
+      m_head = next.m_self;
+      next.m_prev = 0;
+    }
+  else
+    {
+      it.m_prev->next = next.m_self;
+      next.m_prev = it.m_prev;
+    }
+  
+  if( m_tail == it.m_self)
+    m_tail = it.m_prev;
+  
+  it.m_self = 0;
+  m_size--;
+
+  return next;
 }

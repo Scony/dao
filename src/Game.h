@@ -3,6 +3,7 @@
 
 #include <sigc++/sigc++.h>
 #include <vector>
+#include <set>
 #include "State.h"
 #include "Player.h"
 #include "Move.h"
@@ -24,7 +25,7 @@ public:
   State getCurrentState() const;
 
   void getAvailableMoves(MoveSet* dest, State* state) const;
-  //filterCycles(Moveset* ) //korzystalo z this->game
+  void filterCycles(MoveSet* moveSet) const;
   //filterSymmetic(Moveset* )
   /* SLOTS */
   bool performMove(Player* player, Move move);
@@ -38,6 +39,7 @@ public: /* SIGNALS */
 private:
   Player* m_players[NUM_PLAYERS];
   std::vector<State> m_states;
+  std::set<dao_hash_short> m_previous_state_hashes;
   int m_currentPlayer;
 };
 
