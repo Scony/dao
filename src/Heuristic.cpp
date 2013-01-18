@@ -1,15 +1,14 @@
 #include "Heuristic.h"
 
-Heuristic::Heuristic(PlayerConfiguration & config)
+Heuristic::Heuristic(const PlayerConfiguration & config) : m_config(config)
 {
-  m_config = config;
 }
 
 Heuristic::~Heuristic()
 {
 }
 
-LBHeuristic::LBHeuristic(PlayerConfiguration & config) : Heuristic(config)
+LBHeuristic::LBHeuristic(const PlayerConfiguration & config) : Heuristic(config)
 {
 }
 
@@ -20,7 +19,7 @@ LBHeuristic::~LBHeuristic()
 int LBHeuristic::eval(State * state)
 {
   FieldState player = state->m_current;
-  FieldState opponent = 1 - player;
+  FieldState opponent = (FieldState)(1 - player);
 
   //parameters: k[i] - weight of i-th layer, h - hope
   int k[3];
@@ -29,12 +28,12 @@ int LBHeuristic::eval(State * state)
   int h = m_config.m_h;
 
   //H()
-  int max = 18 * (k1 + k2 + k3);
+  int max = 18 * (k[0] + k[1] + k[2]);
   int min = -max;
 
   //r-ity and pure r-ity of layer i and player j
-  int r[5][2] = { 0 };
-  int p[5][2] = { 0 };
+  int r[5][2] = { { 0 } };
+  int p[5][2] = { { 0 } };
 
   Board & board = state->m_board;
 
@@ -123,5 +122,5 @@ int LBHeuristic::eval(State * state)
 			   (r[2][opponent] - p[2][opponent]) * k[1] +
 			   (r[3][opponent] - p[3][opponent]) * k[2]);
 
-  return player_stable + player_hope - opponent_stable;
+  return player_stable + player_hope - opponent_stable - opponent_hope * 0; //*0 to avoid warning
 }

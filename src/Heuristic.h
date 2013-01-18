@@ -7,16 +7,17 @@
 class Heuristic
 {
  protected:
-  PlayerConfiguration & m_config;
+  const PlayerConfiguration & m_config;
  public:
-  Heuristic(PlayerConfiguration & config);
-  ~Heuristic();
+  Heuristic(const PlayerConfiguration & config);
+  virtual ~Heuristic();
   virtual int eval(State * state) = 0;
 };
 
 class LBHeuristic : public Heuristic
 {
-  LBHeuristic(PlayerConfiguration & config);
+ public:
+  LBHeuristic(const PlayerConfiguration & config);
   ~LBHeuristic();
   int eval(State * state);
 };

@@ -71,3 +71,36 @@ void Random::run()
   dispatcher_move_proposed.emit();
 }
 
+HillClimber::HillClimber(const Game* game, const PlayerConfiguration& config)
+  : AIStrategy(game, config)
+{
+  heuristic = new LBHeuristic(config);
+}
+
+HillClimber::~HillClimber()
+{
+  delete heuristic;
+}
+
+void HillClimber::run()
+{
+  m_game->getAvailableMoves(&m_moveSet,&m_state);
+
+  int moves_n = m_moveSet.size();
+  if (moves_n == 0)
+    throw DaoException("Ilość ruchów = 0");
+
+  int move = rand() % moves_n;
+  cout << "randed: " << move << endl;
+  
+  MoveSet::Iterator it = m_moveSet.begin();
+  for(int i = 0; i < move; i++)
+    it = it.next();
+
+  m_proposedMove = it.at();
+  State next = m_state.move(m_proposedMove);
+  cout << heuristic->eval(&next);
+
+  sleep(1);
+  dispatcher_move_proposed.emit();
+}
