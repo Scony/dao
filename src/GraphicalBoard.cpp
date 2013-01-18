@@ -57,7 +57,7 @@ void GraphicalBoard::proposeMove(Human* player)
     {
       const Move& move = it.at();
       cout << "f" << move.from << "t" << move.to << endl;
-      effect[move.from%4][move.to/4] = NONE;
+      effect[move.from/4][move.to%4] = NONE;
     }
 
   queue_draw();
@@ -115,8 +115,8 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 	      for (; it != moves.end(); it++)
 		{
 		  Move& move = it.at();
-		  if(move.from % 4 == a && move.from / 4 == b)
-		    effect[move.to%4][move.to/4] = LIGHT;
+		  if(move.from / 4 == a && move.from % 4 == b)
+		    effect[move.to/4][move.to%4] = LIGHT;
 		}
 	      effect[a][b] = LIGHT;
 
