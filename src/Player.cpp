@@ -21,6 +21,7 @@ Player::~Player()
 
 void Player::getAvailableMoves(MoveSet * moveSet, State * state)
 {
+  //Wypisywanie stanu
   for(int i = 0; i < 4; i++)
     {
       for(int j = 0; j < 4; j++)
@@ -28,32 +29,32 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
       cout << endl;
     }
 
-  int msi = 0;
-
+  Board* board = &(state->m_board);
+  
+  moveSet->clear();
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      if(state->m_board.m_fields[i][j] == state->m_current)
+      if(board->m_fields[i][j] == state->m_current)
 	{
-	  int k, l;
+	  int k;
+	  int from = i + 4 * j;
 
 	  //vertical
-
-	  moveSet->moves[msi].from = i + 4 * j;
-	  moveSet->moves[msi].to = -1;
 	  k = i;
-	  while(k - 1 >= 0 && state->m_board.m_fields[k - 1][j] == FIELD_EMPTY)
+	  while(k - 1 >= 0 && board->m_fields[k - 1][j] == FIELD_EMPTY)
 	    k--;
 	  if(k != i)
-	     moveSet->moves[msi++].to = k + 4 * j;
-
-	  moveSet->moves[msi].from = i + 4 * j;
-	  moveSet->moves[msi].to = -1;
+	    moveSet->add(Move(from, k + 4 * j));
+	  
 	  k = i;
-	  while(k + 1 < 4 && state->m_board.m_fields[k + 1][j] == FIELD_EMPTY)
+	  while(k + 1 < 4 && board->m_fields[k + 1][j] == FIELD_EMPTY)
 	    k++;
 	  if(k != i)
-	    moveSet->moves[msi++].to = k + 4 * j;
+	    moveSet->add(Move(from, k + 4 * j));
+	}
+}
 
+	  /*
 	  //horizontal
 
 	  moveSet->moves[msi].from = i + 4 * j;
@@ -133,7 +134,7 @@ void Player::getAvailableMoves(MoveSet * moveSet, State * state)
       while(--msi >= 0)
 	moveSet->moves[msi].next = &moveSet->moves[msi+1];
     }
-}
+	  */
 
 void Player::onDispatcherMoveProposed()
 {

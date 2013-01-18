@@ -27,11 +27,11 @@ bool Human::isInteractive() const
   return true;
 }
 
-Move * Human::getAvailableMoves()
+MoveSet& Human::getAvailableMoves()
 {
   Player::getAvailableMoves(&moveSet,&currentState);
 
-  return moveSet.begin();
+  return moveSet;
 }
 
 void Human::commitMoveProposal(Move m)
