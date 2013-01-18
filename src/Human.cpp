@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Human.h"
+#include "Game.h"
 #include "GraphicalBoard.h"
 
 using namespace std;
@@ -29,7 +30,7 @@ bool Human::isInteractive() const
 
 MoveSet& Human::getAvailableMoves()
 {
-  Player::getAvailableMoves(&moveSet,&currentState);
+  m_game->getAvailableMoves(&moveSet,&currentState);
 
   return moveSet;
 }

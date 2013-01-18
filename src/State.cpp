@@ -41,3 +41,8 @@ State State::move(const Move& m) const
 
   return next;
 }
+
+dao_hash_short State::getHash() const
+{
+  return 0;
+}
