@@ -64,7 +64,7 @@ void Application::initUI()
     manage(new Gtk::ScrolledWindow);
   scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
 			     Gtk::POLICY_AUTOMATIC);
-  scrolled_window->set_size_request(300, 50);
+  scrolled_window->set_size_request(300, 200);
 
   Gtk::TextView* configuration_text = manage(new Gtk::TextView);
   configuration_text->set_buffer(m_configuration_buffer);
