@@ -46,25 +46,5 @@ protected:
   friend class AIStrategy;
 };
 
-class Random : public AIStrategy
-{
-public:
-  Random(const Game* game, const PlayerConfiguration& config);
-  void run();
-
-private:
-  MoveSet m_moveSet;
-};
-
-class HillClimber : public AIStrategy
-{
-public:
-  HillClimber(const Game* game, const PlayerConfiguration& config);
-  ~HillClimber();
-  void run();
-
-private:
-  MoveSet m_moveSet;
-};
 
 #endif
