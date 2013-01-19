@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <limits.h>
+#include <time.h>
 #include "Algorithms.h"
 
 using namespace std;
@@ -95,7 +96,7 @@ AlphaBeta::AlphaBeta(const Game* game,
   : AIStrategy(game, config)
 {
   heuristic = new LBHeuristic(config);
-  m_max_depth = 1;
+  m_max_depth = 7;
 }
 
 AlphaBeta::~AlphaBeta()
@@ -106,12 +107,13 @@ AlphaBeta::~AlphaBeta()
 void AlphaBeta::run() 
 {
   MoveSet moves;
-  
+
+  startTiming();
   m_game->getAvailableMoves(&moves, &m_state);
   m_game->filterCycles(&moves);
   if (moves.size() == 0)
     {
-      cout << "!!! Random player" << endl;
+      cout << "!!! Alpha beta player" << endl;
       cout << "!!! There is no move that will not cause cycles" << endl;
       cout << "!!! Breaking rules ;-)" << endl;
       m_game->getAvailableMoves(&moves, &m_state);
@@ -119,14 +121,12 @@ void AlphaBeta::run()
 
   MoveSet::Iterator it = moves.begin();
   int best = INT_MIN;
-  cout << "best " << best << endl;
   Move bestMove;
   for(; it != moves.end(); it++)
     {
       State state = m_state.move(it.at());
       int val = alphaBeta(state, m_max_depth, AB_MIN,
 			  INT_MIN, INT_MAX, m_state);
-      cout << "Wybieramy maksimum" << cout;
       if (val > best)
 	{
 	  bestMove = it.at();
@@ -135,6 +135,8 @@ void AlphaBeta::run()
     }
 
   m_proposedMove = bestMove;
+
+  endTiming();
   int latency = Configuration::getInstance().m_latency;
   usleep(latency);
   dispatcher_move_proposed.emit();
@@ -175,11 +177,6 @@ int AlphaBeta::alphaBeta(const State& state, int depth,
 	  State next_state = state.move(it.at());
 	  int val = alphaBeta(next_state, depth-1, AB_MIN, alpha, beta,
 			      state);
-	  if (val > 6000)
-	    cout << "Punkt B" << endl;
-	  cout << "------------" << endl;
-	  next_state.print();
-	  cout << "val: " << val << endl;
 	  alpha = val > alpha ? val : alpha;
 	  if (alpha >= beta)
 	    {
@@ -197,11 +194,6 @@ int AlphaBeta::alphaBeta(const State& state, int depth,
 	  State next_state = state.move(it.at());
 	  int val = alphaBeta(next_state, depth-1, AB_MAX, alpha, beta,
 			      state);
-	  if (val < -6000)
-	    cout << "Punkt A" << endl;
-	  cout << "------------" << endl;
-	  next_state.print();
-	  cout << "val: " << val << endl;
 	  beta = val < beta ? val : beta;
 	  if (alpha >= beta)
 	    {
