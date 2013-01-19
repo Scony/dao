@@ -2,6 +2,7 @@
 #include "Configuration.h"
 #include "Human.h"
 #include "Computer.h"
+#include "Algorithms.h"
 
 #include <iostream>
 using namespace std;
@@ -37,6 +38,9 @@ Player* PlayerFactory::createPlayer(const PlayerConfiguration& config,
 	    return new Computer(config, game, strategy);
 	  case ALGORITHM_HILL_CLIMBER:
 	    strategy = new HillClimber(game, config);
+	    return new Computer(config, game, strategy);
+	  case ALGORITHM_ALPHA_BETA:
+	    strategy = new AlphaBeta(game, config);
 	    return new Computer(config, game, strategy);
 	  default:
 	    throw DaoException("Algorithm type not implemented");

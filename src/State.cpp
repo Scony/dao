@@ -68,3 +68,26 @@ dao_hash_short State::getHash() const
 
   return hash;
 }
+
+void State::print() const
+{
+  for(int y = 0; y < m_board.SIZE; y++)
+    {
+      for(int x = 0; x < m_board.SIZE; x++)
+	{
+	  switch (m_board.m_fields[y][x]) 
+	    {
+	    case FIELD_EMPTY:
+	      cout << " ";
+	      break;
+	    case FIELD_PLAYER1:
+	      cout << "O";
+	      break;
+	    case FIELD_PLAYER2:
+	      cout << "#";
+	      break;
+	    }
+	}
+      cout << endl;
+    }
+}

@@ -24,7 +24,7 @@ public:
   const Player* getCurrentPlayer() const;
   State getCurrentState() const;
 
-  void getAvailableMoves(MoveSet* dest, State* state) const;
+  void getAvailableMoves(MoveSet* dest, const State* state) const;
   void filterCycles(MoveSet* moveSet) const;
   //filterSymmetic(Moveset* )
   /* SLOTS */

@@ -21,6 +21,10 @@ PlayerAlgorithm PlayerConfiguration::stringToPlayerAlgorithm(const std::string& 
     return ALGORITHM_RANDOM;
   else if (a == "hill climber")
     return ALGORITHM_HILL_CLIMBER;
+  else if (a == "alpha beta")
+    return ALGORITHM_ALPHA_BETA;
+  else if (a == "alpha beta tt")
+    return ALGORITHM_ALPHA_BETA_TT;
   else
     throw DaoException("Unknown algorithm");
 }

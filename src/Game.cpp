@@ -94,7 +94,8 @@ State Game::getCurrentState() const
   return m_states.back();
 }
 
-void Game::getAvailableMoves(MoveSet* moveSet, State* state) const
+void Game::getAvailableMoves(MoveSet* moveSet,
+			     const State* state) const
 {
   //Wypisywanie stanu
   for(int i = 0; i < 4; i++)
@@ -104,7 +105,7 @@ void Game::getAvailableMoves(MoveSet* moveSet, State* state) const
       cout << endl;
     }
 
-  Board* board = &(state->m_board);
+  const Board* board = &(state->m_board);
   
   moveSet->clear();
   for(int from_x = 0; from_x < 4; from_x++)
