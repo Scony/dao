@@ -53,8 +53,10 @@ Random::Random(const Game* game, const PlayerConfiguration& config)
 void Random::run()
 {
   m_game->getAvailableMoves(&m_moveSet,&m_state);
-  
+
+  cout << "Number of cycles before " << m_moveSet.size();  
   m_game->filterCycles(&m_moveSet);
+  cout << " after " << m_moveSet.size() << endl;
 
   if (m_moveSet.size() == 0)
     {
