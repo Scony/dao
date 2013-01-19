@@ -19,8 +19,8 @@ public:
   Board(const Board& b);
   ~Board();
 
-  bool isValidField(int x, int y);
-  bool isEmptyField(int x, int y);
+  bool isValidField(int x, int y) const;
+  bool isEmptyField(int x, int y) const;
   Board rotate180();
 
   FieldState getWinner();

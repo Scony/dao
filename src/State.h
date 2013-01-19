@@ -23,6 +23,8 @@ public:
 
   dao_hash_short getHash() const;
   dao_hash_invariant getInvariantHash() const;
+
+  void print() const;
 };
 
 #endif

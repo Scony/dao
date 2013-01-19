@@ -18,7 +18,7 @@ LBHeuristic::~LBHeuristic()
 {
 }
 
-int LBHeuristic::eval(State * state, FieldState player)
+int LBHeuristic::eval(const State * state, FieldState player)
 {
   FieldState opponent = (FieldState)(1 - player);
 
@@ -37,7 +37,7 @@ int LBHeuristic::eval(State * state, FieldState player)
   int r[5][2] = { { 0 } };
   int p[5][2] = { { 0 } };
 
-  Board & board = state->m_board;
+  const Board & board = state->m_board;
 
   //ammout of stones that belongs to i-th owner (for concrete term-state)
   int stones[3] = { 0 };
@@ -125,4 +125,22 @@ int LBHeuristic::eval(State * state, FieldState player)
 			   (r[3][opponent] - p[3][opponent]) * k[2]);
 
   return player_stable + player_hope - opponent_stable - opponent_hope * 0; //*0 to avoid warning
+}
+
+int LBHeuristic::getMax() const 
+{
+  //parameters: k[i] - weight of i-th layer, h - hope
+  int k[3];
+  for(int i = 0; i < 3; i++)
+    k[i] = m_config.m_k[i];
+  
+  //H()
+  int max = 18 * (k[0] + k[1] + k[2]);
+
+  return max;
+}
+
+int LBHeuristic::getMin() const
+{
+  return -getMax();
 }

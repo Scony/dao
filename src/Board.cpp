@@ -124,7 +124,7 @@ bool Board::isTerminal()
   return getWinner() != FIELD_EMPTY;
 }
 
-bool Board::isValidField(int x, int y)
+bool Board::isValidField(int x, int y) const
 {
   if (x < 0 || x > 3)
     return false;
@@ -134,7 +134,7 @@ bool Board::isValidField(int x, int y)
   return true;
 }
 
-bool Board::isEmptyField(int x, int y)
+bool Board::isEmptyField(int x, int y) const
 {
   if(!isValidField(x, y))
     return false;
