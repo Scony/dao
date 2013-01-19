@@ -23,6 +23,8 @@ class GraphicalBoard : public Gtk::DrawingArea
   Cairo::RefPtr<Cairo::ImageSurface> m_stones[COLOR_NUM];
   Cairo::RefPtr<Cairo::ImageSurface> m_hilightImg;
   Cairo::RefPtr<Cairo::ImageSurface> m_lolightImg;
+  Cairo::RefPtr<Cairo::ImageSurface> m_backgroundImg;
+  Cairo::RefPtr<Cairo::SurfacePattern> m_backgroundPattern;
 
   void lock();
   void unlock();

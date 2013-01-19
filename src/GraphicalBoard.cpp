@@ -22,7 +22,11 @@ GraphicalBoard::GraphicalBoard()
     Cairo::ImageSurface::create_from_png(DATA("highlight.png"));
   m_lolightImg =
     Cairo::ImageSurface::create_from_png(DATA("gray.png"));
-  
+  m_backgroundImg =
+    Cairo::ImageSurface::create_from_png(DATA("background.png"));
+  m_backgroundPattern =
+    Cairo::SurfacePattern::create(m_backgroundImg);  
+  m_backgroundPattern->set_extend(Cairo::EXTEND_REPEAT);
   m_board = Board::initialBoard();
   m_currentPlayer = NULL;
 
@@ -158,8 +162,9 @@ void GraphicalBoard::onGameStateChanged(State s, const Player& p)
 
 bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-  cout << "on_draw()" << endl;
-  
+  cr->set_source(m_backgroundPattern);
+  cr->rectangle(0, 0, get_width(), get_height());
+  cr->paint();
   cr->set_source(m_boardImg, 10, 10);
   cr->paint();
 
