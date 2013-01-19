@@ -59,6 +59,7 @@ void PlayerConfiguration::readKeyFile(const Glib::KeyFile& key)
   m_k[1] = key.get_double(m_sectionName, "k2");
   m_k[2] = key.get_double(m_sectionName, "k3");
   m_h = key.get_double(m_sectionName, "h");
+  m_depth = key.get_integer(m_sectionName, "depth");
 }
 
 Configuration::Configuration()

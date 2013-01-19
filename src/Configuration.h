@@ -20,6 +20,7 @@ struct PlayerConfiguration
   std::string m_name;
   float m_k[3];
   float m_h;
+  int m_depth;
 
   PlayerType stringToPlayerType(const std::string& type)
     const throw(DaoException);

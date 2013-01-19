@@ -96,7 +96,7 @@ AlphaBeta::AlphaBeta(const Game* game,
   : AIStrategy(game, config)
 {
   heuristic = new LBHeuristic(config);
-  m_max_depth = 7;
+  m_max_depth = config.m_depth;
 }
 
 AlphaBeta::~AlphaBeta()
