@@ -11,6 +11,22 @@ AIStrategy::AIStrategy(const Game* game,
   m_game = game;
 }
 
+void AIStrategy::startTiming()
+{
+  clock_gettime(CLOCK_MONOTONIC, &m_startTime);
+}
+
+void AIStrategy::endTiming()
+{
+  timespec endTime;
+  clock_gettime(CLOCK_MONOTONIC, &endTime);
+
+  double st = m_startTime.tv_sec + m_startTime.tv_nsec * 1e-9;
+  double en = endTime.tv_sec + endTime.tv_nsec * 1e-9;
+  double elapsed = en - st;
+  cout << "---ELAPSED TIME" << elapsed << endl;
+}
+
 Computer::Computer(const PlayerConfiguration& config,
 		   const Game* game,
 		   AIStrategy* strategy): Player(config)

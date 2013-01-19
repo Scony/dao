@@ -1,6 +1,7 @@
 #ifndef COMPUTER_H
 #define COMPUTER_H
 
+#include <time.h>
 #include <glibmm/dispatcher.h>
 #include <glibmm/thread.h>
 
@@ -24,6 +25,10 @@ public:
   Glib::Dispatcher dispatcher_move_proposed;
 protected:
   const Game* m_game;
+  timespec m_startTime;
+
+  void startTiming();
+  void endTiming();
 };
 
 

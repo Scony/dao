@@ -97,14 +97,6 @@ State Game::getCurrentState() const
 void Game::getAvailableMoves(MoveSet* moveSet,
 			     const State* state) const
 {
-  //Wypisywanie stanu
-  for(int i = 0; i < 4; i++)
-    {
-      for(int j = 0; j < 4; j++)
-	cout << state->m_board.m_fields[i][j] << " ";
-      cout << endl;
-    }
-
   const Board* board = &(state->m_board);
   
   moveSet->clear();
