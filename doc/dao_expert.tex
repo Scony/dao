@@ -110,6 +110,36 @@ Rozważmy stan gry przedstawiony na rysunku \ref{fig:exaple_state}.
 \subsection{Metody przeszukiwania stanów gry}
 
 \subsection{Funkcja oceny heurystycznej stanu gry}
+\subsubsection{Lampe - Boczkowski heuristic}
+W grze dao wyróżniamy łącznie 22 wszystkie możliwe stany terminalne dla danego gracza:
+\begin{itemize}
+\item 1 stan - pokrycie narożników
+\item 9 stanów - kwadraty 2x2
+\item 8 stanów - linie poziome i pionowe
+\item 4 stany - blokada przeciwnika w rogu
+\end{itemize}
+W dalszej części rozważań będziemy używać pojęć które definiuje się następująco:
+\begin{itemize}
+\item Warstwą będziemy nazywać zbiór stanów terminalnych pokrytych za pomocą odpowiedniej ilości pionów. Tak oto $n$-ta warstwa to zbiór takich stanów terminalnych, że są one kryte przez $n$ pionów danego gracza. Ze względu na powyższe sens mają rzecz jasna tylko warstwy od 1 do 4
+\item Przez $r_{n}^{m}$ oznaczać będziemy arność $n$-tej warstwy dla $m$-tego gracza
+\item Przez $p_{n}^{m}$ oznaczać będziemy arność $n$-tej warstwy dla $m$-tego gracza z pominięciem stanów terminalnych blokowanych przez przeciwnika
+\item Przez $k_{n}$ oznaczać będziemy wagę $n$-tej warstwy
+\item Przez $h$ oznaczać będziemy współczynnik nadzieji
+\item Vetem nazywać będziemy stan terminalny w pełni pokryty
+\end{itemize}
+Niech dane będą wszelkie wymagane arności. W ogólności możemy wyróżnić następujące wzory:
+%equation
+$max = 18 ( k_{1} + k_{2} + k_{3} )$
+%equation
+$h_{n} = p_{1}^{n} k_{1} + p_{2}^{n} k_{2} + p_{3}^{n} k_{3} + h ([r_{1}^{n} - p_{1}^{n}] k_{1} + [r_{2}^{n} - p_{2}^{n}] k_{2} + [r_{3}^{n} - p_{3}^{n}] k_{3})$
+
+$max$ to maksymalna i nieprzekraczalna ocena heurystyczna. Jest to swojego rodzaju przeszacowana górna granica funkcji oceny heurystycznej.
+
+$h_{n}$ to ocena heurystyczna $n$-tego gracza.
+
+$max$ używana jest w sytuacjach veta oraz w sytacji osiągnięcia jednego ze stanów blokady przeciwnika w rogu.
+
+Ostatecznie $h_{n} - h_{1-n}$ to ocena heurystyczna danego stanu.
 
 \section{Testy wydajnościowe i porównania algorytmów}
 

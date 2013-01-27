@@ -1,5 +1,9 @@
 + Menu graficzne http://developer.gnome.org/gtkmm-tutorial/3.4/chapter-menus-and-toolbars.html.en
 
-+ Opis heurystyki do sprawka //Paweł
-
 + przerywanie obliczen
+
++ obsluga stanu: 3 moje blokuja w rogu jeden Twoj
+|
++--- w generatorze ruchow
+|
++--- w heurystyce (veto) //Paweł
