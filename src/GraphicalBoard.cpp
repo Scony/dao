@@ -30,9 +30,12 @@ GraphicalBoard::GraphicalBoard()
   m_board = Board::initialBoard();
   m_currentPlayer = NULL;
 
-  choosen.a = -1;
-  choosen.b = -1;
+  m_choosen.a = -1;
+  m_choosen.b = -1;
   lock();
+
+  m_offset.x = 10;
+  m_offset.y = 10;
 
   signal_button_press_event().connect(sigc::mem_fun(this, &GraphicalBoard::onButtonPress));
 }
@@ -44,7 +47,7 @@ GraphicalBoard::~GraphicalBoard()
 
 void GraphicalBoard::proposeMove(Human* player)
 {
-  cout << "proposeMove(" << player->m_name << ")" << endl;
+  // cout << "proposeMove(" << player->m_name << ")" << endl;
 
   m_currentPlayer = player;
 
@@ -53,7 +56,7 @@ void GraphicalBoard::proposeMove(Human* player)
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
       if(m_board.m_fields[i][j] != FIELD_EMPTY)
-	effect[i][j] = GRAY;
+	m_effect[i][j] = GRAY;
 
   MoveSet& moves = m_currentPlayer->getAvailableMoves();
   MoveSet::Iterator it = moves.begin();
@@ -61,7 +64,7 @@ void GraphicalBoard::proposeMove(Human* player)
     {
       const Move& move = it.at();
       cout << "f" << move.from << "t" << move.to << endl;
-      effect[move.from/4][move.from%4] = NONE;
+      m_effect[move.from/4][move.from%4] = NONE;
     }
 
   queue_draw();
@@ -69,19 +72,13 @@ void GraphicalBoard::proposeMove(Human* player)
 
 bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 {
-  cout << "onButtonPress(" << (int)event->x << "x" << (int)event->y << ")" << endl;
+  // cout << "onButtonPress(" << (int)event->x << "x" << (int)event->y << ")" << endl;
 
-  if(locked)
+  if(m_locked)
     return true;
 
-  int x = event->x - 45;
-  int y = event->y - 45;
-
-  //TODO: Po wykonaniu ruchu wywolaj Human::commitMoveProposal
-  // currentPlayer->commitMoveProposal
-
-  // Spowoduje to cykl wywolan funkcji, m.in
-  // GraphicalBoard::onGameStateChanged
+  int x = event->x - (m_offset.x + 35);
+  int y = event->y - (m_offset.y + 35);
 
   if(x > 0 && y > 0)
     {
@@ -89,43 +86,42 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 	{
 	  int a = y / 60, b = x / 60;
 
-	  if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT && (this->choosen.a != a || this->choosen.b != b))
+	  if(this->m_choosen.a >= 0 && this->m_effect[a][b] == LIGHT && (this->m_choosen.a != a || this->m_choosen.b != b))
 	    {
 	      Move move;
-	      move.from = choosen.a * 4 + choosen.b;
+	      move.from = m_choosen.a * 4 + m_choosen.b;
 	      move.to = a * 4 + b;
 
-	      choosen.a = -1;
-	      choosen.b = -1;
+	      m_choosen.a = -1;
+	      m_choosen.b = -1;
 
 	      lock();
 	      m_currentPlayer->commitMoveProposal(move);
 	    }
-	  else if(this->choosen.a >= 0 && this->effect[a][b] == LIGHT)
+	  else if(this->m_choosen.a >= 0 && this->m_effect[a][b] == LIGHT)
 	    {
 	      for(int i = 0; i < 4; i++)
 	      	for(int j = 0; j < 4; j++)
-		  if(effect[i][j] == LIGHT)
-		    effect[i][j] = NONE;
+		  if(m_effect[i][j] == LIGHT)
+		    m_effect[i][j] = NONE;
 
-	      this->choosen.a = -1;
-	      this->choosen.b = -1;
+	      this->m_choosen.a = -1;
+	      this->m_choosen.b = -1;
 	    }
-	  else if(choosen.a < 0 && m_board.m_fields[a][b] != FIELD_EMPTY && effect[a][b] != GRAY)
+	  else if(m_choosen.a < 0 && m_board.m_fields[a][b] != FIELD_EMPTY && m_effect[a][b] != GRAY)
 	    {
-	      //IF xyx0 -> y -> 0xxx => THEN TODO: vectors & path enlightment
 	      MoveSet& moves = m_currentPlayer->getAvailableMoves();
 	      MoveSet::Iterator it = moves.begin();
 	      for (; it != moves.end(); it++)
 		{
 		  Move& move = it.at();
 		  if(move.from / 4 == a && move.from % 4 == b)
-		    effect[move.to/4][move.to%4] = LIGHT;
+		    m_effect[move.to/4][move.to%4] = LIGHT;
 		}
-	      effect[a][b] = LIGHT;
+	      m_effect[a][b] = LIGHT;
 
-	      choosen.a = a;
-	      choosen.b = b;
+	      m_choosen.a = a;
+	      m_choosen.b = b;
 	    }
 	}
     }
@@ -137,14 +133,11 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 
 void GraphicalBoard::onGameNew(const Game& game)
 {
-  //TODO: enter no move selection mode
-  //Jezeli aktualny gracz bedzie czlowiekiem, to
-  //sam wykona GraphicalBoard::proposeMove()
   m_currentPlayer = NULL;
   m_players = game.getPlayers();
   m_board = game.getCurrentState().m_board;
-  choosen.a = -1;
-  choosen.b = -1;
+  m_choosen.a = -1;
+  m_choosen.b = -1;
   lock();
   
   queue_draw();
@@ -162,10 +155,13 @@ void GraphicalBoard::onGameStateChanged(State s, const Player& p)
 
 bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+  m_offset.x = (get_width() - 300) / 2;
+  m_offset.y = (get_height() - 300) / 2;
+
   cr->set_source(m_backgroundPattern);
   cr->rectangle(0, 0, get_width(), get_height());
   cr->paint();
-  cr->set_source(m_boardImg, 10, 10);
+  cr->set_source(m_boardImg, m_offset.x, m_offset.y);
   cr->paint();
 
   for(int i = 0; i < 4; i++)
@@ -178,18 +174,18 @@ bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	if (fs != FIELD_EMPTY)
 	  {
 	    color = m_players[fs]->m_color;
-	    cr->set_source(m_stones[color], 45+j*60, 45+i*60);
+	    cr->set_source(m_stones[color], m_offset.x+35+j*60, m_offset.y+35+i*60);
 	    cr->paint();
 	  }
 
-  	switch(this->effect[i][j])
+  	switch(this->m_effect[i][j])
   	  {
   	  case LIGHT:
-	    cr->set_source(m_hilightImg, 45+j*60, 45+i*60);
+	    cr->set_source(m_hilightImg, m_offset.x+35+j*60, m_offset.y+35+i*60);
 	    cr->paint();
 	    break;
   	  case GRAY:
-	    cr->set_source(m_lolightImg, 45+j*60, 45+i*60);
+	    cr->set_source(m_lolightImg, m_offset.x+35+j*60, m_offset.y+35+i*60);
 	    cr->paint();
 	  case NONE:
 	    ;
@@ -201,18 +197,18 @@ bool GraphicalBoard::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 void GraphicalBoard::lock()
 {
-  locked = true;
+  m_locked = true;
 
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      this->effect[i][j] = GRAY;  
+      this->m_effect[i][j] = GRAY;  
 }
 
 void GraphicalBoard::unlock()
 {
-  locked = false;
+  m_locked = false;
 
   for(int i = 0; i < 4; i++)
     for(int j = 0; j < 4; j++)
-      this->effect[i][j] = NONE;
+      this->m_effect[i][j] = NONE;
 }

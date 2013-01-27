@@ -15,9 +15,11 @@ class GraphicalBoard : public Gtk::DrawingArea
   Board m_board;
   Human* m_currentPlayer;
   const pPlayer* m_players;
-  struct { int a, b; } choosen;
-  enum { NONE, GRAY, LIGHT } effect[4][4];
-  bool locked;
+  struct { int a, b; } m_choosen;
+  enum { NONE, GRAY, LIGHT } m_effect[4][4];
+  bool m_locked;
+
+  struct { int x, y; } m_offset;
   
   Cairo::RefPtr<Cairo::ImageSurface> m_boardImg;
   Cairo::RefPtr<Cairo::ImageSurface> m_stones[COLOR_NUM];
