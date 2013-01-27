@@ -74,7 +74,7 @@ void HillClimber::run()
   for(MoveSet::Iterator it = best; it != m_moveSet.end(); it++)
     {
       State next = m_state.move(it.at());
-      int rate = heuristic->eval(&next,m_state.m_current);
+      int rate = heuristic->eval(next,m_state.m_current);
       cout << it.at().from << "->" << it.at().to << " H(): " << rate << endl;
       if(rate > max)
 	{
@@ -149,7 +149,7 @@ int AlphaBeta::alphaBeta(const State& state, int depth,
 {
   FieldState currentPlayer = state.m_current;
 
-  int heur_val = heuristic->eval(&state, currentPlayer);
+  int heur_val = heuristic->eval(state, currentPlayer);
 
 
   if (heur_val == heuristic->getMax() || 

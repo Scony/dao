@@ -18,7 +18,7 @@ LBHeuristic::~LBHeuristic()
 {
 }
 
-int LBHeuristic::eval(const State * state, FieldState player)
+int LBHeuristic::eval(const State & state, FieldState player)
 {
   FieldState opponent = (FieldState)(1 - player);
 
@@ -37,7 +37,7 @@ int LBHeuristic::eval(const State * state, FieldState player)
   int r[5][2] = { { 0 } };
   int p[5][2] = { { 0 } };
 
-  const Board & board = state->m_board;
+  const Board & board = state.m_board;
 
   //ammout of stones that belongs to i-th owner (for concrete term-state)
   int stones[3] = { 0 };

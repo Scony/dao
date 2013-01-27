@@ -11,7 +11,7 @@ class Heuristic
  public:
   Heuristic(const PlayerConfiguration & config);
   virtual ~Heuristic();
-  virtual int eval(const State * state, FieldState player) = 0;
+  virtual int eval(const State & state, FieldState player) = 0;
 
   virtual int getMax() const = 0;
   virtual int getMin() const = 0;
@@ -22,7 +22,7 @@ class LBHeuristic : public Heuristic
  public:
   LBHeuristic(const PlayerConfiguration & config);
   ~LBHeuristic();
-  int eval(const State * state, FieldState player);
+  int eval(const State & state, FieldState player);
 
   int getMax() const;
   int getMin() const;
