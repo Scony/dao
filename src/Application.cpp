@@ -53,9 +53,81 @@ void Application::initUI()
 
   Gtk::VBox* layout = manage(new Gtk::VBox);
 
-  Gtk::Button* button = manage(new Gtk::Button("Nowa gra"));
-  button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
-  layout->add(*button);
+  /////////////////////////////////////////////
+  /////////////////////////////////////////////
+
+  //Create actions for menus and toolbars:
+  m_refActionGroup = Gtk::ActionGroup::create();
+
+  //Game menu:
+  m_refActionGroup->add(Gtk::Action::create("GameMenu", "Gra"));
+  //Sub-menu.
+  m_refActionGroup->add(Gtk::Action::create("GameNew", Gtk::Stock::NEW, "Nowa", "Start new game"), sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+  m_refActionGroup->add(Gtk::Action::create("GameQuit", Gtk::Stock::QUIT)); //dodac obsluge wyjscia z gry // moze jakies onApplicationExit ?
+
+  //Edit menu:
+  m_refActionGroup->add(Gtk::Action::create("EditMenu", "Edit"));
+  m_refActionGroup->add(Gtk::Action::create("EditCopy", Gtk::Stock::COPY));
+  m_refActionGroup->add(Gtk::Action::create("EditPaste", Gtk::Stock::PASTE));
+  m_refActionGroup->add(Gtk::Action::create("EditSomething", "Something"),
+			Gtk::AccelKey("<control><alt>S"));
+
+  //Choices menu, to demonstrate Radio items
+  m_refActionGroup->add( Gtk::Action::create("ChoicesMenu", "Choices") );
+  Gtk::RadioAction::Group group_userlevel;
+  m_refChoiceOne = Gtk::RadioAction::create(group_userlevel, "ChoiceOne", "One");
+  m_refActionGroup->add(m_refChoiceOne); //po przecinku mozna dac sygnal
+  m_refChoiceTwo = Gtk::RadioAction::create(group_userlevel, "ChoiceTwo", "Two");
+  m_refActionGroup->add(m_refChoiceTwo); //po przecinku mozna dac sygnal
+
+  //Help menu:
+  m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Pomoc") );
+  m_refActionGroup->add( Gtk::Action::create("HelpAbout", Gtk::Stock::HELP, "O programie"));
+
+  m_refUIManager = Gtk::UIManager::create();
+  m_refUIManager->insert_action_group(m_refActionGroup);
+
+  add_accel_group(m_refUIManager->get_accel_group());
+
+  //Layout the actions in a menubar and toolbar:
+  Glib::ustring ui_info = 
+        "<ui>"
+        "  <menubar name='MenuBar'>"
+        "    <menu action='GameMenu'>"
+        "      <menuitem action='GameNew'/>"
+        "      <separator/>"
+        "      <menuitem action='GameQuit'/>"
+        "    </menu>"
+        "    <menu action='EditMenu'>"
+        "      <menuitem action='EditCopy'/>"
+        "      <menuitem action='EditPaste'/>"
+        "      <menuitem action='EditSomething'/>"
+        "    </menu>"
+        "    <menu action='ChoicesMenu'>"
+        "      <menuitem action='ChoiceOne'/>"
+        "      <menuitem action='ChoiceTwo'/>"
+        "    </menu>"
+        "    <menu action='HelpMenu'>"
+        "      <menuitem action='HelpAbout'/>"
+        "    </menu>"
+        "  </menubar>"
+        "</ui>";
+
+  try
+  {
+    m_refUIManager->add_ui_from_string(ui_info);
+  }
+  catch(const Glib::Error& ex)
+  {
+    std::cerr << "building menus failed: " <<  ex.what();
+  }
+
+  //Get the menubar and toolbar widgets, and add them to a container widget:
+  Gtk::Widget* pMenubar = m_refUIManager->get_widget("/MenuBar");
+  if(pMenubar)
+    layout->add(*pMenubar);
+  /////////////////////////////////////////////
+  /////////////////////////////////////////////
 
   m_gBoard = new GraphicalBoard;
   layout->add(*m_gBoard);

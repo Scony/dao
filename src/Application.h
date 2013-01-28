@@ -4,6 +4,9 @@
 #include <glibmm/refptr.h>
 #include <gtkmm/window.h>
 #include <gtkmm/statusbar.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/uimanager.h>
+#include <gtkmm/radioaction.h>
 
 #include "Configuration.h"
 #include "GraphicalBoard.h"
@@ -21,6 +24,9 @@ private:
   Game* m_game;
   Gtk::Statusbar* m_statusbar;
   Glib::RefPtr<Gtk::TextBuffer> m_configuration_buffer;
+  Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+  Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
+  Glib::RefPtr<Gtk::RadioAction> m_refChoiceOne, m_refChoiceTwo;
 
   void initUI();
 
