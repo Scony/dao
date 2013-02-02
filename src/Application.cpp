@@ -22,6 +22,8 @@ Application::Application()
 {
   this->initUI();
 
+  m_configurationUI = new ConfigurationUI(*this);
+
   Configuration& config = Configuration::getInstance();  
   string configuration_text = config.getData();
   m_configuration_buffer->set_text(configuration_text);
@@ -39,6 +41,7 @@ Application::Application()
 
 Application::~Application()
 {
+  delete m_configurationUI;
   delete m_gBoard;
 }
 
