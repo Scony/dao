@@ -26,6 +26,8 @@ public:
   ConfigurationUI(Gtk::Window& parent);
   ~ConfigurationUI();
 
+  int run();
+
 protected:
   GameConfigurationUI* m_gameConfigurationUI;
   //TODO: Add player configuration UI

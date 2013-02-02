@@ -28,6 +28,14 @@ ConfigurationUI::~ConfigurationUI()
 {
 }
 
+int ConfigurationUI::run()
+{
+  Configuration& config = Configuration::getInstance();
+  m_gameConfigurationUI->readValues(config);
+  //TODO: player conf read
+  return Gtk::Dialog::run();
+}
+
 void ConfigurationUI::onClose(int button_id)
 {
   //TODO: Save configuration
@@ -48,7 +56,6 @@ GameConfigurationUI::GameConfigurationUI()
   m_sbTimeout = manage(new Gtk::SpinButton);
   m_sbTimeout->set_range(0, 10000);
   m_sbTimeout->set_increments(100, 100);
-  //TODO: Add range
   
   add(*lblTimeout);
   attach_next_to(*m_sbTimeout, *lblTimeout, Gtk::POS_RIGHT, 1, 1);
@@ -64,4 +71,17 @@ GameConfigurationUI::GameConfigurationUI()
   attach(*lblFirstPlayer, 0, 1, 1, 1);
   attach_next_to(*m_cbFirstPlayer, *lblFirstPlayer, Gtk::POS_RIGHT,
 		 1, 1);
+}
+
+void GameConfigurationUI::readValues(Configuration& config)
+{
+  m_cbFirstPlayer->set_active(static_cast<int>(config.m_firstPlayer));
+  m_sbTimeout->set_value(config.m_latency/1000);
+}
+
+void GameConfigurationUI::saveValues(Configuration& config)
+{
+  config.m_latency = m_sbTimeout->get_value() * 1000;
+  config.m_firstPlayer =
+    static_cast<FieldState>(m_cbFirstPlayer->get_active_row_number());
 }
