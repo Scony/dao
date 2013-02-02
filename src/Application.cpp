@@ -73,8 +73,10 @@ void Application::initUI()
   m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Pomoc") );
   m_refActionGroup->add( Gtk::Action::create("HelpAbout", "O programie"),
 			 sigc::mem_fun(*this, &Application::onMenuHelpAboutSelected));
-  m_refActionGroup->add( Gtk::Action::create("HelpRules", "Zasady gry"));
-  m_refActionGroup->add( Gtk::Action::create("HelpGUI", "Interfejs"));
+  m_refActionGroup->add( Gtk::Action::create("HelpRules", "Zasady gry"),
+			 sigc::mem_fun(*this, &Application::onMenuHelpRulesSelected));
+  m_refActionGroup->add( Gtk::Action::create("HelpGUI", "Interfejs"),
+			 sigc::mem_fun(*this, &Application::onMenuHelpGUISelected));
 
   m_refUIManager = Gtk::UIManager::create();
   m_refUIManager->insert_action_group(m_refActionGroup);
@@ -143,6 +145,16 @@ void Application::onMenuHelpAboutSelected()
 void Application::onMenuGameQuitSelected()
 {
   Gtk::Main::quit();
+}
+
+void Application::onMenuHelpRulesSelected()
+{
+  system("xdg-open ./data/index.html");
+}
+
+void Application::onMenuHelpGUISelected()
+{
+  system("xdg-open ./data/gui.html");
 }
 
 void Application::onGameNew(const Game& game)

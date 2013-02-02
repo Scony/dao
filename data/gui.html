@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Dao - pomoc</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      body {
+        padding-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="index.html">Dao</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="index.html#aim">Cel gry</a></li>
+              <li><a href="index.html#moves">Możliwe ruchy</a></li>
+              <li><a href="index.html#run">Przebieg rozgrywki</a></li>
+              <li><a href="index.html#win">Pozycje wygrywające</a></li>
+              <li><a href="index.html#loose">Pozycje przegrywające</a></li>
+              <li><a href="#gui">Obsługa interfejsu</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="gui" style="height:40px;"></div>
+      <h1>Obsługa interfejsu</h1>
+      <p>
+	Obsługa interfejsu jest prosta oraz intuicyjna. Przykładowy ruch przebiega następująco:
+	<ul>
+	  <li>Naprowadzamy kursor na pion który chcemy przesunąć:<br>
+	    <img src="./over.png" class="img-polaroid"></li>
+	  <li>Klikamy pion:<br>
+	    <img src="./marked.png" class="img-polaroid"></li>
+	  <li>Przesuwamy kursor w jedno z podświetlonych miejsc oznaczających możliwe przesunięcie piona:<br>
+	    <img src="./getready.png" class="img-polaroid"></li>
+	  <li>Klikamy myszą aby przesunąć pion:<br>
+	    <img src="./done.png" class="img-polaroid"></li>
+	</ul>
+      </p>
+
+      <p>
+	Istnieje także możliwość zmiany wybranego piona na inny. Przykładowa zmiana przebiega następująco:<br>
+	<ul>
+	  <li>Naprowadzamy kursor na pion który chcemy przesunąć:<br>
+	    <img src="./over.png" class="img-polaroid"></li>
+	  <li>Klikamy pion:<br>
+	    <img src="./marked.png" class="img-polaroid"></li>
+	  <li>Zmieniamy zdanie, chcemy wybrać inny pion. Przesuwamy więc nad niego kursor:<br>
+	    <img src="./change.png" class="img-polaroid"></li>
+	  <li>Klikamy myszą aby wybrać inny pion:<br>
+	    <img src="./changed.png" class="img-polaroid"></li>
+	</ul>
+      </p>
+      <div style="height:1000px;"></div>
+    </div>
+    
+  </body>
+</html>
