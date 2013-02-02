@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Dao - pomoc</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+      body {
+        padding-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Dao</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="#aim">Cel gry</a></li>
+              <li><a href="#moves">Możliwe ruchy</a></li>
+              <li><a href="#run">Przebieg rozgrywki</a></li>
+              <li><a href="#win">Pozycje wygrywające</a></li>
+              <li><a href="#loose">Pozycje przegrywające</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="aim" style="height:40px;"></div>
+      <h1>Cel gry</h1>
+      <p>
+	Celem gry Dao jest bycie pierwszym z graczy który przesunie swoje 4 piony na którąś z pozycji wygrywających.
+      </p>
+
+      <div id="moves" style="height:40px;"></div>
+      <h1>Możliwe ruchy</h1>
+      <p>
+	Podczas ruchu, gracz może wykonać ruch każdym ze swoich pionów. Ruch polega na przesunięciu piona w poziomie, w pionie lub na skos.
+	Przesunięcie musi zostać wykonane w danym kierunku aż do napotkania przez dany pion przeszkody. Przeszkodą może być koniec planszy
+	lub pion innego gracza. Zabronione jest przeskakiwanie pionów przeciwnika tudzież ruch w niedozwolonym kierunku.
+      </p>
+
+      <div id="run" style="height:40px;"></div>
+      <h1>Przebieg rozgrywki</h1>
+      <p>
+	Na początek rozmieszczamy na planszy 8 pionów tak jak na rysunku poniżej. Następnie decydujemy którymi pionkami będziemy
+	grać oraz kto rozpocznie rozgrywkę.<br>
+	<img src="./start.png" class="img-polaroid">
+      </p>
+      <p>
+	Po powyższych ustaleniach można przystąpić do gry. Zaczynający gracz wykonuje dokładnie jeden ruch dokładnie jednym pionem.
+	Następnie ruch wykonuje gracz przeciwny. Naprzemienne ruchy  powtarzają się tak długo aż któryś z graczy osiągnie pozycję wygrywającą
+	lub pozycję przegrywającą.
+      </p>
+
+      <div id="win" style="height:40px;"></div>
+      <h1>Pozycje wygrywające</h1>
+      <p>
+	W grze dao wyróżniamy 18 różnych stanów wygrywających:
+	<ul>
+	  <li>1 stan narożnikowy (poniżej pokazuje go gracz niebieski):<br><img src="./corn.png" class="img-polaroid"></li>
+	  <li>9 stanów typu kwadrat, przy czym kwadrat może być gdziekolwiek na planszy (poniżej pokazuje go gracz niebieski):<br>
+	    <img src="./quad.png" class="img-polaroid"></li>
+	  <li>8 stanów typu linia pionowa lub pozioma, gdziekolwiek na planszy (poniżej pokazuje to gracz niebieski):
+	    <img src="./line.png" class="img-polaroid"></li>
+	</ul>
+      </p>
+
+      <div id="loose" style="height:40px;"></div>
+      <h1>Pozycje przegrywające</h1>
+      <p>
+	O pozyji przegrywającej mówimy wtedy, gdy któryś z graczy przy użyciu trzech swoich pionów zablokuje pion przeciwnika w narożniku. Tak
+	oto na ilustracji poniżej gracz niebieski zablokował w prawym dolnym narożniku gracza czerwonego przez co przegrał.<br>
+	<img src="./err.png" class="img-polaroid">
+      </p>
+
+    <div id="" style="height:40px;"></div>
+      <h1>Obsługa interfejsu</h1>
+      <p>
+	Obsługa interfejsu jest prosta oraz intuicyjna. Przebiega następująco:
+	<ul>
+	  <li>dasdas</li>
+	  <li>adsas</li>
+	  <li>dasdas</li>
+	</ul>
+	<img src="./over.png" class="img-polaroid"><br>
+	<img src="./marked.png" class="img-polaroid"><br>
+	<img src="./getready.png" class="img-polaroid"><br>
+	<img src="./done.png" class="img-polaroid"><br>
+	<img src="./change.png" class="img-polaroid"><br>
+	<img src="./changed.png" class="img-polaroid">
+      </p>
+      <div style="height:1000px;"></div>
+    </div>
+    
+  </body>
+</html>

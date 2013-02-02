@@ -108,7 +108,7 @@ bool GraphicalBoard::onButtonPress(GdkEventButton* event)
 	      this->m_choosen.a = -1;
 	      this->m_choosen.b = -1;
 	    }
-	  else if(/*m_choosen.a < 0 && */m_board.m_fields[a][b] != FIELD_EMPTY && m_effect[a][b] != GRAY)
+	  else if(m_board.m_fields[a][b] != FIELD_EMPTY && m_effect[a][b] != GRAY)
 	    {
 	      for(int i = 0; i < 4; i++)
 	      	for(int j = 0; j < 4; j++)
