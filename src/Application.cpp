@@ -48,8 +48,6 @@ void Application::initUI()
   // set_position(Gtk::WIN_POS_CENTER_ALWAYS);
   // set_resizable(false);
   
-  m_configuration_buffer = Gtk::TextBuffer::create();
-
   Gtk::VBox* layout = manage(new Gtk::VBox);
 
   m_refActionGroup = Gtk::ActionGroup::create();
