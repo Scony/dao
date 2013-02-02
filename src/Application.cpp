@@ -2,12 +2,15 @@
 #include <sstream>
 #include <string.h>
 #include <string>
+#include <vector>
 #include <gtkmm/hvbox.h>
 #include <gtkmm/button.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/statusbar.h>
 #include <gtkmm/messagedialog.h>
 #include <gtkmm/scrolledwindow.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/aboutdialog.h>
 
 #include "defines.h"
 #include "Application.h"
@@ -50,16 +53,12 @@ void Application::initUI()
   m_gBoard = 0;
   set_title("Dao");
   // set_position(Gtk::WIN_POS_CENTER_ALWAYS);
-  //set_resizable(false);
-
+  // set_resizable(false);
+  
   m_configuration_buffer = Gtk::TextBuffer::create();
 
   Gtk::VBox* layout = manage(new Gtk::VBox);
 
-  /////////////////////////////////////////////
-  /////////////////////////////////////////////
-
-  //Create actions for menus and toolbars:
   m_refActionGroup = Gtk::ActionGroup::create();
 
   //Game menu:
@@ -71,7 +70,7 @@ void Application::initUI()
   m_refActionGroup->add(Gtk::Action::create("GameSave", Gtk::Stock::SAVE, "Zapisz"),
   			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
   m_refActionGroup->add(Gtk::Action::create("GameQuit", Gtk::Stock::QUIT, "Zakończ"),
-			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+			sigc::mem_fun(*this, &Application::onMenuGameQuitSelected));
 
   //Settings menu:
   m_refActionGroup->add(Gtk::Action::create("SettingsMenu", "Ustawienia"));
@@ -100,12 +99,9 @@ void Application::initUI()
     std::cerr << "building menus failed: " <<  ex.what();
   }
 
-  //Get the menubar and toolbar widgets, and add them to a container widget:
   Gtk::Widget* pMenubar = m_refUIManager->get_widget("/MenuBar");
   if(pMenubar)
     layout->add(*pMenubar);
-  /////////////////////////////////////////////
-  /////////////////////////////////////////////
 
   m_gBoard = new GraphicalBoard;
   layout->add(*m_gBoard);
@@ -194,6 +190,11 @@ void Application::onMenuHelpAboutSelected()
   authors.push_back("Paweł Lampe");
   ab.set_authors(authors);
   ab.run();
+}
+
+void Application::onMenuGameQuitSelected()
+{
+  Gtk::Main::quit();
 }
 
 void Application::onGameNew(const Game& game)

@@ -4,10 +4,9 @@
 #include <glibmm/refptr.h>
 #include <gtkmm/window.h>
 #include <gtkmm/statusbar.h>
-#include <gtkmm/stock.h>
 #include <gtkmm/uimanager.h>
-#include <gtkmm/aboutdialog.h>
-#include <vector>
+#include <gtkmm/main.h>
+
 
 #include "Configuration.h"
 #include "ConfigurationUI.h"
@@ -38,6 +37,7 @@ private: /* SLOTS */
   void onMenuGameNewSelected();
   void onMenuSettingsPreferencesSelected();
   void onMenuHelpAboutSelected();
+  void onMenuGameQuitSelected();
   void onGameNew(const Game& game);
   void onGameEnd(const Player& winner);
   void onGameStateChanged(State s, const Player& p);
