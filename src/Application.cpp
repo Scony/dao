@@ -78,7 +78,7 @@ void Application::initUI()
   m_refActionGroup->add(Gtk::Action::create("SettingsMenu", "Ustawienia"));
   m_refActionGroup->add(Gtk::Action::create("SettingsPreferences", "Preferencje"),
 			Gtk::AccelKey("<control>P"),
-			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+			sigc::mem_fun(*this, &Application::onMenuSettingsPreferencesSelected));
 
   //Help menu:
   m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Pomoc") );
@@ -193,6 +193,11 @@ void Application::onMenuGameNewSelected()
       dlg.set_secondary_text(e.what());
       dlg.run();
     }
+}
+
+void Application::onMenuSettingsPreferencesSelected()
+{
+  m_configurationUI->run();
 }
 
 void Application::onGameNew(const Game& game)
