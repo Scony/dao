@@ -62,23 +62,20 @@ void Application::initUI()
   //Game menu:
   m_refActionGroup->add(Gtk::Action::create("GameMenu", "Gra"));
   //Sub-menu.
-  m_refActionGroup->add(Gtk::Action::create("GameNew", Gtk::Stock::NEW, "Nowa", "Start new game"), sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
-  m_refActionGroup->add(Gtk::Action::create("GameQuit", Gtk::Stock::QUIT)); //dodac obsluge wyjscia z gry // moze jakies onApplicationExit ?
+  m_refActionGroup->add(Gtk::Action::create("GameNew", Gtk::Stock::NEW, "Nowa"),
+			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+  m_refActionGroup->add(Gtk::Action::create("GameLoad", Gtk::Stock::OPEN, "Wczytaj"),
+  			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+  m_refActionGroup->add(Gtk::Action::create("GameSave", Gtk::Stock::SAVE, "Zapisz"),
+  			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+  m_refActionGroup->add(Gtk::Action::create("GameQuit", Gtk::Stock::QUIT, "Zakończ"),
+			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
 
-  //Edit menu:
-  m_refActionGroup->add(Gtk::Action::create("EditMenu", "Edit"));
-  m_refActionGroup->add(Gtk::Action::create("EditCopy", Gtk::Stock::COPY));
-  m_refActionGroup->add(Gtk::Action::create("EditPaste", Gtk::Stock::PASTE));
-  m_refActionGroup->add(Gtk::Action::create("EditSomething", "Something"),
-			Gtk::AccelKey("<control><alt>S"));
-
-  //Choices menu, to demonstrate Radio items
-  m_refActionGroup->add( Gtk::Action::create("ChoicesMenu", "Choices") );
-  Gtk::RadioAction::Group group_userlevel;
-  m_refChoiceOne = Gtk::RadioAction::create(group_userlevel, "ChoiceOne", "One");
-  m_refActionGroup->add(m_refChoiceOne); //po przecinku mozna dac sygnal
-  m_refChoiceTwo = Gtk::RadioAction::create(group_userlevel, "ChoiceTwo", "Two");
-  m_refActionGroup->add(m_refChoiceTwo); //po przecinku mozna dac sygnal
+  //Settings menu:
+  m_refActionGroup->add(Gtk::Action::create("SettingsMenu", "Ustawienia"));
+  m_refActionGroup->add(Gtk::Action::create("SettingsPreferences", "Preferencje"),
+			Gtk::AccelKey("<control>P"),
+			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
 
   //Help menu:
   m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Pomoc") );
@@ -95,17 +92,14 @@ void Application::initUI()
         "  <menubar name='MenuBar'>"
         "    <menu action='GameMenu'>"
         "      <menuitem action='GameNew'/>"
+        "      <menuitem action='GameLoad'/>"
+        "      <separator/>"
+        "      <menuitem action='GameSave'/>"
         "      <separator/>"
         "      <menuitem action='GameQuit'/>"
         "    </menu>"
-        "    <menu action='EditMenu'>"
-        "      <menuitem action='EditCopy'/>"
-        "      <menuitem action='EditPaste'/>"
-        "      <menuitem action='EditSomething'/>"
-        "    </menu>"
-        "    <menu action='ChoicesMenu'>"
-        "      <menuitem action='ChoiceOne'/>"
-        "      <menuitem action='ChoiceTwo'/>"
+        "    <menu action='SettingsMenu'>"
+        "      <menuitem action='SettingsPreferences'/>"
         "    </menu>"
         "    <menu action='HelpMenu'>"
         "      <menuitem action='HelpAbout'/>"
