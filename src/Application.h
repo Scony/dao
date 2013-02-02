@@ -6,6 +6,8 @@
 #include <gtkmm/statusbar.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/uimanager.h>
+#include <gtkmm/aboutdialog.h>
+#include <vector>
 
 #include "Configuration.h"
 #include "ConfigurationUI.h"
@@ -35,6 +37,7 @@ private: /* SLOTS */
   void onConfigurationChanged();
   void onMenuGameNewSelected();
   void onMenuSettingsPreferencesSelected();
+  void onMenuHelpAboutSelected();
   void onGameNew(const Game& game);
   void onGameEnd(const Player& winner);
   void onGameStateChanged(State s, const Player& p);

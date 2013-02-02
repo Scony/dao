@@ -1,0 +1,20 @@
+<ui>
+  <menubar name='MenuBar'>
+    <menu action='GameMenu'>
+      <menuitem action='GameNew'/>
+      <menuitem action='GameLoad'/>
+      <separator/>
+      <menuitem action='GameSave'/>
+      <separator/>
+      <menuitem action='GameQuit'/>
+    </menu>
+    <menu action='SettingsMenu'>
+      <menuitem action='SettingsPreferences'/>
+    </menu>
+    <menu action='HelpMenu'>
+      <menuitem action='HelpAbout'/>
+      <menuitem action='HelpRules'/>
+      <menuitem action='HelpGUI'/>
+    </menu>
+  </menubar>
+</ui>

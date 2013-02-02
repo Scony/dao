@@ -49,7 +49,7 @@ void Application::initUI()
 {
   m_gBoard = 0;
   set_title("Dao");
-  set_position(Gtk::WIN_POS_CENTER_ALWAYS);
+  // set_position(Gtk::WIN_POS_CENTER_ALWAYS);
   //set_resizable(false);
 
   m_configuration_buffer = Gtk::TextBuffer::create();
@@ -64,7 +64,6 @@ void Application::initUI()
 
   //Game menu:
   m_refActionGroup->add(Gtk::Action::create("GameMenu", "Gra"));
-  //Sub-menu.
   m_refActionGroup->add(Gtk::Action::create("GameNew", Gtk::Stock::NEW, "Nowa"),
 			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
   m_refActionGroup->add(Gtk::Action::create("GameLoad", Gtk::Stock::OPEN, "Wczytaj"),
@@ -82,7 +81,8 @@ void Application::initUI()
 
   //Help menu:
   m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Pomoc") );
-  m_refActionGroup->add( Gtk::Action::create("HelpAbout", "O programie"));
+  m_refActionGroup->add( Gtk::Action::create("HelpAbout", "O programie"),
+			 sigc::mem_fun(*this, &Application::onMenuHelpAboutSelected));
   m_refActionGroup->add( Gtk::Action::create("HelpRules", "Zasady gry"));
   m_refActionGroup->add( Gtk::Action::create("HelpGUI", "Interfejs"));
 
@@ -91,32 +91,9 @@ void Application::initUI()
 
   add_accel_group(m_refUIManager->get_accel_group());
 
-  //Layout the actions in a menubar and toolbar:
-  Glib::ustring ui_info = 
-        "<ui>"
-        "  <menubar name='MenuBar'>"
-        "    <menu action='GameMenu'>"
-        "      <menuitem action='GameNew'/>"
-        "      <menuitem action='GameLoad'/>"
-        "      <separator/>"
-        "      <menuitem action='GameSave'/>"
-        "      <separator/>"
-        "      <menuitem action='GameQuit'/>"
-        "    </menu>"
-        "    <menu action='SettingsMenu'>"
-        "      <menuitem action='SettingsPreferences'/>"
-        "    </menu>"
-        "    <menu action='HelpMenu'>"
-        "      <menuitem action='HelpAbout'/>"
-        "      <menuitem action='HelpRules'/>"
-        "      <menuitem action='HelpGUI'/>"
-        "    </menu>"
-        "  </menubar>"
-        "</ui>";
-
   try
   {
-    m_refUIManager->add_ui_from_string(ui_info);
+    m_refUIManager->add_ui_from_file("./data/menu.xml");
   }
   catch(const Glib::Error& ex)
   {
@@ -202,6 +179,21 @@ void Application::onMenuGameNewSelected()
 void Application::onMenuSettingsPreferencesSelected()
 {
   m_configurationUI->run();
+}
+
+void Application::onMenuHelpAboutSelected()
+{
+  Gtk::AboutDialog ab;
+  ab.set_program_name("Dao");
+  ab.set_version("Wersja 1.0");
+  ab.set_copyright("Copyright (c) 2013");
+  ab.set_comments("Gra Dao - projekt zaliczeniowy w ramach laboratorium\nsztucznej inteligencji na Politechnice Poznańskiej");
+  ab.set_license("GNU GPL v3");
+  vector<Glib::ustring> authors;
+  authors.push_back("Tomasz Boczkowski");
+  authors.push_back("Paweł Lampe");
+  ab.set_authors(authors);
+  ab.run();
 }
 
 void Application::onGameNew(const Game& game)
