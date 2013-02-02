@@ -197,6 +197,7 @@ void Application::onMenuGameNewSelected()
 
 void Application::onMenuSettingsPreferencesSelected()
 {
+  m_configurationUI->readValues();
   m_configurationUI->run();
 }
 

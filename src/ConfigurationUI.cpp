@@ -28,17 +28,16 @@ ConfigurationUI::~ConfigurationUI()
 {
 }
 
-int ConfigurationUI::run()
+void ConfigurationUI::readValues()
 {
   Configuration& config = Configuration::getInstance();
   m_gameConfigurationUI->readValues(config);
-  //TODO: player conf read
-  return Gtk::Dialog::run();
-}
+}  
 
 void ConfigurationUI::onClose(int button_id)
 {
-  //TODO: Save configuration
+  Configuration& config = Configuration::getInstance();  
+  m_gameConfigurationUI->saveValues(config);
   hide();
 }
 

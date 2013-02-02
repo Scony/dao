@@ -26,7 +26,7 @@ public:
   ConfigurationUI(Gtk::Window& parent);
   ~ConfigurationUI();
 
-  int run();
+  void readValues();
 
 protected:
   GameConfigurationUI* m_gameConfigurationUI;
