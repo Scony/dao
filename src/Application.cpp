@@ -82,7 +82,9 @@ void Application::initUI()
 
   //Help menu:
   m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Pomoc") );
-  m_refActionGroup->add( Gtk::Action::create("HelpAbout", Gtk::Stock::HELP, "O programie"));
+  m_refActionGroup->add( Gtk::Action::create("HelpAbout", "O programie"));
+  m_refActionGroup->add( Gtk::Action::create("HelpRules", "Zasady gry"));
+  m_refActionGroup->add( Gtk::Action::create("HelpGUI", "Interfejs"));
 
   m_refUIManager = Gtk::UIManager::create();
   m_refUIManager->insert_action_group(m_refActionGroup);
@@ -106,6 +108,8 @@ void Application::initUI()
         "    </menu>"
         "    <menu action='HelpMenu'>"
         "      <menuitem action='HelpAbout'/>"
+        "      <menuitem action='HelpRules'/>"
+        "      <menuitem action='HelpGUI'/>"
         "    </menu>"
         "  </menubar>"
         "</ui>";
