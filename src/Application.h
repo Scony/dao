@@ -6,7 +6,6 @@
 #include <gtkmm/statusbar.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/uimanager.h>
-#include <gtkmm/radioaction.h>
 
 #include "Configuration.h"
 #include "ConfigurationUI.h"
@@ -28,7 +27,6 @@ private:
   Glib::RefPtr<Gtk::TextBuffer> m_configuration_buffer;
   Glib::RefPtr<Gtk::UIManager> m_refUIManager;
   Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
-  Glib::RefPtr<Gtk::RadioAction> m_refChoiceOne, m_refChoiceTwo;
 
   void initUI();
 
@@ -36,6 +34,7 @@ private: /* SLOTS */
   void onCommitClicked();
   void onConfigurationChanged();
   void onMenuGameNewSelected();
+  void onMenuSettingsPreferencesSelected();
   void onGameNew(const Game& game);
   void onGameEnd(const Player& winner);
   void onGameStateChanged(State s, const Player& p);
