@@ -4,14 +4,12 @@
 #include <string>
 #include <gtkmm/hvbox.h>
 #include <gtkmm/button.h>
-#include <gtkmm/textview.h>
 #include <gtkmm/statusbar.h>
 #include <gtkmm/messagedialog.h>
 #include <gtkmm/scrolledwindow.h>
 
 #include "defines.h"
 #include "Application.h"
-#include "Configuration.h"
 #include "DaoException.h"
 #include "Game.h"
 #include "Player.h"
@@ -23,10 +21,6 @@ Application::Application()
   this->initUI();
 
   m_configurationUI = new ConfigurationUI(*this);
-
-  Configuration& config = Configuration::getInstance();  
-  string configuration_text = config.getData();
-  m_configuration_buffer->set_text(configuration_text);
 
   m_game = new Game;
   m_game->signal_new_game.connect( sigc::mem_fun(*this, &Application::onGameNew));
@@ -41,7 +35,6 @@ Application::Application()
 
 Application::~Application()
 {
-  delete m_configurationUI;
   delete m_gBoard;
 }
 
@@ -51,8 +44,6 @@ void Application::initUI()
   set_title("Dao");
   set_position(Gtk::WIN_POS_CENTER_ALWAYS);
   //set_resizable(false);
-
-  m_configuration_buffer = Gtk::TextBuffer::create();
 
   Gtk::VBox* layout = manage(new Gtk::VBox);
 
@@ -122,63 +113,19 @@ void Application::initUI()
   //Get the menubar and toolbar widgets, and add them to a container widget:
   Gtk::Widget* pMenubar = m_refUIManager->get_widget("/MenuBar");
   if(pMenubar)
-    layout->add(*pMenubar);
+    layout->pack_start(*pMenubar, false, true);
   /////////////////////////////////////////////
   /////////////////////////////////////////////
 
   m_gBoard = new GraphicalBoard;
   layout->add(*m_gBoard);
 
-  Gtk::ScrolledWindow* scrolled_window =
-    manage(new Gtk::ScrolledWindow);
-  scrolled_window->set_policy(Gtk::POLICY_AUTOMATIC,
-			     Gtk::POLICY_AUTOMATIC);
-  scrolled_window->set_size_request(300, 200);
-
-  Gtk::TextView* configuration_text = manage(new Gtk::TextView);
-  configuration_text->set_buffer(m_configuration_buffer);
-  //TODO: Zbadać, dlaczego tu powstaje Gtk-Critical x2
-  scrolled_window->add(*configuration_text);
-
-  layout->add(*scrolled_window);
-    
-  Gtk::Button* commit_button = manage(new Gtk::Button("Ci"));
-  commit_button->signal_clicked().connect( sigc::mem_fun(*this, &Application::onCommitClicked));
-  layout->add(*commit_button);
-
   m_statusbar = manage(new Gtk::Statusbar);
   m_statusbar->push("values ...");
-  layout->add(*m_statusbar);
+  layout->pack_end(*m_statusbar, false, true);
 
   add(*layout);
-
-
-  Configuration& config = Configuration::getInstance();
-  config.signal_changed.connect( sigc::mem_fun(*this, &Application::onConfigurationChanged));
-
 }  
-
-void Application::onCommitClicked()
-{
-  string configuration_text = m_configuration_buffer->get_text();
-  try
-    {
-      Configuration::getInstance().readString(configuration_text);
-    }
-  catch(DaoException e)
-    {
-      Gtk::MessageDialog dlg(*this, "Błąd podczas wczytywania pliku konfiguracyjnego");
-      dlg.set_secondary_text(e.what());
-      dlg.run();
-    }
-}
-
-void Application::onConfigurationChanged()
-{
-  string configuration_text =
-    Configuration::getInstance().getData();
-  m_configuration_buffer->set_text(configuration_text);
-}
 
 void Application::onMenuGameNewSelected()
 {

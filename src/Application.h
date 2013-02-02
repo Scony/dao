@@ -7,7 +7,6 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/uimanager.h>
 
-#include "Configuration.h"
 #include "ConfigurationUI.h"
 #include "GraphicalBoard.h"
 #include "State.h"
@@ -24,15 +23,12 @@ private:
   Game* m_game;
   ConfigurationUI* m_configurationUI;
   Gtk::Statusbar* m_statusbar;
-  Glib::RefPtr<Gtk::TextBuffer> m_configuration_buffer;
   Glib::RefPtr<Gtk::UIManager> m_refUIManager;
   Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
 
   void initUI();
 
 private: /* SLOTS */
-  void onCommitClicked();
-  void onConfigurationChanged();
   void onMenuGameNewSelected();
   void onMenuSettingsPreferencesSelected();
   void onGameNew(const Game& game);
