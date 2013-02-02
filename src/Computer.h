@@ -21,11 +21,13 @@ public:
 
   AIStrategy(const Game* game, const PlayerConfiguration& config);
   virtual void run() = 0;
+  void cancel();
   
   Glib::Dispatcher dispatcher_move_proposed;
 protected:
   const Game* m_game;
   timespec m_startTime;
+  bool m_cancelRequest;
 
   void startTiming();
   void endTiming();

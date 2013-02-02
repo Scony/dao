@@ -108,6 +108,7 @@ void AlphaBeta::run()
 {
   MoveSet moves;
 
+  m_cancelRequest = false;
   startTiming();
   m_game->getAvailableMoves(&moves, &m_state);
   m_game->filterCycles(&moves);
@@ -124,6 +125,8 @@ void AlphaBeta::run()
   Move bestMove;
   for(; it != moves.end(); it++)
     {
+      if (m_cancelRequest)
+	return;
       State state = m_state.move(it.at());
       int val = alphaBeta(state, m_max_depth, AB_MIN,
 			  INT_MIN, INT_MAX, m_state);
@@ -137,6 +140,8 @@ void AlphaBeta::run()
   m_proposedMove = bestMove;
 
   endTiming();
+  if (m_cancelRequest)
+    return;
   int latency = Configuration::getInstance().m_latency;
   usleep(latency);
   dispatcher_move_proposed.emit();
@@ -147,6 +152,9 @@ int AlphaBeta::alphaBeta(const State& state, int depth,
 			 int alpha, int beta,
 			 const State& parent_state)
 {
+  if (m_cancelRequest)
+    return 0;
+
   FieldState currentPlayer = state.m_current;
 
   int heur_val = heuristic->eval(state, currentPlayer);

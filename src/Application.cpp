@@ -169,6 +169,13 @@ void Application::onGameEnd(const Player& winner)
   ostringstream message;
 
   message << "Koniec! Wygral: ";
+  message << winner.m_name;
+  message << " (";
+  if (winner.m_color == COLOR_RED) 
+    message << "czerwony";
+  else
+    message << "niebieski";
+  message << ")";
 
   m_statusbar->push(message.str());
 
@@ -184,7 +191,7 @@ void Application::onGameStateChanged(State s, const Player& p)
   if (!s.m_board.isTerminal() )
     {
       message << "Ruch ma " << p.m_name;
-      if (p.m_color == 0)
+      if (p.m_color == COLOR_RED)
 	message << " koloru czerwonego. ";
       else 
 	message << " koloru niebieskiego. ";

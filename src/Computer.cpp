@@ -9,6 +9,7 @@ AIStrategy::AIStrategy(const Game* game,
 		       const PlayerConfiguration& config) 
 {
   m_game = game;
+  m_cancelRequest = false;
 }
 
 void AIStrategy::startTiming()
@@ -27,6 +28,11 @@ void AIStrategy::endTiming()
   cout << "---ELAPSED TIME" << elapsed << endl;
 }
 
+void AIStrategy::cancel()
+{
+  m_cancelRequest = true;
+}
+
 Computer::Computer(const PlayerConfiguration& config,
 		   const Game* game,
 		   AIStrategy* strategy): Player(config)
@@ -40,6 +46,12 @@ Computer::Computer(const PlayerConfiguration& config,
 
 Computer::~Computer()
 {
+  if (m_thread)
+    {
+      if (m_strategy)
+	m_strategy->cancel();
+      m_thread->join();
+    }
 }
 
 void Computer::proposeMove(State state)
