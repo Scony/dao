@@ -8,6 +8,7 @@
 #include <gtkmm/uimanager.h>
 
 #include "Configuration.h"
+#include "ConfigurationUI.h"
 #include "GraphicalBoard.h"
 #include "State.h"
 #include "Player.h"
@@ -21,6 +22,7 @@ public:
 private:
   GraphicalBoard * m_gBoard;
   Game* m_game;
+  ConfigurationUI* m_configurationUI;
   Gtk::Statusbar* m_statusbar;
   Glib::RefPtr<Gtk::TextBuffer> m_configuration_buffer;
   Glib::RefPtr<Gtk::UIManager> m_refUIManager;
