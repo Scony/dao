@@ -66,6 +66,20 @@ int LBHeuristic::eval(const State & state, FieldState player)
 	  for(int l = 0; l < 2; l++)
 	    stones[board.m_fields[i+k][j+l]]++;
 
+	//blocked corners >>>
+	if(stones[player] == 3)
+	  {
+	    if(i == 0 && j == 0 && board.m_fields[0][0] == opponent)
+	      return min;
+	    if(i == 0 && j == 2 && board.m_fields[0][3] == opponent)
+	      return min;
+	    if(i == 2 && j == 0 && board.m_fields[3][0] == opponent)
+	      return min;
+	    if(i == 2 && j == 2 && board.m_fields[3][3] == opponent)
+	      return min;
+	  }
+	//blocked corners <<<
+
 	r[stones[player]][player]++;
 	r[stones[opponent]][opponent]++;
 	if(stones[player] > 0 && stones[opponent] == 0)
