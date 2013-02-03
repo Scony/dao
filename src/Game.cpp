@@ -161,11 +161,44 @@ void Game::filterCycles(MoveSet* moveSet) const
 ostream& Game::write(ostream& out) const
 {
   const State& current_state = m_states.back();
+
   return current_state.write(out);
 }
 
-istream& Game::read(istream& in)
+istream& Game::read(istream& in) throw(DaoException)
 {
-  State& current_state = m_states.back();
-  return current_state.read(in);
+  //State& current_state = m_states.back();
+
+  Configuration& config = Configuration::getInstance();
+
+  //TODO: Check for good colors
+  for(int i = 0; i < NUM_PLAYERS; i++)
+    {
+      if (m_players[i])
+	{
+	  delete m_players[i];
+	  m_players[i] = 0; //This is important since createPlayer
+	  //can throw exceptions
+	}
+      m_players[i] =
+	PlayerFactory::createPlayer(config.m_players[i], this);
+
+      m_players[i]->signal_move_proposed.connect( sigc::mem_fun( *this, &Game::performMove));
+    }
+
+  //TODO: Implement reading custom initial states
+  m_states.clear();
+  m_previous_state_hashes.clear();
+
+  m_currentPlayer = config.m_firstPlayer;
+  State initialState(config.m_firstPlayer);
+  istream & re = initialState.read(in);
+  m_states.push_back(initialState);
+  m_previous_state_hashes.insert(initialState.getHash());
+  
+  signal_new_game.emit(*this);
+
+  m_players[m_currentPlayer]->proposeMove(m_states.back());
+
+  return re;
 }
