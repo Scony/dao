@@ -299,3 +299,23 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
   return result;
 }
 
+void AlphaBetaTT::saveTT(TTEntry & entry)
+{
+  if (entry.m_heurVal <= entry.m_alpha)
+    entry.m_bound = UPPER;
+  else
+    if(entry.m_heurVal >= entry.m_beta)
+      entry.m_bound = LOWER;
+    else
+      entry.m_bound = ACCURATE;
+
+  m_TT.insert(pair<dao_hash_invariant, TTEntry>(entry.m_hash,entry));
+}
+
+TTEntry * AlphaBetaTT::TTlookup(dao_hash_invariant hash)
+{
+  map<dao_hash_invariant, TTEntry>::iterator ptr = m_TT.find(hash);
+  if(ptr == m_TT.end())
+    return NULL;
+  return &ptr->second;
+}

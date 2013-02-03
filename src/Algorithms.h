@@ -1,6 +1,8 @@
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 
+#include <map>
+
 #include "Computer.h"
 
 class Random : public AIStrategy
@@ -62,7 +64,7 @@ struct TTEntry
   dao_hash_invariant m_hash;
   int m_heurVal;
   int m_alpha, m_beta;
-  TTEntryType m_type;
+  TTEntryType m_bound;
   int m_depth;
   Move m_bestMove;
 };
@@ -76,9 +78,9 @@ public:
 protected:
   int alphaBeta(const State& state, int depth, AlphaBeta::Type type,
 		int alpha, int beta, const State& parent_state);
-  //map<dao_hash_invariant, TTEntry> m_TT;
-  //saveTT
-  //TTEntry* TTlookup; (moze byc NULL)
+  std::map<dao_hash_invariant, TTEntry> m_TT;
+  void saveTT(TTEntry & entry);
+  TTEntry * TTlookup(dao_hash_invariant hash);
 };
 
 #endif
