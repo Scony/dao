@@ -153,3 +153,29 @@ MoveSet::Iterator MoveSet::remove(MoveSet::Iterator& it)
 
   return next;
 }
+
+void MoveSet::setAsFirstMove(int from, int to)
+{
+  MoveSet::Iterator it = begin();
+  for(; it != end(); it++)
+    {
+      Move& move = it.at();
+      if( move.from == from && move.to == to)
+	break;
+    }
+
+  if( it != end())
+    {
+      if (it.m_self == m_head)
+	return;
+      
+      if (it.m_self == m_tail)
+	m_tail = it.m_prev;
+      else
+	m_tail = it.m_self->next;
+
+      it.m_prev->next = it.m_self->next;
+      it.m_self->next = m_head;
+      m_head = it.m_self;
+    }
+}
