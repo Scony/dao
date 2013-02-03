@@ -1,6 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include <iostream>
 #include"Board.h"
 
 typedef unsigned int dao_hash_short;
@@ -25,6 +26,8 @@ public:
   dao_hash_invariant getInvariantHash() const;
 
   void print() const;
+  std::ostream& write(std::ostream& out) const;
+  std::istream& read(std::istream& in);
+  
 };
-
 #endif

@@ -147,3 +147,15 @@ void Game::filterCycles(MoveSet* moveSet) const
 	}
     }
 }
+
+ostream& Game::write(ostream& out) const
+{
+  const State& current_state = m_states.back();
+  return current_state.write(out);
+}
+
+istream& Game::read(istream& in)
+{
+  State& current_state = m_states.back();
+  return current_state.read(in);
+}

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string.h>
 #include <string>
 #include <vector>
@@ -10,6 +11,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/aboutdialog.h>
+#include <gtkmm/filechooserdialog.h>
 
 #include "defines.h"
 #include "Application.h"
@@ -59,7 +61,7 @@ void Application::initUI()
   m_refActionGroup->add(Gtk::Action::create("GameLoad", Gtk::Stock::OPEN, "Wczytaj"),
   			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
   m_refActionGroup->add(Gtk::Action::create("GameSave", Gtk::Stock::SAVE, "Zapisz"),
-  			sigc::mem_fun(*this, &Application::onMenuGameNewSelected));
+  			sigc::mem_fun(*this, &Application::onMenuSaveSelected));
   m_refActionGroup->add(Gtk::Action::create("GameQuit", Gtk::Stock::QUIT, "Zakończ"),
 			sigc::mem_fun(*this, &Application::onMenuGameQuitSelected));
 
@@ -213,6 +215,31 @@ void Application::onGameStateChanged(State s, const Player& p)
       else
 	message << " Czekaj...";
       
+      m_statusbar->push(message.str());
+    }
+}
+
+void Application::onMenuSaveSelected()
+{
+  Gtk::FileChooserDialog dialog("Zapisz stan gry", 
+			     Gtk::FILE_CHOOSER_ACTION_SAVE);
+  dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+  dialog.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
+  dialog.set_current_name("gra.txt");
+  dialog.set_current_folder("saved");
+  dialog.set_transient_for(*this);
+  int result = dialog.run();
+  
+  if (result == Gtk::RESPONSE_OK)
+    {
+      ostringstream message;
+
+      string filename = dialog.get_filename();
+      ofstream fout(filename.c_str());
+      m_game->write(fout);
+      fout.close();
+
+      message << "Zapisano do pliku: " << filename;
       m_statusbar->push(message.str());
     }
 }

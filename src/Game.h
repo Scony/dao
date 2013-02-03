@@ -29,6 +29,9 @@ public:
   //filterSymmetic(Moveset* )
   /* SLOTS */
   bool performMove(Player* player, Move move);
+
+  std::ostream& write(std::ostream& out) const;
+  std::istream& read(std::istream& in);
   
 
 public: /* SIGNALS */

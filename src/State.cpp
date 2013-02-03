@@ -91,3 +91,24 @@ void State::print() const
       cout << endl;
     }
 }
+
+ostream& State::write(ostream& out) const
+{
+  const FieldState* board_ptr =
+    reinterpret_cast<const FieldState*>(m_board.m_fields);
+
+  out << static_cast<char>(static_cast<char>(m_current) + '%') << endl;
+  for(int i = 0; i < m_board.SIZE * m_board.SIZE; i++)
+    {
+      out << static_cast<char>(static_cast<char>(board_ptr[i]) + '%');
+      if (i % 4 == 3)
+	out << endl;
+    }
+
+  return out;
+}
+
+istream& State::read(istream& in)
+{
+  return in;
+}
