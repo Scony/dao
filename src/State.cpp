@@ -110,5 +110,17 @@ ostream& State::write(ostream& out) const
 
 istream& State::read(istream& in)
 {
+  FieldState* board_ptr =
+    reinterpret_cast<FieldState*>(m_board.m_fields);
+
+  char c;
+  in >> c;
+  m_current = (FieldState)(int)(c - '%');
+  for(int i = 0; i < m_board.SIZE * m_board.SIZE; i++)
+    {
+      in >> c;
+      board_ptr[i] = (FieldState)(int)(c - '%');
+    }
+
   return in;
 }

@@ -36,7 +36,8 @@ private: /* SLOTS */
   void onMenuGameQuitSelected();
   void onMenuHelpRulesSelected();
   void onMenuHelpGUISelected();
-  void onMenuSaveSelected();
+  void onMenuGameSaveSelected();
+  void onMenuGameLoadSelected();
   void onGameNew(const Game& game);
   void onGameEnd(const Player& winner);
   void onGameStateChanged(State s, const Player& p);

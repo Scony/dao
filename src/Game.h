@@ -31,7 +31,7 @@ public:
   bool performMove(Player* player, Move move);
 
   std::ostream& write(std::ostream& out) const;
-  std::istream& read(std::istream& in);
+  std::istream& read(std::istream& in) throw(DaoException);
   
 
 public: /* SIGNALS */
