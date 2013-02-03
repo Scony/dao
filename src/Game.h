@@ -19,6 +19,7 @@ public:
 
   void newGame()
     throw(DaoException);
+  bool gameStarted() const;
 
   const pPlayer* getPlayers() const;
   const Player* getCurrentPlayer() const;
@@ -44,6 +45,7 @@ private:
   std::vector<State> m_states;
   std::set<dao_hash_short> m_previous_state_hashes;
   int m_currentPlayer;
+  bool m_gameStarted;
 };
 
 #endif
