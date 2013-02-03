@@ -114,7 +114,39 @@ FieldState Board::getWinner()
     }
 
   //Trapping sb in a corner
-  //TODO
+  for(int i = 0; i < SIZE-1; i++)
+    for(int j = 0; j < SIZE-1; j++)
+      {
+	int stones[3] = {0};
+	
+	for(int k = 0; k < 2; k++)
+	  for(int l = 0; l < 2; l++)
+	    stones[m_fields[i+k][j+l]]++;
+
+	if(stones[FIELD_PLAYER1] == 3)
+	  {
+	    if(i == 0 && j == 0 && m_fields[0][0] == FIELD_PLAYER2)
+	      return FIELD_PLAYER2;
+	    if(i == 0 && j == 2 && m_fields[0][3] == FIELD_PLAYER2)
+	      return FIELD_PLAYER2;
+	    if(i == 2 && j == 0 && m_fields[3][0] == FIELD_PLAYER2)
+	      return FIELD_PLAYER2;
+	    if(i == 2 && j == 2 && m_fields[3][3] == FIELD_PLAYER2)
+	      return FIELD_PLAYER2;
+	  }
+
+	if(stones[FIELD_PLAYER2] == 3)
+	  {
+	    if(i == 0 && j == 0 && m_fields[0][0] == FIELD_PLAYER1)
+	      return FIELD_PLAYER1;
+	    if(i == 0 && j == 2 && m_fields[0][3] == FIELD_PLAYER1)
+	      return FIELD_PLAYER1;
+	    if(i == 2 && j == 0 && m_fields[3][0] == FIELD_PLAYER1)
+	      return FIELD_PLAYER1;
+	    if(i == 2 && j == 2 && m_fields[3][3] == FIELD_PLAYER1)
+	      return FIELD_PLAYER1;
+	  }
+      }
 
   return FIELD_EMPTY;
 }
