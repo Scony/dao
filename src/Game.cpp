@@ -10,6 +10,7 @@ Game::Game()
 {
   m_players[0] = 0;
   m_players[1] = 0;
+  m_gameStarted = false;
 }
 
 Game::~Game()
@@ -48,6 +49,7 @@ void Game::newGame()
   signal_new_game.emit(*this);
 
   m_players[m_currentPlayer]->proposeMove(m_states.back());
+  m_gameStarted = false;
 }
 
 bool Game::performMove(Player* player, Move move)
@@ -61,7 +63,10 @@ bool Game::performMove(Player* player, Move move)
   m_states.push_back(nextState);
   m_previous_state_hashes.insert(nextState.getHash());
   
-  if (!nextState.m_board.isTerminal())
+  m_gameStarted = true;
+
+  FieldState winner = nextState.m_board.getWinner();
+  if (winner == FIELD_EMPTY)
     {
       m_currentPlayer = nextState.m_current;
       signal_state_changed.emit(m_states.back(), 
@@ -74,9 +79,14 @@ bool Game::performMove(Player* player, Move move)
     {
       signal_state_changed.emit(m_states.back(),
 				*m_players[m_currentPlayer]);
-      signal_game_end.emit(*m_players[m_currentPlayer]);
+      signal_game_end.emit(*m_players[static_cast<int>(winner)]);
       return true;
     }
+}
+
+bool Game::gameStarted() const
+{
+  return m_gameStarted;
 }
 
 const pPlayer* Game::getPlayers() const 

@@ -127,6 +127,10 @@ void Application::onMenuSettingsPreferencesSelected()
 {
   m_configurationUI->readValues();
   m_configurationUI->run();
+  if (!m_game->gameStarted())
+    {
+      m_game->newGame();
+    }
 }
 
 void Application::onMenuHelpAboutSelected()
