@@ -55,6 +55,8 @@ public:
 
   void clear();
   MoveSet::Iterator remove(MoveSet::Iterator& it);
+  //TODO: Implement
+  void setAsFirstMove(int from, int to);
   
 private:
   Move moves[32];

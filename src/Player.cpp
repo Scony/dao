@@ -42,6 +42,9 @@ Player* PlayerFactory::createPlayer(const PlayerConfiguration& config,
 	  case ALGORITHM_ALPHA_BETA:
 	    strategy = new AlphaBeta(game, config);
 	    return new Computer(config, game, strategy);
+	  case ALGORITHM_ALPHA_BETA_TT:
+	    strategy = new AlphaBetaTT(game, config);
+	    return new Computer(config, game, strategy);
 	  default:
 	    throw DaoException("Algorithm type not implemented");
 	  }

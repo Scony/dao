@@ -109,7 +109,9 @@ void AlphaBeta::run()
   MoveSet moves;
 
   m_cancelRequest = false;
+  m_maxPlayerColor = m_state.m_current;
   startTiming();
+  m_visitedNodes = 0;
   m_game->getAvailableMoves(&moves, &m_state);
   m_game->filterCycles(&moves);
   if (moves.size() == 0)
@@ -123,6 +125,7 @@ void AlphaBeta::run()
   MoveSet::Iterator it = moves.begin();
   int best = INT_MIN;
   Move bestMove;
+  cout << "NUMBER OF MOVES: " << moves.size() << endl;
   for(; it != moves.end(); it++)
     {
       if (m_cancelRequest)
@@ -140,6 +143,7 @@ void AlphaBeta::run()
   m_proposedMove = bestMove;
 
   endTiming();
+  cout << "VISITED NODES: " << m_visitedNodes << endl;
   if (m_cancelRequest)
     return;
   int latency = Configuration::getInstance().m_latency;
@@ -147,36 +151,44 @@ void AlphaBeta::run()
   dispatcher_move_proposed.emit();
 }
 
+int AlphaBeta::eval(const State& state, bool* isTerminalState)
+{
+  *isTerminalState = false;
+
+  int heur_val = heuristic->eval(state, m_maxPlayerColor);
+  if (heur_val == heuristic->getMax() || 
+      heur_val == heuristic->getMin())
+    {
+      *isTerminalState = true;
+    }
+
+  return heur_val;
+}
+
 int AlphaBeta::alphaBeta(const State& state, int depth, 
 			 AlphaBeta::Type type,
 			 int alpha, int beta,
 			 const State& parent_state)
 {
-  if (m_cancelRequest)
+  int heurVal;
+  bool isTerminalState;
+  int result;
+  MoveSet* moves;
+
+  if (m_cancelRequest)  //Anulowanie ruchu
     return 0;
+  m_visitedNodes += 1;
+ 
+  heurVal = eval(state, &isTerminalState);
 
-  FieldState currentPlayer = state.m_current;
+  if( depth == 0 || isTerminalState)
+    return heurVal;
 
-  int heur_val = heuristic->eval(state, currentPlayer);
-
-
-  if (heur_val == heuristic->getMax() || 
-      heur_val == heuristic->getMin() || 
-      depth == 0)
-    {
-      //Terminal state for LBHeuristic or depht == 0
-      if (type == AB_MIN)
-	return -heur_val;
-      else
-	return heur_val;
-    }
+  //  FieldState currentPlayer = state.m_current;
   
-  MoveSet* moves = new MoveSet();
+  moves = new MoveSet();
   m_game->getAvailableMoves(moves, &state);
   MoveSet::Iterator it = moves->begin();
-  //TODO: Uwzglednic cykle
-
-  int result;
 
   if (type == AB_MAX)
     {
@@ -216,3 +228,74 @@ int AlphaBeta::alphaBeta(const State& state, int depth,
   delete moves;
   return result;
 }
+
+AlphaBetaTT::AlphaBetaTT(const Game* game,
+			 const PlayerConfiguration& config)
+  : AlphaBeta(game, config)
+{
+}
+
+AlphaBetaTT::~AlphaBetaTT()
+{
+}
+
+int AlphaBetaTT::alphaBeta(const State& state, int depth, 
+			 AlphaBeta::Type type,
+			 int alpha, int beta,
+			 const State& parent_state)
+{
+  int heurVal;
+  bool isTerminalState;
+  int result;
+  MoveSet* moves;
+
+  if (m_cancelRequest)  //Anulowanie ruchu
+    return 0;
+  m_visitedNodes += 1;
+ 
+  heurVal = eval(state, &isTerminalState);
+
+  if( depth == 0 || isTerminalState)
+    return heurVal;
+
+  //  FieldState currentPlayer = state.m_current;
+  
+  moves = new MoveSet();
+  m_game->getAvailableMoves(moves, &state);
+  MoveSet::Iterator it = moves->begin();
+
+  if (type == AB_MAX)
+    {
+      int best = INT_MIN;
+
+      for(; it != moves->end(); it++)
+	{
+	  State next_state = state.move(it.at());
+	  int val = alphaBeta(next_state, depth-1, AB_MIN, alpha, beta,
+			      state);
+	  if (val > best) best = val;
+	  if (best >= beta) break;
+	  if (best > alpha) alpha = best;
+	}
+      result = best;
+    }
+  else //type == AB_MIN
+    {
+      int best = INT_MAX;
+
+      for(; it != moves->end(); it++)
+	{
+	  State next_state = state.move(it.at());
+	  int val = alphaBeta(next_state, depth-1, AB_MAX, alpha, beta,
+			      state);
+	  if (val < best) best = val;
+	  if (best <= alpha) break;
+	  if (best < beta) beta = best;
+	}
+      result = best;
+    }
+
+  delete moves;
+  return result;
+}
+
