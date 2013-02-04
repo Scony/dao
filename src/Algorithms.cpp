@@ -266,6 +266,7 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
   moves = new MoveSet();
   m_game->getAvailableMoves(moves, &state);
   MoveSet::Iterator it = moves->begin();
+  MoveSet::Iterator best_move;
 
   if (type == AB_MAX)
     {
@@ -276,7 +277,11 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
 	  State next_state = state.move(it.at());
 	  int val = alphaBeta(next_state, depth-1, AB_MIN, alpha, beta,
 			      state);
-	  if (val > best) best = val;
+	  if (val > best)
+	    {
+	      best = val;
+	      best_move = it;
+	    }
 	  if (best >= beta) break;
 	  if (best > alpha) alpha = best;
 	}
@@ -291,7 +296,11 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
 	  State next_state = state.move(it.at());
 	  int val = alphaBeta(next_state, depth-1, AB_MAX, alpha, beta,
 			      state);
-	  if (val < best) best = val;
+	  if (val < best)
+	    {
+	      best = val;
+	      best_move = it;
+	    }
 	  if (best <= alpha) break;
 	  if (best < beta) beta = best;
 	}
