@@ -4,6 +4,28 @@
 #include <iostream>
 using namespace std;
 
+const char State::POSITION_MAP[State::AXIS_N][16] = 
+  { {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
+    {3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12},
+    {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
+    {12, 8, 4, 0, 13, 9, 5, 1, 14, 10, 6, 2, 15, 11, 7, 3},
+    {3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12},
+    {12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3},
+    {15, 11, 9, 3, 14, 10, 6, 2, 13, 9, 5, 1, 12, 8, 4, 0},
+    {0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15}
+  };
+
+const char State::INVERSE_POSITION_MAP[State::AXIS_N][16] = 
+  { {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}, //E
+    {12, 8, 4, 0, 13, 9, 5, 1, 14, 10, 6, 2, 15, 11, 7, 3}, //R270
+    {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0}, //R180
+    {3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12}, //R90
+    {3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12}, //S|
+    {0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15}, //S|R270
+    {15, 11, 9, 3, 14, 10, 6, 2, 13, 9, 5, 1, 12, 8, 4, 0}, //S|R180
+    {12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3}  //S|R90
+  };
+
 State::State()
 {
 }
@@ -69,23 +91,13 @@ dao_hash_short State::getHash() const
   return hash;
 }
 
-dao_hash_invariant State::getInvariantHash() const 
+dao_hash_invariant State::getInvariantHash(int* axis_ptr) const 
 {
-  const int axis_n = 8;
+  int min_axis;
   const FieldState* board_ptr =
     reinterpret_cast<const FieldState*>(m_board.m_fields);
   
-  unsigned const char position_map[axis_n][16] = 
-    { {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
-      {3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12},
-      {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
-      {12, 8, 4, 0, 13, 9, 5, 1, 14, 10, 6, 2, 15, 11, 7, 3},
-      {3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12},
-      {12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3},
-      {15, 11, 9, 3, 14, 10, 6, 2, 13, 9, 5, 1, 12, 8, 4, 0},
-      {0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15}
-    };
-  unsigned int hashes[axis_n] = {0};
+  unsigned int hashes[AXIS_N] = {0};
   unsigned int min_hash;
 
   for(int i = 0; i < m_board.SIZE * m_board.SIZE; i++)
@@ -97,21 +109,28 @@ dao_hash_invariant State::getInvariantHash() const
 	case FIELD_PLAYER2: field_value = 0x2; break;
 	default: break;
 	}
-      for(int axis = 0; axis < axis_n; axis++)
+      for(int axis = 0; axis < AXIS_N; axis++)
 	{
-	  hashes[axis] |= (field_value << (2 * position_map[axis][i]));
+	  hashes[axis] |= (field_value << (2 * POSITION_MAP[axis][i]));
 	}
     }
 
   min_hash = hashes[0];
-  for (int axis = 1; axis < axis_n; axis++)
+  min_axis = 0;
+  for (int axis = 1; axis < AXIS_N; axis++)
     {
       if (hashes[axis] < min_hash)
-	min_hash = hashes[axis];
+	{
+	  min_hash = hashes[axis];
+	  min_axis = axis;
+	}
     }
 
   if (m_current == FIELD_PLAYER2)
     min_hash = ~min_hash;
+
+  if (axis_ptr != NULL)
+    *axis_ptr = min_axis;
 
   return min_hash;
 }
