@@ -2,7 +2,7 @@ CFLAGS=-Wall `pkg-config --cflags gtk+-3.0 gtkmm-3.0`
 LDFLAGS=`pkg-config --libs gtk+-3.0 gtkmm-3.0` -lrt
 OBJS=main.o Application.o GraphicalBoard.o Configuration.o Board.o
 OBJS+=State.o Move.o Player.o Human.o Game.o Computer.o Heuristic.o
-OBJS+=Algorithms.o ConfigurationUI.o
+OBJS+=Algorithms.o ConfigurationUI.o Statistic.o
 EXE=main.out
 
 all: $(EXE)

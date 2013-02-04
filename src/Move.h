@@ -39,6 +39,9 @@ public:
     bool operator==(const MoveSet::Iterator& r);
     bool operator!=(const MoveSet::Iterator& r);
     MoveSet::Iterator operator++(int unused);
+    bool valid() {
+      return m_self != NULL;
+    }
   private:
     Move* m_prev;
     Move* m_self;

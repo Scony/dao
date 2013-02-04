@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "DaoException.h"
+#include "Statistic.h"
 #include "Configuration.h"
 
 using namespace std;
@@ -20,6 +21,7 @@ Game::~Game()
 void Game::newGame()
   throw (DaoException)
 {
+  Statistic::getInstance().clear();
   Configuration& config = Configuration::getInstance();
 
   //TODO: Check for good colors
@@ -80,6 +82,7 @@ bool Game::performMove(Player* player, Move move)
       signal_state_changed.emit(m_states.back(),
 				*m_players[m_currentPlayer]);
       signal_game_end.emit(*m_players[static_cast<int>(winner)]);
+      Statistic::getInstance().print();
       return true;
     }
 }

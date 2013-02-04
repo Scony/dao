@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <time.h>
 #include "Algorithms.h"
+#include "Statistic.h"
 
 using namespace std;
 
@@ -97,6 +98,7 @@ AlphaBeta::AlphaBeta(const Game* game,
 {
   heuristic = new LBHeuristic(config);
   m_max_depth = config.m_depth;
+  m_algorithm = ALGORITHM_ALPHA_BETA;
 }
 
 AlphaBeta::~AlphaBeta()
@@ -144,6 +146,7 @@ void AlphaBeta::run()
 
   endTiming();
   cout << "VISITED NODES: " << m_visitedNodes << endl;
+  Statistic::getInstance().addNodeCount(m_visitedNodes, m_algorithm);
   if (m_cancelRequest)
     return;
   int latency = Configuration::getInstance().m_latency;
@@ -233,6 +236,7 @@ AlphaBetaTT::AlphaBetaTT(const Game* game,
 			 const PlayerConfiguration& config)
   : AlphaBeta(game, config)
 {
+  m_algorithm = ALGORITHM_ALPHA_BETA_TT;
 }
 
 AlphaBetaTT::~AlphaBetaTT()
@@ -248,23 +252,20 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
   bool isTerminalState;
   int result;
   int prevAlpha = alpha;
+  int prevBeta = beta;
   MoveSet* moves;
 
   if (m_cancelRequest)  //Anulowanie ruchu
     return 0;
   m_visitedNodes += 1;
 
-  //TODO: TTlookup
-  //TODO: i ten kod z nastepnych slajdow
-
   heurVal = eval(state, &isTerminalState);
 
   if( depth == 0 || isTerminalState)
     return heurVal;
 
-  //  FieldState currentPlayer = state.m_current;
-
-  TTEntry * ptr = TTLookup(/*hash*/);
+  int current_axis;
+  TTEntry * ptr = TTLookup(state.getInvariantHash(&current_axis));
   if (ptr != NULL && ptr->m_depth >= depth)
     {
       if (ptr->m_bound == LOWER)
@@ -276,13 +277,16 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
       if (alpha >= beta)
 	return ptr->m_heurVal; // TT's cutoff
     }
-  if (ptr != NULL)
-    ;//wybierz bestmove jako pierwszy
-  //w tym celu przekombiuj MoveSet
-  //transform
-  
+
   moves = new MoveSet();
   m_game->getAvailableMoves(moves, &state);
+
+  if (ptr != NULL)
+    {
+      Move move = ptr->m_bestMove.inverseTransform(current_axis);
+      moves->setAsFirstMove(move.from, move.to);
+    }
+  
   MoveSet::Iterator it = moves->begin();
   MoveSet::Iterator best_move;
 
@@ -327,16 +331,23 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
       result = best;
     }
 
-  // TTEntry entry;
-  // int axis;
-  // entry.m_hash = state.getInvariantHash(&axis);
-  // entry.m_heurVal = val; //not sure
-  // entry.m_alpha = prevAplha;
-  // entry.m_beta = beta;
-  // entry.m_depth = depth;
-  // entry.m_bestMove = ;
-  // saveTT(entry);
-
+  if (best_move.valid()) 
+    {
+      TTEntry entry;
+      int axis;
+      entry.m_hash = state.getInvariantHash(&axis);
+      entry.m_heurVal = result;
+      entry.m_alpha = prevAlpha;
+      entry.m_beta = prevBeta;
+      entry.m_depth = depth;
+      entry.m_bestMove = best_move.at().transform(axis);
+      saveTT(entry);
+    }
+  else
+    {
+      cout << "Nie zapisano do TT" << endl;
+    }
+  
   delete moves;
   return result;
 }

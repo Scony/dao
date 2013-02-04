@@ -40,6 +40,7 @@ protected:
   int m_max_depth;
   int m_visitedNodes;
   FieldState m_maxPlayerColor;
+  PlayerAlgorithm m_algorithm;
 
   /**
    * Ewaluacja heurystyczna stanu planszy.
@@ -80,7 +81,7 @@ protected:
 		int alpha, int beta, const State& parent_state);
   std::map<dao_hash_invariant, TTEntry> m_TT;
   void saveTT(TTEntry & entry);
-  TTEntry * TTlookup(dao_hash_invariant hash);
+  TTEntry * TTLookup(dao_hash_invariant hash);
 };
 
 #endif

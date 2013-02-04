@@ -31,7 +31,8 @@ enum PlayerAlgorithm
     ALGORITHM_RANDOM,
     ALGORITHM_HILL_CLIMBER,
     ALGORITHM_ALPHA_BETA,
-    ALGORITHM_ALPHA_BETA_TT
+    ALGORITHM_ALPHA_BETA_TT,
+    ALGORITHM_NUM,
   };
 
 class Player : public sigc::trackable

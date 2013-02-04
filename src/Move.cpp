@@ -23,16 +23,16 @@ Move::~Move()
 Move Move::transform(int axis) const
 {
   Move m;
-  m.from = State::POSITION_MAP[axis][m.from];
-  m.to = State::POSITION_MAP[axis][m.to];
+  m.from = State::POSITION_MAP[axis][from];
+  m.to = State::POSITION_MAP[axis][to];
   return m;
 }
 
 Move Move::inverseTransform(int axis) const
 {
   Move m;
-  m.from = State::INVERSE_POSITION_MAP[axis][m.from];
-  m.to = State::INVERSE_POSITION_MAP[axis][m.to];
+  m.from = State::INVERSE_POSITION_MAP[axis][from];
+  m.to = State::INVERSE_POSITION_MAP[axis][to];
   return m;
 }
 
