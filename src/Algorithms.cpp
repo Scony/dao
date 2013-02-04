@@ -247,6 +247,7 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
   int heurVal;
   bool isTerminalState;
   int result;
+  int prevAlpha = alpha;
   MoveSet* moves;
 
   if (m_cancelRequest)  //Anulowanie ruchu
@@ -259,14 +260,33 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
     return heurVal;
 
   //  FieldState currentPlayer = state.m_current;
+
+  TTEntry * ptr = TTLookup(/*hash*/);
+  if (ptr != NULL && ptr->m_depth >= depth)
+    {
+      if (ptr->m_bound == LOWER)
+	alpha = alpha > ptr->m_heurVal ? alpha : ptr->m_heurVal;
+      if (ptr->m_bound == UPPER)
+	beta = beta < ptr->m_heurVal ? beta : ptr->m_heurVal;
+      if (ptr->m_bound == ACCURATE)
+	alpha = beta = ptr->m_heurVal;
+      if (alpha >= beta)
+	return ptr->m_heurVal; // TT's cutoff
+    }
+  if (ptr != NULL)
+    ;//wybierz bestmove jako pierwszy
+  //w tym celu przekombiuj MoveSet
+  //transform
   
   moves = new MoveSet();
   m_game->getAvailableMoves(moves, &state);
   MoveSet::Iterator it = moves->begin();
 
+  int best;
+
   if (type == AB_MAX)
     {
-      int best = INT_MIN;
+      best = INT_MIN;
 
       for(; it != moves->end(); it++)
 	{
@@ -281,7 +301,7 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
     }
   else //type == AB_MIN
     {
-      int best = INT_MAX;
+      best = INT_MAX;
 
       for(; it != moves->end(); it++)
 	{
@@ -294,6 +314,15 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
 	}
       result = best;
     }
+
+  // TTEntry entry;
+  // entry.m_hash = ;
+  // entry.m_heurVal = val; //not sure
+  // entry.m_alpha = prevAplha;
+  // entry.m_beta = beta;
+  // entry.m_depth = depth;
+  // entry.m_bestMove = ;
+  // saveTT(entry);
 
   delete moves;
   return result;
@@ -312,7 +341,7 @@ void AlphaBetaTT::saveTT(TTEntry & entry)
   m_TT.insert(pair<dao_hash_invariant, TTEntry>(entry.m_hash,entry));
 }
 
-TTEntry * AlphaBetaTT::TTlookup(dao_hash_invariant hash)
+TTEntry * AlphaBetaTT::TTLookup(dao_hash_invariant hash)
 {
   map<dao_hash_invariant, TTEntry>::iterator ptr = m_TT.find(hash);
   if(ptr == m_TT.end())
