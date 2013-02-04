@@ -318,9 +318,9 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
       result = best;
     }
 
-
   // TTEntry entry;
-  // entry.m_hash = ;
+  // int axis;
+  // entry.m_hash = state.getInvariantHash(&axis);
   // entry.m_heurVal = val; //not sure
   // entry.m_alpha = prevAplha;
   // entry.m_beta = beta;
