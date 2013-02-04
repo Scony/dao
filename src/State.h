@@ -12,6 +12,10 @@ class Move;
 class State
 {
 public:
+  static const char AXIS_N = 8;
+  static const char POSITION_MAP[AXIS_N][16];
+  static const char INVERSE_POSITION_MAP[AXIS_N][16];
+
   Board m_board;
   FieldState m_current;
 
@@ -23,7 +27,7 @@ public:
   State move(const Move& m) const;
 
   dao_hash_short getHash() const;
-  dao_hash_invariant getInvariantHash() const;
+  dao_hash_invariant getInvariantHash(int* axis_ptr=NULL) const;
 
   void print() const;
   std::ostream& write(std::ostream& out) const;

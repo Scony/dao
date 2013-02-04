@@ -18,6 +18,9 @@ struct Move
   Move(int from, int to);
   ~Move();
 
+  Move transform(int axis) const;
+  Move inverseTransform(int axis) const;
+
 private:
   Move * next;
   friend class MoveSet;

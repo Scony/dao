@@ -253,7 +253,10 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
   if (m_cancelRequest)  //Anulowanie ruchu
     return 0;
   m_visitedNodes += 1;
- 
+
+  //TODO: TTlookup
+  //TODO: i ten kod z nastepnych slajdow
+
   heurVal = eval(state, &isTerminalState);
 
   if( depth == 0 || isTerminalState)
@@ -314,6 +317,7 @@ int AlphaBetaTT::alphaBeta(const State& state, int depth,
 	}
       result = best;
     }
+
 
   // TTEntry entry;
   // entry.m_hash = ;
