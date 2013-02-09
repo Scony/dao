@@ -27,36 +27,57 @@ Lorem ipsum
 \subsection{Reprezentacja stanu gry}
 
 Stan gry jest reprezentowany na trzy sposoby. Są one wymienione w
-poniższych punktach.
+poniższych punktach. Implementacja reprezentacji stanu gry zawarta 
+jest w plikach Board.*, State.*.
 
 \subsubsection{Podstawowa reprezentacja macierzowa}
 
-\subsubsection{Reprezentacja krótka}
+W skład podstawowej reprezentacji stanu gry wchodzi 
+macierzowa reprezentacja planszy oraz
+wskazanie na gracza wykonującego ruch w bieżącej turze\footnote{
+State.h, linie 19-20}. 
 
-TODO: Zamienić biały -> czerwony, czarny->niebieski
+Stan planszy reprezentowany jest jako dwuwymiarowa tablica o rozmiarze
+4x4\footnote{Board.h, linia 16}. Każdy z jej elementów reprezentuje
+pojedyncze pole. Dopuszczalne
+wartości elementów tablicy znajdują się w typie wyliczeniowym
+\emph{enum FieldState}\footnote{Board.h, linia 4}. Oznaczają one:
+\begin{itemize}
+\item FIELD\_PLAYER1 - pole, na którym znajduje się pionek gracza 1
+\item FIELD\_PLAYER2 - pole, na którym znajduje się pionek gracza 2
+\item FIELD\_EMPTY - pole puste
+\end{itemize}
+
+Gracza wykonujęcego ruch reprezentuje pojedyncza zmienna typu
+\emph{enum FieldState}. Wartości FIELD\_PLAYER1 oraz FIELD\_PLAYER2 
+oznaczają odpowiednich graczy, wartość FIELD\_EMPTY nie jest
+uzywana.
+
+\subsubsection{Reprezentacja krótka}
 
 Reprezentacja krótka zawiera pełną informację o stanie gry zawartą
 w 32--bitowej liczbie całkowitej bez znaku. Jest ona stosowana przy
-wykrywaniu cykli.
+wykrywaniu cykli. Obliczanie reprezentacji krótkiej zostało
+zaimplementowane w metodzie getHash() klasy State\footnote{
+State.h, linia 29}.
 
 Stan każdego z 16 pól jest reprezentowany za pomocą dwóch
 bitów:
 \begin{itemize}
 \item $(00)_B$ reprezentuje pole puste
-\item $(01)_B$ reprezentuje pole zajęte przez pionek gracza aktualnie
-  wykonującego ruch
-\item $(10)_B$ reprezentuje pole zajęte przez pionek gracza
-  oczekującego na ruch przeciwnika
+\item $(01)_B$ reprezentuje pole zajęte przez pionek gracza 1
+\item $(10)_B$ reprezentuje pole zajęte przez pionek gracza 2
 \item $(11)_B$ stan zakazany, przydatny przy rozpoznawaniu kolorów
   graczy.
 \end{itemize}
 
-Reprezentacje stanów pól są konkantenowane zgodnie z kolejnością pól,
+Reprezentacje stanów pól są konkantenowane zgodnie z kolejnością pól
 przedstawioną na rysunku \ref{fig:field_order}. Tworzą one 32-bitową
-liczbę. Jeżeli gracz aktualnie wykonujący ruch ma kolor biały,
-utworzona liczba jest reprezentacją krótką stanu gry. Jeżeli kolorem
-gracza wykoującego ruch jest czarny, reprezentacja krótka powstaje 
-poprzez zanegowanie bitowe utworzonej przez konkatenację liczby.
+liczbę. Pole numer 16 zajmuje najstarsze bity, pole numer 1 --
+najmłodsze. Jeżeli bieżący ruch wykonuje gracz 1,
+utworzona liczba jest reprezentacją krótką stanu gry. W przeciwnym
+przypadku reprezentacja krótka powstaje 
+poprzez zanegowanie bitowe utworzonej w wyniku konkatenacji liczby.
 
 \begin{figure}[h]
   \centering
@@ -65,21 +86,19 @@ poprzez zanegowanie bitowe utworzonej przez konkatenację liczby.
   \label{fig:field_order}
 \end{figure}
 
-Kolor gracza wykonującego ruch można określić, wyszukując w
+Kolor gracza wykonującego ruch można określić na podstawie
+reprezentacji którkiej, wyszukując w
 reprezentacji stanu gry sekwencji $(11)_B$. Jest ona obecna wtedy i
-tylko wtedy, gdy gracz wykonujący ruch posiada pionki czarne.
-
-TODO: Ująć jakoś, że $(11)_B$ nie jest dowolną sekwencją, lecz jednym
-z 16 2--bitowych kawałków.
+tylko wtedy, gracz 2 wykonuje bieżący ruch.
 
 \subsubsection{Reprezentacja krótka niezmienna względem odbić,
   obrotów i kolorów}
-Jest to wariant reprezentacji krótkiej, nie zawierający informacji 
-o kolorach pionów. Jest on obliczany w sposób, zapewniający 
+Jest to wariant reprezentacji krótkiej. Jest on obliczany w sposób,
+zapewniający 
 niezmienniczość względem obrotów planszy i odbić lustrzanych w pionie
 i poziomie. 
 
-Plansze na rysunku \ref{fig:field_order2} zawierają numery pól na
+Figury na rysunku \ref{fig:field_order2} zawierają numery pól na
 planszy poddanej transformacjom. Dla każdej z 8 transformacji i
 określonej przez nią kolejności pól, jest obliczana reprezentacja 
 krótka (bez negowania). Spośród obliczonych 8 reprezentacji, 
@@ -92,25 +111,171 @@ jest wybierana ta, która stanowi najmniejszą liczbę.
   \label{fig:field_order2}
 \end{figure}
 
+Jeżeli gracz 2 wykonuje bieżący ruch, wybrana reprezentacja jest
+negowana.
 
 \subsubsection{Przykład}
 
-Rozważmy stan gry przedstawiony na rysunku \ref{fig:exaple_state}.
+\paragraph{Reprezentacja macierzowa} Rozważmy stan gry przedstawiony na rysunku \ref{fig:example_state}.
+Gracz 2 wykonuje ruch. W podstawowej reprezentacja planszy wygląda
+następujaco:
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=5cm]{data/example_board.pdf}
-  \caption{Przykładowy stan gry}
+  \caption{Przykładowy stan gry. Gracz 1 ma kolor czerwony, Gracz 2
+niebieski. Gracz 2 wykonuje ruch.}
   \label{fig:example_state}
 \end{figure}
 
+\[ \begin{bmatrix}
+\text{FIELD\_PLAYER2} & \text{FIELD\_EMPTY} & 
+\text{FIELD\_PLAYER1} & \text{FIELD\_PLAYER2} \\ 
+\text{FIELD\_EMPTY} & \text{FIELD\_EMPTY} & 
+\text{FIELD\_PLAYER1} & \text{FIELD\_EMPTY} \\ 
+\text{FIELD\_PLAYER2} & \text{FIELD\_EMPTY} & 
+\text{FIELD\_PLAYER2} & \text{FIELD\_PLAYER1} \\ 
+\text{FIELD\_EMPTY} & \text{FIELD\_PLAYER1} & 
+\text{FIELD\_EMPTY} & \text{FIELD\_EMPTY}
+\end{bmatrix}
+\]
+
+\paragraph{Reprezentacja krótka} Pierwszym krokiem przy wyliczaniu reprezentacji którkiej jest 
+konkatenacja bitowa reprezentacji odpowiednich pól.
+\[r = (00\ 00\ 01\ 00\ 01\ 10\ 00\ 10\ 00\ 01\ 00\ 00\ 10\ 01\ 00\ 10
+)_B \]
+Ponieraż gracz 2 wykonuje ruch, otrzymaną reprezentację należy
+zanegować bitowo. Ostatecznie
+\[R = ~r = (11\ 11\ 10\ 11\ 10\ 01\ 11\ 01\ 11\ 10\ 11\ 11\ 01\ 10\ 11\ 01)_B
+= 4221431698 \]
+
+\paragraph{Reprezentacja krótka niezmienna względem symetrii} Aby obliczyć reprezentację krótką niezmienną względem symetrii planszy
+należy wybrać najmniejszą wśród liczb odpowiadających różnym 
+kolejnościom pól przedstawionym na rysunku \ref{fig:field_order2}.
+\[r_1 = (00\ 00\ 01\ 00\ 01\ 10\ 00\ 10\ 00\ 01\ 00\ 00\ 10\ 01\ 00\ 10
+)_B \]
+\[r_2 = (10\ 00\ 01\ 00\ 01\ 01\ 10\ 00\ 00\ 00\ 00\ 01\ 10\ 00\ 10\ 00
+)_B\]
+\[r_3 = (10\ 00\ 01\ 10\ 00\ 00\ 01\ 00\ 10\ 00\ 10\ 01\ 00\ 01\ 00\ 00
+)_B\]
+\[r_4 = (00\ 10\ 00\ 10\ 01\ 00\ 00\ 00\ 00\ 10\ 01\ 01\ 00\ 01\ 10\ 10
+)_B\]
+\[r_5 = (00\ 01\ 00\ 00\ 10\ 00\ 10\ 01\ 00\ 00\ 01\ 00\ 10\ 00\ 01\ 10
+)_B\]
+\[r_6 = (00\ 01\ 00\ 10\ 00\ 10\ 01\ 01\ 01\ 00\ 00\ 00\ 00\ 10\ 00\ 10
+)_B\]
+\[r_7 = (10\ 00\ 10\ 00\ 00\ 00\ 00\ 01\ 01\ 01\ 10\ 00\ 10\ 00\ 01\ 00
+)_B\]
+\[r_8 = (10\ 01\ 00\ 10\ 00\ 01\ 00\ 00\ 01\ 10\ 00\ 10\ 00\ 00\ 01\ 00
+)_B\]
+Wśród wyżej wymienionych liczb najmnjejszą jest:
+\[r_1\]
+Ponieważ ruch należy do gracza 2, reprezentacja stanu gry powstaje
+poprzez zanegowanie $r_1$.
+\[R = ~r = (11\ 11\ 10\ 11\ 10\ 01\ 11\ 01\ 11\ 10\ 11\ 11\ 01\ 10\ 11\ 01)_B
+= 4221431698 \]
 
 \subsection{Generacja ruchów dopuszczalnych}
 
+Jedynym typem ruchu w grze jest przesunięcie. 
+Ruch reprezentowany jest w pamięci komputera jako klasa Move\footnote{
+Move.h}. Najważniejsze pola to \emph{from} oraz \emph{to}. Są one
+liczbami
+całkowitymi. Reprezentują one pola planszy zgodnie z kolejnością 
+przedstawioną na rysunku \ref{fig:field_order}. Pole \emph{from}
+reprezentuje pole, skąd przesuwany jest pion, a pole \emph{to}
+-- pole na które jest przesuwany pionek.
+
+Zbiór ruchów może być przechowywany w strukturze MoveSet\footnote{
+Move.h, linia 30}. MoveSet wykorzystuje strukturę listy łączonej
+z uprzednio zaalokowaną pamięcią na elementy. Taka implementacja 
+umożliwia szybkie wstawianie elementów, filtrowanie, czyszczenie
+oraz zmianę konieczności. Jednocześnie unikany jest problem 
+wielu alokacji pamięci występujący przy zwykłej liście łączonej.
+
+Generator ruchów dopuszczalnych zaimplementowany jest jako metoda 
+klasy \emph{Game} \emph{getAvailableMoves}\footnote{Game.h, linia 28}.
+Algorytm wyszukuje pionków bieżącego gracza, iterując po
+planszy\footnote{Game.cpp, linie 130-131}. Dla każgego znalezionego
+piona, sprawdzana jest możliwość ruchu w każdym z 8 kierunków
+(w pionie, poziomie i po skosie)\footnote{Game.cpp, linie 134-139}.
+Najpierw sprawdzane są ruchy powodujące przesunięcie w górę 
+(górny lewy skos, góra, prawy górny skos). Następnie ruchy nie 
+powodujące przesunięcia w pionie (prawo, lewo). Jako ostatnie 
+rozpatrywane są ruchy powodujące przesunięcie w dół (dolny lewy
+skos, dół, dolny prawy skos).
+
+Generator ruchów tworzy listę wszystkich dostępnych ruchów. Wykrywanie
+i usuwanie cykli implementowane jest przez metodę \emph{filterCycles}
+klasy \emph{Game}\footnote{Game.h, linia 29, Game.cpp, linie 142-162}.
+Metoda ta działa jako filtr dla listy ruchów. 
+
+Kiedy gracz wykonuje ruch, klasa Game zapisuje krótką reprezentację
+nowego stanu w zbiorze (klasa std::set) Game::m\_previous\_state\_hashes 
+\footnote{Game.cpp, linia 66}.
+Przy filtrowaniu cykli obliczane są krótkie reprezentacje stanów gry.
+Jeżeli reprezentacja jednego z następników znajduje się w 
+Game::m\_previous\_state\_hashes, jest on usuwany.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.6]{data/example_move.pdf}
+  \caption{Przykładowy ruch}
+  \label{fig:example_move}
+\end{figure}
+
+Przykładowy ruch został przedstawiony na rysunku
+\ref{fig:example_move}. Jego reprezentacją jest klasa Move. Jej 
+pola mają wartości:
+\[\text{from} = 10\]
+\[\text{to} = 9\]
+
 \subsection{Metody przeszukiwania stanów gry}
 
+Zaimplementowane zostały dwa algorytmy przeszukiwania stanów gry:
+\begin{itemize}
+\item $\alpha - \beta$ w wersji klasycznej\footnote{Algorithms.h, 
+    linia 29}
+\item $\alpha - \beta (\text{failsoft}) + \text{TT}$\footnote{Algorithms.h, linia 73}
+\end{itemize}
+
+Algorytm $\alpha - \beta$ został zaimplementowany przy użyciu 
+zapisu minimax.
+
+W rekordzie tablicy przejść pamiętane są\footnote{Alhorithms.h, 
+linia 63}:
+\begin{itemize}
+\item{krótka reprezentacja stanu służąca jako klucz}
+\item{zapamietana wartość funkcji oceny heurystycznej}
+\item{zapamiętane wartości progów alfa, beta}
+\item{typ rektordu}
+\item{głębokość wierchołka}
+\item{najlepszy ruch}
+\end{itemize}
+
+Znaczenie tych pól jest identyczne z omówionym na zajęciach 
+laboratoryjnych. 
+
+Kluczem tablicy przejść jest reprezentacja krótka stanu niezmienna
+względem symetrii omówiona w punkcie 2.1.2. Konflikty różnych 
+stanów, pomijając symetryczne, nie występują.
+
+Ze względu na istnienie jednego wpisu w tablicy transpozycji dla
+wszystkich symetrycznych stanów gry, należy uwzględnić przekształcenia
+najlepszego ruchu. Funkcja \emph{getInvariantHash} klasy \emph{State}
+zapisuje numer przekształcenia, które wybrała do obliczenia 
+reprezentacji. To samo przekształcenie jest stosowane przy zapisie
+ruchu. Przy odczycie ruchu należy zastosować przekształcenie
+odwotne. Numer przekształcenia jest wówczas pobierany przy obliczaniu 
+klucza.
+
+Ponieważ bicia w grze nie występują, wszystkie wpisy pozostają 
+aktualne do końca gry. 
+Tablica przejść tworzona jest wraz z początkiem gry.
+
+
 \subsection{Funkcja oceny heurystycznej stanu gry}
-\subsubsection{Lampe - Boczkowski heuristic}
+
 W grze dao wyróżniamy łącznie 22 wszystkie możliwe stany terminalne dla danego gracza:
 \begin{itemize}
 \item 1 stan - pokrycie narożników

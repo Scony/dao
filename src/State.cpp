@@ -68,7 +68,7 @@ dao_hash_short State::getHash() const
     reinterpret_cast<const FieldState*>(m_board.m_fields);
   dao_hash_short hash = 0;
 
-  for(int i = 0; i < m_board.SIZE * m_board.SIZE; i++)
+  for(int i = m_board.SIZE * m_board.SIZE - 1; i >= 0; i--)
     {
       hash <<= 2;
 
