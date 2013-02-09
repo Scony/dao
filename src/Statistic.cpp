@@ -19,8 +19,11 @@ void Statistic::clear()
 
 void Statistic::addNodeCount(int count, PlayerAlgorithm alg)
 {
-  m_nodeCount[alg] += count;
-  m_moveCount[alg] += 1;
+  if (m_moveCount[alg] == 0)
+    {
+      m_nodeCount[alg] += count;
+      m_moveCount[alg] += 1;
+    }
 }
 
 void Statistic::print()

@@ -144,7 +144,7 @@ PlayerConfigurationUI::PlayerConfigurationUI()
   lblDepth->set_halign(Gtk::ALIGN_START);  
 
   m_sbDepth = manage(new Gtk::SpinButton);
-  m_sbDepth->set_range(1, 7);
+  m_sbDepth->set_range(1, 17);
   m_sbDepth->set_increments(1, 1);
   
   attach(*lblDepth, 0, 3, 1, 1);

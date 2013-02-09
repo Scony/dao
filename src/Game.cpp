@@ -67,6 +67,8 @@ bool Game::performMove(Player* player, Move move)
   
   m_gameStarted = true;
 
+  Statistic::getInstance().print();
+
   FieldState winner = nextState.m_board.getWinner();
   if (winner == FIELD_EMPTY)
     {
@@ -173,6 +175,7 @@ istream& Game::read(istream& in) throw(DaoException)
   //State& current_state = m_states.back();
 
   Configuration& config = Configuration::getInstance();
+  Statistic::getInstance().clear();
 
   //TODO: Check for good colors
   for(int i = 0; i < NUM_PLAYERS; i++)
