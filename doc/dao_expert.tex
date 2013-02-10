@@ -79,10 +79,10 @@ wartości elementów tablicy znajdują się w typie wyliczeniowym
 \item FIELD\_EMPTY - pole puste
 \end{itemize}
 
-Gracza wykonujęcego ruch reprezentuje pojedyncza zmienna typu
+Gracza wykonującego ruch reprezentuje pojedyncza zmienna typu
 \emph{enum FieldState}. Wartości FIELD\_PLAYER1 oraz FIELD\_PLAYER2 
 oznaczają odpowiednich graczy, wartość FIELD\_EMPTY nie jest
-uzywana.
+używana.
 
 \subsubsection{Reprezentacja krótka}
 
@@ -118,7 +118,7 @@ poprzez zanegowanie bitowe utworzonej w wyniku konkatenacji liczby.
 \end{figure}
 
 Kolor gracza wykonującego ruch można określić na podstawie
-reprezentacji którkiej, wyszukując w
+reprezentacji krótkiej, wyszukując w
 reprezentacji stanu gry sekwencji $(11)_B$. Jest ona obecna wtedy i
 tylko wtedy, gracz 2 wykonuje bieżący ruch.
 
@@ -148,8 +148,8 @@ negowana.
 \subsubsection{Przykład}
 
 \paragraph{Reprezentacja macierzowa} Rozważmy stan gry przedstawiony na rysunku \ref{fig:example_state}.
-Gracz 2 wykonuje ruch. W podstawowej reprezentacja planszy wygląda
-następujaco:
+Gracz 2 wykonuje ruch. Podstawowa reprezentacja planszy wygląda
+następująco:
 
 \begin{figure}[h!]
   \centering
@@ -171,11 +171,11 @@ niebieski. Gracz 2 wykonuje ruch.}
 \end{bmatrix}
 \]
 
-\paragraph{Reprezentacja krótka} Pierwszym krokiem przy wyliczaniu reprezentacji którkiej jest 
+\paragraph{Reprezentacja krótka} Pierwszym krokiem przy wyliczaniu reprezentacji krótkiej jest 
 konkatenacja bitowa reprezentacji odpowiednich pól.
 \[r = (00\ 00\ 01\ 00\ 01\ 10\ 00\ 10\ 00\ 01\ 00\ 00\ 10\ 01\ 00\ 10
 )_B \]
-Ponieraż gracz 2 wykonuje ruch, otrzymaną reprezentację należy
+Ponieważ gracz 2 wykonuje ruch, otrzymaną reprezentację należy
 zanegować bitowo. Ostatecznie
 \[R = ~r = (11\ 11\ 10\ 11\ 10\ 01\ 11\ 01\ 11\ 10\ 11\ 11\ 01\ 10\ 11\ 01)_B
 = 4221431698 \]
@@ -199,7 +199,7 @@ kolejnościom pól przedstawionym na rysunku \ref{fig:field_order2}.
 )_B\]
 \[r_8 = (10\ 01\ 00\ 10\ 00\ 01\ 00\ 00\ 01\ 10\ 00\ 10\ 00\ 00\ 01\ 00
 )_B\]
-Wśród wyżej wymienionych liczb najmnjejszą jest:
+Wśród wyżej wymienionych liczb najmniejszą jest:
 \[r_1\]
 Ponieważ ruch należy do gracza 2, reprezentacja stanu gry powstaje
 poprzez zanegowanie $r_1$.
@@ -220,14 +220,14 @@ reprezentuje pole, skąd przesuwany jest pion, a pole \emph{to}
 Zbiór ruchów może być przechowywany w strukturze MoveSet\footnote{
 Move.h, linia 30}. MoveSet wykorzystuje strukturę listy łączonej
 z uprzednio zaalokowaną pamięcią na elementy. Taka implementacja 
-umożliwia szybkie wstawianie elementów, filtrowanie, czyszczenie
-oraz zmianę konieczności. Jednocześnie unikany jest problem 
+umożliwia szybkie wstawianie, filtrowanie, zmianę kolejności
+elementów oraz czyszczenie listy. Jednocześnie unikany jest problem 
 wielu alokacji pamięci występujący przy zwykłej liście łączonej.
 
 Generator ruchów dopuszczalnych zaimplementowany jest jako metoda 
 klasy \emph{Game} \emph{getAvailableMoves}\footnote{Game.h, linia 28}.
 Algorytm wyszukuje pionków bieżącego gracza, iterując po
-planszy\footnote{Game.cpp, linie 130-131}. Dla każgego znalezionego
+planszy\footnote{Game.cpp, linie 130-131}. Dla każdego znalezionego
 piona, sprawdzana jest możliwość ruchu w każdym z 8 kierunków
 (w pionie, poziomie i po skosie)\footnote{Game.cpp, linie 134-139}.
 Najpierw sprawdzane są ruchy powodujące przesunięcie w górę 
@@ -246,7 +246,7 @@ nowego stanu w zbiorze (klasa std::set) Game::m\_previous\_state\_hashes
 \footnote{Game.cpp, linia 66}.
 Przy filtrowaniu cykli obliczane są krótkie reprezentacje stanów gry.
 Jeżeli reprezentacja jednego z następników znajduje się w 
-Game::m\_previous\_state\_hashes, jest on usuwany.
+Game::m\_previous\_state\_hashes, jest on usuwany z listy następników.
 
 \begin{figure}[h]
   \centering
@@ -277,10 +277,10 @@ W rekordzie tablicy przejść pamiętane są\footnote{Alhorithms.h,
 linia 63}:
 \begin{itemize}
 \item{krótka reprezentacja stanu służąca jako klucz}
-\item{zapamietana wartość funkcji oceny heurystycznej}
+\item{zapamiętana wartość funkcji oceny heurystycznej}
 \item{zapamiętane wartości progów alfa, beta}
-\item{typ rektordu}
-\item{głębokość wierchołka}
+\item{typ rekordu}
+\item{głębokość wierzchołka}
 \item{najlepszy ruch}
 \end{itemize}
 
@@ -297,8 +297,12 @@ najlepszego ruchu. Funkcja \emph{getInvariantHash} klasy \emph{State}
 zapisuje numer przekształcenia, które wybrała do obliczenia 
 reprezentacji. To samo przekształcenie jest stosowane przy zapisie
 ruchu. Przy odczycie ruchu należy zastosować przekształcenie
-odwotne. Numer przekształcenia jest wówczas pobierany przy obliczaniu 
+odwrotne. Numer przekształcenia jest wówczas pobierany przy obliczaniu 
 klucza.
+
+Do przeniesienia najlepszego ruchu na początek listy następników
+służy metoda \emph{setAsFirstMove} klasy \emph{MoveSet}\footnote{
+Move.h, linia 65}.
 
 Ponieważ bicia w grze nie występują, wszystkie wpisy pozostają 
 aktualne do końca gry. 
@@ -307,39 +311,91 @@ Tablica przejść tworzona jest wraz z początkiem gry.
 
 \subsection{Funkcja oceny heurystycznej stanu gry}
 
+Funkcja oceny heurystycznej jest oparta na różnicy ocen pozycji graczy.
+Ocena pozycji gracza jest obliczana na podstawie stopnia ukończenia
+przez niego różnych stanów terminalnych\footnote{Heuristic.cpp, 
+linia 21}.
+
 W grze dao wyróżniamy łącznie 22 wszystkie możliwe stany terminalne dla danego gracza:
 \begin{itemize}
 \item 1 stan - pokrycie narożników
 \item 9 stanów - kwadraty 2x2
 \item 8 stanów - linie poziome i pionowe
-\item 4 stany - blokada przeciwnika w rogu
+\item 4 stany - blokada przeciwnika w rogu (stan przegrywający)
 \end{itemize}
-W dalszej części rozważań będziemy używać pojęć które definiuje się następująco:
+
+Wprowadźmy następujące oznaczenia:
 \begin{itemize}
-\item Warstwą będziemy nazywać zbiór stanów terminalnych pokrytych za pomocą odpowiedniej ilości pionów. Tak oto $n$-ta warstwa to zbiór takich stanów terminalnych, że są one kryte przez $n$ pionów danego gracza. Ze względu na powyższe sens mają rzecz jasna tylko warstwy od 1 do 4
-\item Przez $r_{n}^{m}$ oznaczać będziemy ilość elementów $n$-tej warstwy dla $m$-tego gracza
-\item Przez $p_{n}^{m}$ oznaczać będziemy ilość elementów $n$-tej warstwy dla $m$-tego gracza z pominięciem stanów terminalnych blokowanych przez przeciwnika
-\item Przez $k_{n}$ oznaczać będziemy wagę $n$-tej warstwy
-\item Przez $h$ oznaczać będziemy współczynnik nadzieji
-\item Vetem nazywać będziemy stan terminalny w pełni pokryty
+\item Warstwą będziemy nazywać zbiór stanów terminalnych wygrywających
+ pokrytych za pomocą odpowiedniej ilości pionów. $n$-ta warstwa
+to zbiór takich terminalnych układów pionów, które są ukończone w 
+stopniu $\frac{n}{4}$. Wyróżniamy warstwy od 1 do 4. Przykładowo, jeżeli gracz ma
+trzy piony w narożnikach, stan terminalny polegający na umieszczeniu
+swoich pionów w narożniku planszy należy do trzeciej warstwy.
+\item Przez $r_{n}^{m}$ oznaczać będziemy ilość elementów $n$-tej warstwy dla $m$-tego gracza.
+\item Przez $p_{n}^{m}$ oznaczać będziemy ilość elementów $n$-tej warstwy dla $m$-tego gracza z pominięciem stanów terminalnych blokowanych przez przeciwnika.
+\item Przez $k_{n}$ oznaczać będziemy wagę $n$-tej warstwy.
+\item Przez $h$ oznaczać będziemy współczynnik nadziei.
 \end{itemize}
-Niech dane będą wszelkie wymagane arności. W ogólności możemy wyróżnić następujące wzory:
-%equation
-$max = 18 ( k_{1} + k_{2} + k_{3} )$
-%equation
-$h_{n} = p_{1}^{n} k_{1} + p_{2}^{n} k_{2} + p_{3}^{n} k_{3} + h ([r_{1}^{n} - p_{1}^{n}] k_{1} + [r_{2}^{n} - p_{2}^{n}] k_{2} + [r_{3}^{n} - p_{3}^{n}] k_{3})$
 
-$max$ to maksymalna i nieprzekraczalna ocena heurystyczna. Jest to swojego rodzaju przeszacowana górna granica funkcji oceny heurystycznej.
+Funkcja oceny heurystycznej została zaimplementowana w sposób
+umożliwiający wybór gracza MAX. Jeżeli gracz $n$ jest graczem MAX,
+funkcję oceny heurystycznej $h(\text{stan})$ można opisać zależnością:
+\[ h(\text{stan}) =  h_{n} - h_{1-n} \]
+Gdzie:
+\[ h_{n} = p_{1}^{n} k_{1} + p_{2}^{n} k_{2} + p_{3}^{n} k_{3} + h ([r_{1}^{n} - p_{1}^{n}] k_{1} + [r_{2}^{n} - p_{2}^{n}] k_{2} + [r_{3}^{n} - p_{3}^{n}] k_{3}) \]
 
-$h_{n}$ to ocena heurystyczna $n$-tego gracza.
+Największa możliwa wartość funkcji oceny heurystycznej zależna jest
+od wag warstw i wynosi.
 
-$max$ używana jest w sytuacjach veta oraz w sytacji osiągnięcia jednego ze stanów blokady przeciwnika w rogu.
+\[ max = 18 ( k_{1} + k_{2} + k_{3} ) \]
 
-Ostatecznie $h_{n} - h_{1-n}$ to ocena heurystyczna danego stanu.
+Najmniejsza wartość funkcji oceny heurystycznej to $-\text{max}$.
+
+W przypadku wykrycia stanu terminalnego, wygrywającego lub
+przegrywającego, obliczenia wartości funkcji oceny heurystycznej są
+przerywane i zwracana jest wartość $\text{max}$ lub $-\text{max}$.
+
+Wartości wag zostały wybrane na podstawie wyników gier pomiędzy 
+graczami komputerowymi i wynoszą: $k_1 = 1$, $k_2 = 19$, $k_3 = 131$, $h = 0$.
+
+\paragraph{Przykład}
+Na rysunku \ref{fig:position1a} przedstawiony jest przykładowy stan
+gry. Załóżmy, że gracz MAX posiada piony koloru niebieskiego oraz. Dla
+gracza MAX: 1 stan (utworzenie kwadratu 2x2 w lewym dolnym narożniku)
+należy do 3 warstwy. Do 2 warstwy należą 3 stany (utworzenie linii
+pionowej , linii poziomej na dole planszy i umieszczenie pionów w
+narożnikach). 2 z nich są blokowane przez piony przeciwnika. 
+Do warstwy 1 należy 7 stanów, z których 5 jest blokowanych. Zatem $r_1^{\text{MAX}} = 7$,
+$r_2^{\text{MAX}} = 3$, $r_3^{\text{MAX}} = 1$, $p_1^{\text{MAX}} = 2$,
+$p_2^{\text{MAX}} = 1$, $p_3^{\text{MAX}} = 1$. 
+
+Żadna trójka pionów gracza MIN(czerwony) nie wchodzi w skład stanu
+terminalnego. W warstwie 2 znajduje się 5 stanów (umieszczenie pionów
+w narożnikach, utworzenie linii poziomej, zajęcie środkowego górnego
+kwadratu, zajęcie lewego górnego
+kwadratu oraz zajęcie środkowego kwadratu). 1 z nich jest blokowany przez piony przeciwnika. W warstwie
+1 znajduje się 10 stanów, z których 5 jest blokowanych.
+$r_1^{\text{MIN}} = 10$,
+$r_2^{\text{MIN}} = 5$, $r_3^{\text{MIN}} = 0$, $p_1^{\text{MIN}} = 5$,
+$p_2^{\text{MIN}} = 2$, $p_3^{\text{MIN}} = 0$. 
+
+Mamy:
+\[ h_{MAX} = 2 \cdot 1 + 1 \cdot 19 + 1 \cdot 131 = 152 \]
+\[ h_{MIN} = 5 \cdot 1 + 2 \cdot 19 + 0 \cdot 131 = 43 \]
+Wartość funkcji oceny heurystycznej:
+\[ h_(\text{stan}) = 152 - 43 = 109 \]
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.6]{data/position1.pdf}
+  \caption{Przykładowy stan gry}
+  \label{fig:position1a}
+\end{figure}
 
 \section{Testy wydajnościowe i porównania algorytmów}
 
-Dla trzech rożnych stanów poczatkowych dokonano pomiarów liczby
+Dla trzech rożnych stanów początkowych dokonano pomiarów liczby
 wierzchołków odwiedzonych przez algorytmy $\alpha - \beta$ oraz
 $\alpha - \beta + \text{TT}$. Parametry funkcji oceny heurystycznej
 przyjmowały wartości $k_1 = 1$, $k_2 = 19$, $k_3 = 131$, $h = 0$.
@@ -429,7 +485,7 @@ nim cykle. Szacunkowa liczba stanów oryginalnej wersji gry
 1 zbiór 8-elementowy (pola puste).
 
 Ze względu na brak możliwości bicia, graf przestrzeni stanów się 
-nie zmienia. Branching factor pozostaje stały i wynosi około 11.
+nie zmienia. \emph{Branching factor} pozostaje stały i wynosi około 11.
 
 Zdecydowanie najlepszą metodą przeszukiwania przestrzeni stanów 
 jest algorytm $\alpha - \beta + \text{TT}$. W stosunku do 

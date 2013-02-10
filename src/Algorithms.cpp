@@ -110,9 +110,10 @@ void AlphaBeta::run()
 {
   MoveSet moves;
 
+  clock_t start = clock();
+
   m_cancelRequest = false;
   m_maxPlayerColor = m_state.m_current;
-  startTiming();
   m_visitedNodes = 0;
   m_game->getAvailableMoves(&moves, &m_state);
   m_game->filterCycles(&moves);
@@ -127,7 +128,6 @@ void AlphaBeta::run()
   MoveSet::Iterator it = moves.begin();
   int best = INT_MIN;
   Move bestMove;
-  cout << "NUMBER OF MOVES: " << moves.size() << endl;
   for(; it != moves.end(); it++)
     {
       if (m_cancelRequest)
@@ -143,14 +143,18 @@ void AlphaBeta::run()
     }
 
   m_proposedMove = bestMove;
-
-  endTiming();
-  cout << "VISITED NODES: " << m_visitedNodes << endl;
+  
   Statistic::getInstance().addNodeCount(m_visitedNodes, m_algorithm);
   if (m_cancelRequest)
     return;
+
+  clock_t end = clock();
   int latency = Configuration::getInstance().m_latency;
-  usleep(latency);
+  if (end -  start < latency)
+    {
+      usleep(latency - (end - start));
+    }
+
   dispatcher_move_proposed.emit();
 }
 
