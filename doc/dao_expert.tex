@@ -20,7 +20,38 @@
 
 \section{Opis gry}
 
-Lorem ipsum
+Gra DAO została opublikowana w 1999 roku. Jej autorami są 
+Jeff Pickering i Ben VanBuskirk. Dwa lata później otrzymała ona 
+nagrodę \emph{MENSA Select}.
+
+Celem gry Dao jest przesunięcie swoich pionów na jedną z pozycji
+wygrywających.
+
+Podczas ruchu, gracz może wykonać ruch każdym ze swoich pionów. Ruch polega na przesunięciu piona w poziomie, w pionie lub na skos. Przesunięcie musi zostać wykonane w danym kierunku aż do napotkania przez dany pion przeszkody. Przeszkodą może być koniec planszy lub pion innego gracza. Zabronione jest przeskakiwanie pionów przeciwnika.
+
+Gracze wykonują swoje ruchy naprzemiennie. 
+
+Początkowy stan gry przedstawiony został na rysunku \ref{fig:begin}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.6]{data/position0.pdf}
+  \caption{Stan początkowy}
+  \label{fig:begin}
+\end{figure}
+
+W grze dao wyróżniamy 18 różnych stanów wygrywających:
+\begin{itemize}
+\item umieszczenie wszystkich swoich pionów w narożnikach planszy.
+\item utworzenie w dowolnym miejscu planszy kwadratu 2x2 ze swoich
+  pionów (9 takich stanów)
+\item utworzenie w dowolnym miejscu planszy linii poziomej lub
+  pionowej ze swoich pionów (8 takich stanów)
+\end{itemize}
+
+Niedozwolone jest otoczenie pojedynczego piona przeciwnika znajdującego
+się w narożniku trzema swoimi pionami. Taka sytuacja oznacza
+przegraną otaczającego.
 
 \section{Implementacja}
 
@@ -286,8 +317,8 @@ W grze dao wyróżniamy łącznie 22 wszystkie możliwe stany terminalne dla dan
 W dalszej części rozważań będziemy używać pojęć które definiuje się następująco:
 \begin{itemize}
 \item Warstwą będziemy nazywać zbiór stanów terminalnych pokrytych za pomocą odpowiedniej ilości pionów. Tak oto $n$-ta warstwa to zbiór takich stanów terminalnych, że są one kryte przez $n$ pionów danego gracza. Ze względu na powyższe sens mają rzecz jasna tylko warstwy od 1 do 4
-\item Przez $r_{n}^{m}$ oznaczać będziemy arność $n$-tej warstwy dla $m$-tego gracza
-\item Przez $p_{n}^{m}$ oznaczać będziemy arność $n$-tej warstwy dla $m$-tego gracza z pominięciem stanów terminalnych blokowanych przez przeciwnika
+\item Przez $r_{n}^{m}$ oznaczać będziemy ilość elementów $n$-tej warstwy dla $m$-tego gracza
+\item Przez $p_{n}^{m}$ oznaczać będziemy ilość elementów $n$-tej warstwy dla $m$-tego gracza z pominięciem stanów terminalnych blokowanych przez przeciwnika
 \item Przez $k_{n}$ oznaczać będziemy wagę $n$-tej warstwy
 \item Przez $h$ oznaczać będziemy współczynnik nadzieji
 \item Vetem nazywać będziemy stan terminalny w pełni pokryty
