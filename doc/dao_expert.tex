@@ -308,20 +308,107 @@ Ostatecznie $h_{n} - h_{1-n}$ to ocena heurystyczna danego stanu.
 
 \section{Testy wydajnościowe i porównania algorytmów}
 
+Dla trzech rożnych stanów poczatkowych dokonano pomiarów liczby
+wierzchołków odwiedzonych przez algorytmy $\alpha - \beta$ oraz
+$\alpha - \beta + \text{TT}$. Parametry funkcji oceny heurystycznej
+przyjmowały wartości $k_1 = 1$, $k_2 = 19$, $k_3 = 131$, $h = 0$.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.6]{data/position0.pdf}
+  \caption{Przykładowy stan gry - stan początkowy}
+  \label{fig:position0}
+\end{figure}
+
+\begin{table}[h]
+  \centering
+  \caption{Zestawienie wyników  pomiarów wydajności algorytmów dla stanu
+    przedstawionego na rysunku \ref{fig:position0}}
+  \label{table:position0}
+  \include{data/results0}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{data/results0.pdf}
+  \caption{Zależność liczby odwiedzonych wierzchołków od głębokości
+    przeszukiwania dla stanu przedstawionego na rysunku
+    \ref{fig:position0}}
+  \label{fig:results0}
+\end{figure}
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.6]{data/position1.pdf}
+  \caption{Przykładowy stan gry}
+  \label{fig:position1}
+\end{figure}
+
+\begin{table}[h]
+  \centering
+  \caption{Zestawienie wyników  pomiarów wydajności algorytmów dla stanu
+    przedstawionego na rysunku \ref{fig:position1}}
+  \label{table:position1}
+  \include{data/results1}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{data/results1.pdf}
+  \caption{Zależność liczby odwiedzonych wierzchołków od głębokości
+    przeszukiwania dla stanu przedstawionego na rysunku
+    \ref{fig:position1}}
+  \label{fig:results1}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.6]{data/position2.pdf}
+  \caption{Przykładowy stan gry}
+  \label{fig:position2}
+\end{figure}
+
+\begin{table}[h]
+  \centering
+  \caption{Zestawienie wyników  pomiarów wydajności algorytmów dla stanu
+    przedstawionego na rysunku \ref{fig:position2}}
+  \label{table:position2}
+  \include{data/results2}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{data/results2.pdf}
+  \caption{Zależność liczby odwiedzonych wierzchołków od głębokości
+    przeszukiwania dla stanu przedstawionego na rysunku
+    \ref{fig:position2}}
+  \label{fig:results2}
+\end{figure}
+
+\newpage
+\clearpage
+
 \section{Wnioski}
 
-\begin{thebibliography}{9}
+Strukturą przeszukiwanej przestrzeni stanów jest graf. Występują w
+nim cykle. Szacunkowa liczba stanów oryginalnej wersji gry
+(górne ograniczenie) wynosi 900900. Jest to liczba podziałów 
+16-elementowego zbioru pół na zbiory 2 zbiory 4-elementowe (piony) i
+1 zbiór 8-elementowy (pola puste).
 
-\bibitem{drongowski08_g} Paul J. Drongowski,
-  \emph{Basic Performance Measurements for AMD Athlon 64, 
-AMD Opteron and AMD Phenom Processors}, Advanced Micro Devices, Inc.,
-  2008
+Ze względu na brak możliwości bicia, graf przestrzeni stanów się 
+nie zmienia. Branching factor pozostaje stały i wynosi około 11.
 
-\bibitem{drongowski08_ca} Paul J. Drongowski,
-  \emph{An introduction to analysis and optimization 
-with AMD CodeAnalyst Performance Analyzer}, Advanced Micro Devices, Inc.,
-  2008
+Zdecydowanie najlepszą metodą przeszukiwania przestrzeni stanów 
+jest algorytm $\alpha - \beta + \text{TT}$. W stosunku do 
+,,czystego'' algorytmu $\alpha - \beta$ pozwala on osiągnąć 
+90\% redukcję liczby przeszukiwanych wierzchołków.
 
-\end{thebibliography}
+Wygranie z komputerem jest trudne. Autorom programu nie udało 
+do tej pory wygrać z algorytmem $\alpha - \beta$ przy głębokości
+przeszukiwania równej 4.
 
+Na tej podstawie można stwierdzić, że heurystyka okazała się
+wystarczająca.
 \end{document}
